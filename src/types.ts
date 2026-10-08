@@ -46,7 +46,17 @@ export interface Chapter {
   title: string;
   body?: string;
   stylesheets?: string[];
+  /** 本文の中の節。目次では、章の項目の下に `children` より前に置く（ADR 0008） */
+  sections?: Section[];
   children?: Chapter[];
+}
+
+/** 章の本文の中の節。目次の項目になり、`<章の文書>#<id>` を指す（ADR 0008） */
+export interface Section {
+  title: string;
+  /** 章の本文の中の、節の見出しの id */
+  id: string;
+  children?: Section[];
 }
 
 export interface Book {

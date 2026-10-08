@@ -1,6 +1,6 @@
 // EPUB の構成を作る（ADR 0003、ADR 0004）
 
-import { type Book, type BuildOptions, type Chapter, EpubInputError, type EpubVersion } from './types.ts';
+import { type Book, type BuildOptions, type Chapter, EpubInputError, type EpubVersion, type Section } from './types.ts';
 import { encodePath, escapeAttribute, escapeText, hasInvalidXmlChar } from './xml.ts';
 import { writeZip, type ZipEntry } from './zip.ts';
 
@@ -105,6 +105,22 @@ export function validateBook(book: Book, options: BuildOptions): void {
       throw new EpubInputError(`本文も子もない章がある: ${chapter.title}`);
     }
     checkStylesheets(chapter.stylesheets);
+    if ((chapter.sections ?? []).length > 0 && chapter.body === undefined) {
+      throw new EpubInputError(`本文のない章に節がある: ${chapter.title}`);
+    }
+    const checkSection = (section: Section) => {
+      if (typeof section.title !== 'string' || section.title.trim() === '' || hasInvalidXmlChar(section.title)) {
+        throw new EpubInputError(`正しくない節の題名がある: ${chapter.title}`);
+      }
+      if (typeof section.id !== 'string' || section.id === '' || /[\s#]/.test(section.id)) {
+        throw new EpubInputError(`正しくない節の id: ${JSON.stringify(section.id)}（${chapter.title}）`);
+      }
+      if (!chapter.body!.includes(`id="${escapeAttribute(section.id)}"`)) {
+        throw new EpubInputError(`節の id が本文にない: ${section.id}（${chapter.title}）`);
+      }
+      section.children?.forEach(checkSection);
+    };
+    chapter.sections?.forEach(checkSection);
     chapter.children?.forEach(checkChapter);
   };
   book.chapters.forEach(checkChapter);
@@ -154,14 +170,24 @@ function collect(book: Book): { documents: ContentDocument[]; toc: TocEntry[] } 
   if (book.cover) {
     pending.push({ title: book.metadata.title, body: book.cover.body, stylesheets: book.cover.stylesheets ?? [] });
   }
-  type PendingEntry = { title: string; index: number | undefined; children: PendingEntry[] };
+  type PendingEntry = {
+    title: string;
+    index: number | undefined;
+    sections: Section[];
+    children: PendingEntry[];
+  };
   const walk = (chapter: Chapter): PendingEntry => {
     let index: number | undefined;
     if (chapter.body !== undefined) {
       index = pending.length;
       pending.push({ title: chapter.title, body: chapter.body, stylesheets: chapter.stylesheets ?? [] });
     }
-    return { title: chapter.title, index, children: (chapter.children ?? []).map(walk) };
+    return {
+      title: chapter.title,
+      index,
+      sections: chapter.sections ?? [],
+      children: (chapter.children ?? []).map(walk),
+    };
   };
   const entries = book.chapters.map(walk);
   const documents = pending.map((doc, i) => {
@@ -169,10 +195,19 @@ function collect(book: Book): { documents: ContentDocument[]; toc: TocEntry[] } 
     return { ...doc, path: `${TEXT_DIR}/${name}`, id: `doc-${name.replace(/\.xhtml$/, '')}` };
   });
   const firstIndex = (entry: PendingEntry): number => entry.index ?? firstIndex(entry.children[0]);
+  const sectionToToc = (path: string) => (section: Section): TocEntry => ({
+    title: section.title,
+    href: `${path}#${encodeURIComponent(section.id)}`,
+    children: (section.children ?? []).map(sectionToToc(path)),
+  });
+  // 節を子の章より前に置く（ADR 0008）
   const toToc = (entry: PendingEntry): TocEntry => ({
     title: entry.title,
     href: documents[firstIndex(entry)].path,
-    children: entry.children.map(toToc),
+    children: [
+      ...(entry.index === undefined ? [] : entry.sections.map(sectionToToc(documents[entry.index].path))),
+      ...entry.children.map(toToc),
+    ],
   });
   return { documents, toc: entries.map(toToc) };
 }

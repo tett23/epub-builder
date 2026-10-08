@@ -131,6 +131,28 @@ Deno.test('edge-book：境界の場合', async () => {
   expect(jpeg.data.subarray(0, 2)).toEqual(new Uint8Array([0xff, 0xd8]));
 });
 
+Deno.test('sections-book：文書の中の見出しを節として目次に出す', async () => {
+  for (const version of ['2.0.1', '3.0'] as const) {
+    const files = await build('sections-book', version);
+    const ncx = files.get('OEBPS/toc.ncx')!;
+    expect(ncx).toContain('<meta name="dtb:depth" content="5"/>');
+    const labels = [...ncx.matchAll(/<text>([^<]+)<\/text>/g)].map((m) => m[1]).slice(1);
+    expect(labels).toContain('第二節　漢字の見出し');
+    expect(labels).not.toContain('表紙の見出しは目次に入らない');
+    expect(labels).not.toContain('表紙の小見出しも入らない');
+    expect(labels.slice(-3)).toEqual(['奥付', '著者', '発行']);
+    // 部の扉の節は、子の章より前
+    expect(labels.indexOf('第一部の概要')).toBeLessThan(labels.indexOf('第一章'));
+    // 本文の id を避けて番号を付ける
+    const ids = files.get('OEBPS/text/0005.xhtml')!;
+    expect(ids).toContain('<h3 id="sec-2">id のない見出し</h3>');
+    expect(ids).toContain('<h3 id="sec-5">次の id のない見出し</h3>');
+    // playOrder は 1 から目次の順に増える
+    const orders = [...ncx.matchAll(/playOrder="(\d+)"/g)].map((m) => Number(m[1]));
+    expect(orders).toEqual([...orders].sort((a, b) => a - b));
+  }
+});
+
 Deno.test('出力のスナップショット', async (t) => {
   for (const [name, versions] of Object.entries(FIXTURES)) {
     for (const version of versions) {

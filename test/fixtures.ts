@@ -10,4 +10,5 @@ export const FIXTURES: Record<string, EpubVersion[]> = {
   'tech-book': ['2.0.1', '3.0'],
   'minimal-book': ['2.0.1', '3.0'],
   'mixed-format-book': ['2.0.1', '3.0'],
+  'sections-book': ['2.0.1', '3.0'],
 };

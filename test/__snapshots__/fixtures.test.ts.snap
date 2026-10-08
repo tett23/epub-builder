@@ -5024,7 +5024,7 @@ application/epub+zip
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en">
 <head>
 <meta name="dtb:uid" content="urn:isbn:9780000000002"/>
-<meta name="dtb:depth" content="2"/>
+<meta name="dtb:depth" content="5"/>
 <meta name="dtb:totalPageCount" content="0"/>
 <meta name="dtb:maxPageNumber" content="0"/>
 </head>
@@ -5033,32 +5033,56 @@ application/epub+zip
 <navPoint id="np-1" playOrder="1">
   <navLabel><text>Introduction</text></navLabel>
   <content src="text/0002.xhtml"/>
+  <navPoint id="np-2" playOrder="2">
+    <navLabel><text>Scope {#not-an-id-in-commonmark}</text></navLabel>
+    <content src="text/0002.xhtml#sec-1"/>
+  </navPoint>
 </navPoint>
-<navPoint id="np-2" playOrder="2">
+<navPoint id="np-3" playOrder="3">
   <navLabel><text>Part I: Basics</text></navLabel>
   <content src="text/0003.xhtml"/>
-  <navPoint id="np-3" playOrder="3">
+  <navPoint id="np-4" playOrder="4">
     <navLabel><text>Directory layout</text></navLabel>
     <content src="text/0004.xhtml"/>
+    <navPoint id="np-5" playOrder="5">
+      <navLabel><text>The book file</text></navLabel>
+      <content src="text/0004.xhtml#sec-1"/>
+    </navPoint>
+    <navPoint id="np-6" playOrder="6">
+      <navLabel><text>Steps</text></navLabel>
+      <content src="text/0004.xhtml#sec-2"/>
+      <navPoint id="np-7" playOrder="7">
+        <navLabel><text>Writing</text></navLabel>
+        <content src="text/0004.xhtml#sec-3"/>
+        <navPoint id="np-8" playOrder="8">
+          <navLabel><text>Note {#ignored}</text></navLabel>
+          <content src="text/0004.xhtml#sec-4"/>
+        </navPoint>
+      </navPoint>
+    </navPoint>
   </navPoint>
-  <navPoint id="np-4" playOrder="4">
+  <navPoint id="np-9" playOrder="9">
     <navLabel><text>Ordering</text></navLabel>
     <content src="text/0005.xhtml"/>
   </navPoint>
 </navPoint>
-<navPoint id="np-5" playOrder="5">
+<navPoint id="np-10" playOrder="10">
   <navLabel><text>advanced</text></navLabel>
   <content src="text/0006.xhtml"/>
-  <navPoint id="np-6" playOrder="5">
+  <navPoint id="np-11" playOrder="10">
     <navLabel><text>Namespaces</text></navLabel>
     <content src="text/0006.xhtml"/>
+    <navPoint id="np-12" playOrder="11">
+      <navLabel><text>Navigation</text></navLabel>
+      <content src="text/0006.xhtml#back"/>
+    </navPoint>
   </navPoint>
-  <navPoint id="np-7" playOrder="6">
+  <navPoint id="np-13" playOrder="12">
     <navLabel><text>Footnotes in English</text></navLabel>
     <content src="text/0007.xhtml"/>
   </navPoint>
 </navPoint>
-<navPoint id="np-8" playOrder="7">
+<navPoint id="np-14" playOrder="13">
   <navLabel><text>Colophon</text></navLabel>
   <content src="text/0008.xhtml"/>
 </navPoint>
@@ -5090,7 +5114,7 @@ application/epub+zip
 </head>
 <body>
 <h1>Introduction</h1>
-<h2>Scope {#not-an-id-in-commonmark}</h2>
+<h2 id="sec-1">Scope {#not-an-id-in-commonmark}</h2>
 <p id="scope">This book is <em>synthetic</em>.</p>
 <p>It exercises reference links like <a href="https://example.com/spec" title="Specification">the spec</a>,
 autolinks like <a href="https://example.com/epub">https://example.com/epub</a>, and links to <a href="0004.xhtml#tree">basics</a>.</p>
@@ -5130,8 +5154,11 @@ on the next line.</p>
   body/
   meta/
   assets/</pre>
+<h2 id="sec-1">The book file</h2>
 <pre><code class="language-toml">title = "x &lt; y &amp;&amp; z"
 </code></pre>
+<h2 id="sec-2">Steps</h2>
+<h3 id="sec-3">Writing</h3>
 <ol>
 <li>Write <code>book.toml</code>.</li>
 <li>Add documents to <code>body/</code>.
@@ -5142,6 +5169,7 @@ on the next line.</p>
 </li>
 <li>Build.</li>
 </ol>
+<h4 id="sec-4">Note {#ignored}</h4>
 <blockquote>
 <p><strong>Note:</strong> a blockquote with a <a href="0002.xhtml">link back</a>.</p>
 </blockquote>
@@ -5187,6 +5215,7 @@ on the next line.</p>
   <image xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../assets/diagrams/cover.png" width="60" height="60"/>
   <a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#ns"><text x="70" y="35">top</text></a>
 </svg>
+<h2 id="back">Navigation</h2>
 <p>Back to <a href="0005.xhtml">ordering</a>.</p>
 
 </body>
@@ -5294,7 +5323,7 @@ application/epub+zip
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en">
 <head>
 <meta name="dtb:uid" content="urn:isbn:9780000000002"/>
-<meta name="dtb:depth" content="2"/>
+<meta name="dtb:depth" content="5"/>
 <meta name="dtb:totalPageCount" content="0"/>
 <meta name="dtb:maxPageNumber" content="0"/>
 </head>
@@ -5303,32 +5332,56 @@ application/epub+zip
 <navPoint id="np-1" playOrder="1">
   <navLabel><text>Introduction</text></navLabel>
   <content src="text/0002.xhtml"/>
+  <navPoint id="np-2" playOrder="2">
+    <navLabel><text>Scope {#not-an-id-in-commonmark}</text></navLabel>
+    <content src="text/0002.xhtml#sec-1"/>
+  </navPoint>
 </navPoint>
-<navPoint id="np-2" playOrder="2">
+<navPoint id="np-3" playOrder="3">
   <navLabel><text>Part I: Basics</text></navLabel>
   <content src="text/0003.xhtml"/>
-  <navPoint id="np-3" playOrder="3">
+  <navPoint id="np-4" playOrder="4">
     <navLabel><text>Directory layout</text></navLabel>
     <content src="text/0004.xhtml"/>
+    <navPoint id="np-5" playOrder="5">
+      <navLabel><text>The book file</text></navLabel>
+      <content src="text/0004.xhtml#sec-1"/>
+    </navPoint>
+    <navPoint id="np-6" playOrder="6">
+      <navLabel><text>Steps</text></navLabel>
+      <content src="text/0004.xhtml#sec-2"/>
+      <navPoint id="np-7" playOrder="7">
+        <navLabel><text>Writing</text></navLabel>
+        <content src="text/0004.xhtml#sec-3"/>
+        <navPoint id="np-8" playOrder="8">
+          <navLabel><text>Note {#ignored}</text></navLabel>
+          <content src="text/0004.xhtml#sec-4"/>
+        </navPoint>
+      </navPoint>
+    </navPoint>
   </navPoint>
-  <navPoint id="np-4" playOrder="4">
+  <navPoint id="np-9" playOrder="9">
     <navLabel><text>Ordering</text></navLabel>
     <content src="text/0005.xhtml"/>
   </navPoint>
 </navPoint>
-<navPoint id="np-5" playOrder="5">
+<navPoint id="np-10" playOrder="10">
   <navLabel><text>advanced</text></navLabel>
   <content src="text/0006.xhtml"/>
-  <navPoint id="np-6" playOrder="5">
+  <navPoint id="np-11" playOrder="10">
     <navLabel><text>Namespaces</text></navLabel>
     <content src="text/0006.xhtml"/>
+    <navPoint id="np-12" playOrder="11">
+      <navLabel><text>Navigation</text></navLabel>
+      <content src="text/0006.xhtml#back"/>
+    </navPoint>
   </navPoint>
-  <navPoint id="np-7" playOrder="6">
+  <navPoint id="np-13" playOrder="12">
     <navLabel><text>Footnotes in English</text></navLabel>
     <content src="text/0007.xhtml"/>
   </navPoint>
 </navPoint>
-<navPoint id="np-8" playOrder="7">
+<navPoint id="np-14" playOrder="13">
   <navLabel><text>Colophon</text></navLabel>
   <content src="text/0008.xhtml"/>
 </navPoint>
@@ -5345,16 +5398,37 @@ application/epub+zip
 <body>
 <nav epub:type="toc" id="toc">
 <ol>
-<li><a href="text/0002.xhtml">Introduction</a></li>
+<li><a href="text/0002.xhtml">Introduction</a>
+<ol>
+<li><a href="text/0002.xhtml#sec-1">Scope {#not-an-id-in-commonmark}</a></li>
+</ol>
+</li>
 <li><a href="text/0003.xhtml">Part I: Basics</a>
 <ol>
-<li><a href="text/0004.xhtml">Directory layout</a></li>
+<li><a href="text/0004.xhtml">Directory layout</a>
+<ol>
+<li><a href="text/0004.xhtml#sec-1">The book file</a></li>
+<li><a href="text/0004.xhtml#sec-2">Steps</a>
+<ol>
+<li><a href="text/0004.xhtml#sec-3">Writing</a>
+<ol>
+<li><a href="text/0004.xhtml#sec-4">Note {#ignored}</a></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
 <li><a href="text/0005.xhtml">Ordering</a></li>
 </ol>
 </li>
 <li><a href="text/0006.xhtml">advanced</a>
 <ol>
-<li><a href="text/0006.xhtml">Namespaces</a></li>
+<li><a href="text/0006.xhtml">Namespaces</a>
+<ol>
+<li><a href="text/0006.xhtml#back">Navigation</a></li>
+</ol>
+</li>
 <li><a href="text/0007.xhtml">Footnotes in English</a></li>
 </ol>
 </li>
@@ -5389,7 +5463,7 @@ application/epub+zip
 </head>
 <body>
 <h1>Introduction</h1>
-<h2>Scope {#not-an-id-in-commonmark}</h2>
+<h2 id="sec-1">Scope {#not-an-id-in-commonmark}</h2>
 <p id="scope">This book is <em>synthetic</em>.</p>
 <p>It exercises reference links like <a href="https://example.com/spec" title="Specification">the spec</a>,
 autolinks like <a href="https://example.com/epub">https://example.com/epub</a>, and links to <a href="0004.xhtml#tree">basics</a>.</p>
@@ -5429,8 +5503,11 @@ on the next line.</p>
   body/
   meta/
   assets/</pre>
+<h2 id="sec-1">The book file</h2>
 <pre><code class="language-toml">title = "x &lt; y &amp;&amp; z"
 </code></pre>
+<h2 id="sec-2">Steps</h2>
+<h3 id="sec-3">Writing</h3>
 <ol>
 <li>Write <code>book.toml</code>.</li>
 <li>Add documents to <code>body/</code>.
@@ -5441,6 +5518,7 @@ on the next line.</p>
 </li>
 <li>Build.</li>
 </ol>
+<h4 id="sec-4">Note {#ignored}</h4>
 <blockquote>
 <p><strong>Note:</strong> a blockquote with a <a href="0002.xhtml">link back</a>.</p>
 </blockquote>
@@ -5486,6 +5564,7 @@ on the next line.</p>
   <image xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../assets/diagrams/cover.png" width="60" height="60"/>
   <a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#ns"><text x="70" y="35">top</text></a>
 </svg>
+<h2 id="back">Navigation</h2>
 <p>Back to <a href="0005.xhtml">ordering</a>.</p>
 
 </body>
@@ -5928,5 +6007,722 @@ application/epub+zip
 </p>
 </body>
 </html>
+'
+`;
+
+snapshot[`出力のスナップショット > sections-book 2.0.1 1`] = `
+'== mimetype
+application/epub+zip
+== META-INF/container.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+<rootfiles>
+<rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+</rootfiles>
+</container>
+
+== OEBPS/content.opf
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="bookid">
+<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+<dc:identifier id="bookid">urn:uuid:4c3b2a19-0807-4f6e-9d5c-4b3a29180706</dc:identifier>
+<dc:title>節の入れ子</dc:title>
+<dc:language>ja</dc:language>
+<dc:date opf:event="modification">2026-10-09</dc:date>
+</metadata>
+<manifest>
+<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+<item id="doc-0001" href="text/0001.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0002" href="text/0002.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0003" href="text/0003.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0004" href="text/0004.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0005" href="text/0005.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0006" href="text/0006.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0007" href="text/0007.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0008" href="text/0008.xhtml" media-type="application/xhtml+xml"/>
+<item id="css-1" href="assets/style.css" media-type="text/css"/>
+</manifest>
+<spine toc="ncx">
+<itemref idref="doc-0001"/>
+<itemref idref="doc-0002"/>
+<itemref idref="doc-0003"/>
+<itemref idref="doc-0004"/>
+<itemref idref="doc-0005"/>
+<itemref idref="doc-0006"/>
+<itemref idref="doc-0007"/>
+<itemref idref="doc-0008"/>
+</spine>
+</package>
+
+== OEBPS/toc.ncx
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="ja">
+<head>
+<meta name="dtb:uid" content="urn:uuid:4c3b2a19-0807-4f6e-9d5c-4b3a29180706"/>
+<meta name="dtb:depth" content="5"/>
+<meta name="dtb:totalPageCount" content="0"/>
+<meta name="dtb:maxPageNumber" content="0"/>
+</head>
+<docTitle><text>節の入れ子</text></docTitle>
+<navMap>
+<navPoint id="np-1" playOrder="1">
+  <navLabel><text>はじめに</text></navLabel>
+  <content src="text/0002.xhtml"/>
+</navPoint>
+<navPoint id="np-2" playOrder="2">
+  <navLabel><text>第一部</text></navLabel>
+  <content src="text/0003.xhtml"/>
+  <navPoint id="np-3" playOrder="3">
+    <navLabel><text>第一部の概要</text></navLabel>
+    <content src="text/0003.xhtml#sec-1"/>
+    <navPoint id="np-4" playOrder="4">
+      <navLabel><text>概要の細目</text></navLabel>
+      <content src="text/0003.xhtml#sec-2"/>
+    </navPoint>
+  </navPoint>
+  <navPoint id="np-5" playOrder="5">
+    <navLabel><text>第一章</text></navLabel>
+    <content src="text/0004.xhtml"/>
+    <navPoint id="np-6" playOrder="6">
+      <navLabel><text>第一節</text></navLabel>
+      <content src="text/0004.xhtml#sec-1"/>
+      <navPoint id="np-7" playOrder="7">
+        <navLabel><text>第一項</text></navLabel>
+        <content src="text/0004.xhtml#sec-2"/>
+        <navPoint id="np-8" playOrder="8">
+          <navLabel><text>第一目</text></navLabel>
+          <content src="text/0004.xhtml#sec-3"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="np-9" playOrder="9">
+        <navLabel><text>第二項</text></navLabel>
+        <content src="text/0004.xhtml#sec-4"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-10" playOrder="10">
+      <navLabel><text>第二節　漢字の見出し</text></navLabel>
+      <content src="text/0004.xhtml#sec-5"/>
+      <navPoint id="np-11" playOrder="11">
+        <navLabel><text>レベルの飛んだ見出し</text></navLabel>
+        <content src="text/0004.xhtml#sec-6"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-12" playOrder="12">
+      <navLabel><text>題名より後の h1</text></navLabel>
+      <content src="text/0004.xhtml#sec-7"/>
+    </navPoint>
+  </navPoint>
+  <navPoint id="np-13" playOrder="13">
+    <navLabel><text>章</text></navLabel>
+    <content src="text/0005.xhtml"/>
+    <navPoint id="np-14" playOrder="13">
+      <navLabel><text>id を持つ見出し</text></navLabel>
+      <content src="text/0005.xhtml"/>
+      <navPoint id="np-15" playOrder="14">
+        <navLabel><text>自分で id を付けた見出し</text></navLabel>
+        <content src="text/0005.xhtml#user-id"/>
+      </navPoint>
+      <navPoint id="np-16" playOrder="15">
+        <navLabel><text>id のない見出し</text></navLabel>
+        <content src="text/0005.xhtml#sec-2"/>
+        <navPoint id="np-17" playOrder="16">
+          <navLabel><text>さらに下</text></navLabel>
+          <content src="text/0005.xhtml#sec-4"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="np-18" playOrder="17">
+        <navLabel><text>sec-3 を自分で付けた見出し</text></navLabel>
+        <content src="text/0005.xhtml#sec-3"/>
+      </navPoint>
+      <navPoint id="np-19" playOrder="18">
+        <navLabel><text>次の id のない見出し</text></navLabel>
+        <content src="text/0005.xhtml#sec-5"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-20" playOrder="19">
+      <navLabel><text>HTML の見出し</text></navLabel>
+      <content src="text/0006.xhtml"/>
+      <navPoint id="np-21" playOrder="20">
+        <navLabel><text>閉じ忘れた見出し</text></navLabel>
+        <content src="text/0006.xhtml#sec-1"/>
+        <navPoint id="np-22" playOrder="21">
+          <navLabel><text>div の中の見出し</text></navLabel>
+          <content src="text/0006.xhtml#sec-2"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="np-23" playOrder="22">
+        <navLabel><text>空白の まとめ</text></navLabel>
+        <content src="text/0006.xhtml#sec-3"/>
+      </navPoint>
+    </navPoint>
+  </navPoint>
+</navPoint>
+<navPoint id="np-24" playOrder="23">
+  <navLabel><text>付録 A</text></navLabel>
+  <content src="text/0007.xhtml"/>
+  <navPoint id="np-25" playOrder="24">
+    <navLabel><text>付録 B</text></navLabel>
+    <content src="text/0007.xhtml#sec-1"/>
+  </navPoint>
+</navPoint>
+<navPoint id="np-26" playOrder="25">
+  <navLabel><text>奥付</text></navLabel>
+  <content src="text/0008.xhtml"/>
+  <navPoint id="np-27" playOrder="26">
+    <navLabel><text>著者</text></navLabel>
+    <content src="text/0008.xhtml#sec-1"/>
+  </navPoint>
+  <navPoint id="np-28" playOrder="27">
+    <navLabel><text>発行</text></navLabel>
+    <content src="text/0008.xhtml#sec-2"/>
+  </navPoint>
+</navPoint>
+</navMap>
+</ncx>
+
+== OEBPS/text/0001.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<title>節の入れ子</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>表紙の見出しは目次に入らない</h1>
+<h2>表紙の小見出しも入らない</h2>
+</body>
+</html>
+
+== OEBPS/text/0002.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<title>はじめに</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>はじめに</h1>
+<p>見出しが一つだけの文書。目次には題名だけが出る。</p>
+</body>
+</html>
+
+== OEBPS/text/0003.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<title>第一部</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>第一部</h1>
+<h2 id="sec-1">第一部の概要</h2>
+<p>部の扉の節は、子の章より前に並ぶ。</p>
+<h3 id="sec-2">概要の細目</h3>
+</body>
+</html>
+
+== OEBPS/text/0004.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<title>第一章</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>第一章</h1>
+<h2 id="sec-1">第一節</h2>
+<p>本文。</p>
+<h3 id="sec-2">第一項</h3>
+<h4 id="sec-3">第一目</h4>
+<p>本文。</p>
+<h3 id="sec-4">第二項</h3>
+<h2 id="sec-5">第二節　<span class="ruby"><span class="rb">漢字</span><span class="rp">（</span><span class="rt">かんじ</span><span class="rp">）</span></span>の見出し<sup><a class="noteref" id="fnref-1" href="#fn-1">1</a></sup></h2>
+<h5 id="sec-6">レベルの飛んだ見出し</h5>
+<p>本文。</p>
+<h1 id="sec-7">題名より後の h1</h1>
+<p>h1 は、題名と同じレベルでも、文書の項目の直下の節になる。</p>
+<h2></h2>
+<p>空の見出しは節にならない。</p>
+<div class="footnotes"><div class="footnote" id="fn-1"><p><a href="#fnref-1">1</a> 脚注の参照は節の題名から除く。</p></div></div>
+</body>
+</html>
+
+== OEBPS/text/0005.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<title>id を持つ見出し</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h2>id を持つ見出し</h2>
+<p id="sec-1">本文に sec-1 があるため、付ける id は sec-2 から始まる。</p>
+<h3 id="user-id">自分で id を付けた見出し</h3>
+<h3 id="sec-2">id のない見出し</h3>
+<h4 id="sec-4">さらに下</h4>
+<h3 id="sec-3">sec-3 を自分で付けた見出し</h3>
+<h3 id="sec-5">次の id のない見出し</h3>
+
+</body>
+</html>
+
+== OEBPS/text/0006.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<title>HTML の見出し</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>HTML の見出し
+</h1><h2 id="sec-1">閉じ忘れた見出し</h2>
+<div><h3 id="sec-2">div の中の見出し</h3><p>入れ子の要素の中でも節になる。</p></div>
+<h2 id="sec-3">  空白の   まとめ  </h2>
+
+</body>
+</html>
+
+== OEBPS/text/0007.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<title>付録 A</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<p>最初の段落は見出しより前にある。題名は最初の見出し「付録 A」になり、二つ目の見出しからが節になる。</p>
+<h2>付録 A</h2>
+<h2 id="sec-1">付録 B</h2>
+<p><a href="0004.xhtml#sec-1">第一章の第一節へ</a></p>
+</body>
+</html>
+
+== OEBPS/text/0008.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<title>奥付</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>奥付</h1>
+<h2 id="sec-1">著者</h2>
+<p>合成データ。</p>
+<h2 id="sec-2">発行</h2>
+<p>合成データ。</p>
+</body>
+</html>
+
+== OEBPS/assets/style.css
+.footnotes h2 { font-size: 1em; }
+'
+`;
+
+snapshot[`出力のスナップショット > sections-book 3.0 1`] = `
+'== mimetype
+application/epub+zip
+== META-INF/container.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+<rootfiles>
+<rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+</rootfiles>
+</container>
+
+== OEBPS/content.opf
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="bookid" xml:lang="ja">
+<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+<dc:identifier id="bookid">urn:uuid:4c3b2a19-0807-4f6e-9d5c-4b3a29180706</dc:identifier>
+<dc:title>節の入れ子</dc:title>
+<dc:language>ja</dc:language>
+<meta property="dcterms:modified">2026-10-09T00:00:00Z</meta>
+</metadata>
+<manifest>
+<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+<item id="doc-0001" href="text/0001.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0002" href="text/0002.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0003" href="text/0003.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0004" href="text/0004.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0005" href="text/0005.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0006" href="text/0006.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0007" href="text/0007.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0008" href="text/0008.xhtml" media-type="application/xhtml+xml"/>
+<item id="css-1" href="assets/style.css" media-type="text/css"/>
+</manifest>
+<spine toc="ncx">
+<itemref idref="doc-0001"/>
+<itemref idref="doc-0002"/>
+<itemref idref="doc-0003"/>
+<itemref idref="doc-0004"/>
+<itemref idref="doc-0005"/>
+<itemref idref="doc-0006"/>
+<itemref idref="doc-0007"/>
+<itemref idref="doc-0008"/>
+</spine>
+</package>
+
+== OEBPS/toc.ncx
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="ja">
+<head>
+<meta name="dtb:uid" content="urn:uuid:4c3b2a19-0807-4f6e-9d5c-4b3a29180706"/>
+<meta name="dtb:depth" content="5"/>
+<meta name="dtb:totalPageCount" content="0"/>
+<meta name="dtb:maxPageNumber" content="0"/>
+</head>
+<docTitle><text>節の入れ子</text></docTitle>
+<navMap>
+<navPoint id="np-1" playOrder="1">
+  <navLabel><text>はじめに</text></navLabel>
+  <content src="text/0002.xhtml"/>
+</navPoint>
+<navPoint id="np-2" playOrder="2">
+  <navLabel><text>第一部</text></navLabel>
+  <content src="text/0003.xhtml"/>
+  <navPoint id="np-3" playOrder="3">
+    <navLabel><text>第一部の概要</text></navLabel>
+    <content src="text/0003.xhtml#sec-1"/>
+    <navPoint id="np-4" playOrder="4">
+      <navLabel><text>概要の細目</text></navLabel>
+      <content src="text/0003.xhtml#sec-2"/>
+    </navPoint>
+  </navPoint>
+  <navPoint id="np-5" playOrder="5">
+    <navLabel><text>第一章</text></navLabel>
+    <content src="text/0004.xhtml"/>
+    <navPoint id="np-6" playOrder="6">
+      <navLabel><text>第一節</text></navLabel>
+      <content src="text/0004.xhtml#sec-1"/>
+      <navPoint id="np-7" playOrder="7">
+        <navLabel><text>第一項</text></navLabel>
+        <content src="text/0004.xhtml#sec-2"/>
+        <navPoint id="np-8" playOrder="8">
+          <navLabel><text>第一目</text></navLabel>
+          <content src="text/0004.xhtml#sec-3"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="np-9" playOrder="9">
+        <navLabel><text>第二項</text></navLabel>
+        <content src="text/0004.xhtml#sec-4"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-10" playOrder="10">
+      <navLabel><text>第二節　漢字の見出し</text></navLabel>
+      <content src="text/0004.xhtml#sec-5"/>
+      <navPoint id="np-11" playOrder="11">
+        <navLabel><text>レベルの飛んだ見出し</text></navLabel>
+        <content src="text/0004.xhtml#sec-6"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-12" playOrder="12">
+      <navLabel><text>題名より後の h1</text></navLabel>
+      <content src="text/0004.xhtml#sec-7"/>
+    </navPoint>
+  </navPoint>
+  <navPoint id="np-13" playOrder="13">
+    <navLabel><text>章</text></navLabel>
+    <content src="text/0005.xhtml"/>
+    <navPoint id="np-14" playOrder="13">
+      <navLabel><text>id を持つ見出し</text></navLabel>
+      <content src="text/0005.xhtml"/>
+      <navPoint id="np-15" playOrder="14">
+        <navLabel><text>自分で id を付けた見出し</text></navLabel>
+        <content src="text/0005.xhtml#user-id"/>
+      </navPoint>
+      <navPoint id="np-16" playOrder="15">
+        <navLabel><text>id のない見出し</text></navLabel>
+        <content src="text/0005.xhtml#sec-2"/>
+        <navPoint id="np-17" playOrder="16">
+          <navLabel><text>さらに下</text></navLabel>
+          <content src="text/0005.xhtml#sec-4"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="np-18" playOrder="17">
+        <navLabel><text>sec-3 を自分で付けた見出し</text></navLabel>
+        <content src="text/0005.xhtml#sec-3"/>
+      </navPoint>
+      <navPoint id="np-19" playOrder="18">
+        <navLabel><text>次の id のない見出し</text></navLabel>
+        <content src="text/0005.xhtml#sec-5"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-20" playOrder="19">
+      <navLabel><text>HTML の見出し</text></navLabel>
+      <content src="text/0006.xhtml"/>
+      <navPoint id="np-21" playOrder="20">
+        <navLabel><text>閉じ忘れた見出し</text></navLabel>
+        <content src="text/0006.xhtml#sec-1"/>
+        <navPoint id="np-22" playOrder="21">
+          <navLabel><text>div の中の見出し</text></navLabel>
+          <content src="text/0006.xhtml#sec-2"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="np-23" playOrder="22">
+        <navLabel><text>空白の まとめ</text></navLabel>
+        <content src="text/0006.xhtml#sec-3"/>
+      </navPoint>
+    </navPoint>
+  </navPoint>
+</navPoint>
+<navPoint id="np-24" playOrder="23">
+  <navLabel><text>付録 A</text></navLabel>
+  <content src="text/0007.xhtml"/>
+  <navPoint id="np-25" playOrder="24">
+    <navLabel><text>付録 B</text></navLabel>
+    <content src="text/0007.xhtml#sec-1"/>
+  </navPoint>
+</navPoint>
+<navPoint id="np-26" playOrder="25">
+  <navLabel><text>奥付</text></navLabel>
+  <content src="text/0008.xhtml"/>
+  <navPoint id="np-27" playOrder="26">
+    <navLabel><text>著者</text></navLabel>
+    <content src="text/0008.xhtml#sec-1"/>
+  </navPoint>
+  <navPoint id="np-28" playOrder="27">
+    <navLabel><text>発行</text></navLabel>
+    <content src="text/0008.xhtml#sec-2"/>
+  </navPoint>
+</navPoint>
+</navMap>
+</ncx>
+
+== OEBPS/nav.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>節の入れ子</title>
+</head>
+<body>
+<nav epub:type="toc" id="toc">
+<ol>
+<li><a href="text/0002.xhtml">はじめに</a></li>
+<li><a href="text/0003.xhtml">第一部</a>
+<ol>
+<li><a href="text/0003.xhtml#sec-1">第一部の概要</a>
+<ol>
+<li><a href="text/0003.xhtml#sec-2">概要の細目</a></li>
+</ol>
+</li>
+<li><a href="text/0004.xhtml">第一章</a>
+<ol>
+<li><a href="text/0004.xhtml#sec-1">第一節</a>
+<ol>
+<li><a href="text/0004.xhtml#sec-2">第一項</a>
+<ol>
+<li><a href="text/0004.xhtml#sec-3">第一目</a></li>
+</ol>
+</li>
+<li><a href="text/0004.xhtml#sec-4">第二項</a></li>
+</ol>
+</li>
+<li><a href="text/0004.xhtml#sec-5">第二節　漢字の見出し</a>
+<ol>
+<li><a href="text/0004.xhtml#sec-6">レベルの飛んだ見出し</a></li>
+</ol>
+</li>
+<li><a href="text/0004.xhtml#sec-7">題名より後の h1</a></li>
+</ol>
+</li>
+<li><a href="text/0005.xhtml">章</a>
+<ol>
+<li><a href="text/0005.xhtml">id を持つ見出し</a>
+<ol>
+<li><a href="text/0005.xhtml#user-id">自分で id を付けた見出し</a></li>
+<li><a href="text/0005.xhtml#sec-2">id のない見出し</a>
+<ol>
+<li><a href="text/0005.xhtml#sec-4">さらに下</a></li>
+</ol>
+</li>
+<li><a href="text/0005.xhtml#sec-3">sec-3 を自分で付けた見出し</a></li>
+<li><a href="text/0005.xhtml#sec-5">次の id のない見出し</a></li>
+</ol>
+</li>
+<li><a href="text/0006.xhtml">HTML の見出し</a>
+<ol>
+<li><a href="text/0006.xhtml#sec-1">閉じ忘れた見出し</a>
+<ol>
+<li><a href="text/0006.xhtml#sec-2">div の中の見出し</a></li>
+</ol>
+</li>
+<li><a href="text/0006.xhtml#sec-3">空白の まとめ</a></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><a href="text/0007.xhtml">付録 A</a>
+<ol>
+<li><a href="text/0007.xhtml#sec-1">付録 B</a></li>
+</ol>
+</li>
+<li><a href="text/0008.xhtml">奥付</a>
+<ol>
+<li><a href="text/0008.xhtml#sec-1">著者</a></li>
+<li><a href="text/0008.xhtml#sec-2">発行</a></li>
+</ol>
+</li>
+</ol>
+</nav>
+</body>
+</html>
+
+== OEBPS/text/0001.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>節の入れ子</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>表紙の見出しは目次に入らない</h1>
+<h2>表紙の小見出しも入らない</h2>
+</body>
+</html>
+
+== OEBPS/text/0002.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>はじめに</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>はじめに</h1>
+<p>見出しが一つだけの文書。目次には題名だけが出る。</p>
+</body>
+</html>
+
+== OEBPS/text/0003.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>第一部</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>第一部</h1>
+<h2 id="sec-1">第一部の概要</h2>
+<p>部の扉の節は、子の章より前に並ぶ。</p>
+<h3 id="sec-2">概要の細目</h3>
+</body>
+</html>
+
+== OEBPS/text/0004.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>第一章</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>第一章</h1>
+<h2 id="sec-1">第一節</h2>
+<p>本文。</p>
+<h3 id="sec-2">第一項</h3>
+<h4 id="sec-3">第一目</h4>
+<p>本文。</p>
+<h3 id="sec-4">第二項</h3>
+<h2 id="sec-5">第二節　<ruby>漢字<rp>（</rp><rt>かんじ</rt><rp>）</rp></ruby>の見出し<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></h2>
+<h5 id="sec-6">レベルの飛んだ見出し</h5>
+<p>本文。</p>
+<h1 id="sec-7">題名より後の h1</h1>
+<p>h1 は、題名と同じレベルでも、文書の項目の直下の節になる。</p>
+<h2></h2>
+<p>空の見出しは節にならない。</p>
+<div class="footnotes"><aside class="footnote" id="fn-1" epub:type="footnote"><p><a href="#fnref-1">1</a> 脚注の参照は節の題名から除く。</p></aside></div>
+</body>
+</html>
+
+== OEBPS/text/0005.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>id を持つ見出し</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h2>id を持つ見出し</h2>
+<p id="sec-1">本文に sec-1 があるため、付ける id は sec-2 から始まる。</p>
+<h3 id="user-id">自分で id を付けた見出し</h3>
+<h3 id="sec-2">id のない見出し</h3>
+<h4 id="sec-4">さらに下</h4>
+<h3 id="sec-3">sec-3 を自分で付けた見出し</h3>
+<h3 id="sec-5">次の id のない見出し</h3>
+
+</body>
+</html>
+
+== OEBPS/text/0006.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>HTML の見出し</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>HTML の見出し
+</h1><h2 id="sec-1">閉じ忘れた見出し</h2>
+<div><h3 id="sec-2">div の中の見出し</h3><p>入れ子の要素の中でも節になる。</p></div>
+<h2 id="sec-3">  空白の   まとめ  </h2>
+
+</body>
+</html>
+
+== OEBPS/text/0007.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>付録 A</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<p>最初の段落は見出しより前にある。題名は最初の見出し「付録 A」になり、二つ目の見出しからが節になる。</p>
+<h2>付録 A</h2>
+<h2 id="sec-1">付録 B</h2>
+<p><a href="0004.xhtml#sec-1">第一章の第一節へ</a></p>
+</body>
+</html>
+
+== OEBPS/text/0008.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>奥付</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>奥付</h1>
+<h2 id="sec-1">著者</h2>
+<p>合成データ。</p>
+<h2 id="sec-2">発行</h2>
+<p>合成データ。</p>
+</body>
+</html>
+
+== OEBPS/assets/style.css
+.footnotes h2 { font-size: 1em; }
 '
 `;
