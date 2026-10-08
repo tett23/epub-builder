@@ -1,4 +1,4 @@
-// EPUB 3.0 の部・章・節の意味づけ（ADR 0010）
+// EPUB 3.0 の部・章・節の意味づけ（ADR 0011）
 import { expect } from '@std/expect';
 import type { Element, Root } from 'hast';
 import { type Book, buildEpub, EpubInputError } from '../mod.ts';

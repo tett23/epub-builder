@@ -348,7 +348,26 @@ ${render(toc, '')}
 `;
 }
 
-function navDocument(book: Book, toc: TocEntry[]): string {
+/** epub:type の語の並びに、語が含まれるか */
+function hasTerm(epubType: string | undefined, term: string): boolean {
+  return (epubType ?? '').split(/\s+/).includes(term);
+}
+
+/** landmarks の項目（ADR 0011） */
+function landmarks(book: Book, documents: ContentDocument[]): { type: string; href: string; label: string }[] {
+  const ja = /^ja(-|$)/i.test(book.metadata.language);
+  const chapterDocs = documents.slice(book.cover ? 1 : 0);
+  const bodymatter = chapterDocs.find((d) => hasTerm(d.epubType, 'bodymatter')) ?? chapterDocs[0];
+  const backmatter = chapterDocs.find((d) => hasTerm(d.epubType, 'backmatter'));
+  const items: { type: string; href: string; label: string }[] = [];
+  if (book.cover) items.push({ type: 'cover', href: documents[0].path, label: ja ? '表紙' : 'Cover' });
+  // toc は書かない。ナビゲーション文書は spine にないため、指すと EPUBCheck で誤り（RSC-011）になる
+  if (bodymatter) items.push({ type: 'bodymatter', href: bodymatter.path, label: ja ? '本文' : 'Start of Content' });
+  if (backmatter) items.push({ type: 'backmatter', href: backmatter.path, label: ja ? '後付け' : 'Back Matter' });
+  return items;
+}
+
+function navDocument(book: Book, toc: TocEntry[], documents: ContentDocument[]): string {
   const render = (entries: TocEntry[]): string =>
     `<ol>\n${
       entries.map((entry) => {
@@ -366,6 +385,15 @@ function navDocument(book: Book, toc: TocEntry[]): string {
 <body>
 <nav epub:type="toc" id="toc">
 ${render(toc)}
+</nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+${
+    landmarks(book, documents)
+      .map((item) => `<li><a epub:type="${item.type}" href="${item.href}">${escapeText(item.label)}</a></li>`)
+      .join('\n')
+  }
+</ol>
 </nav>
 </body>
 </html>
@@ -397,7 +425,7 @@ export async function buildEpub(book: Book, options: BuildOptions): Promise<Uint
     text('content.opf', packageDocument(book, version, documents, imageIds, stylesheetIds, modified)),
     text('toc.ncx', ncxDocument(book, toc)),
   ];
-  if (version === '3.0') entries.push(text('nav.xhtml', navDocument(book, toc)));
+  if (version === '3.0') entries.push(text('nav.xhtml', navDocument(book, toc, documents)));
   for (const doc of documents) entries.push(text(doc.path, wrapDocument(doc, book, version)));
   for (const stylesheet of book.stylesheets ?? []) entries.push(text(stylesheet.path, stylesheet.content));
   for (const image of book.images ?? []) entries.push({ name: `OEBPS/${image.path}`, data: image.data });

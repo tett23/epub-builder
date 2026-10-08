@@ -114,7 +114,8 @@ Deno.test('深い入れ子の目次と、文書のない項目の playOrder', as
   expect(ncx).toContain('<meta name="dtb:depth" content="3"/>');
   const orders = [...ncx.matchAll(/playOrder="(\d+)">\s*<navLabel><text>([^<]+)</g)].map((m) => [m[2], m[1]]);
   expect(orders).toEqual([['1', '1'], ['1-1', '1'], ['1-1-1', '1'], ['2', '2'], ['2-1', '3']]);
-  const nav = files.get('OEBPS/nav.xhtml')!;
+  // 目次の nav だけを見る（landmarks を除く）
+  const nav = files.get('OEBPS/nav.xhtml')!.split('<nav epub:type="landmarks"')[0];
   expect(nav).toMatch(/<a href="text\/0001.xhtml">1<\/a>\s*<ol>\s*<li><a href="text\/0001.xhtml">1-1<\/a>/);
   expect([...nav.matchAll(/<ol>/g)].length).toBe(4);
 });

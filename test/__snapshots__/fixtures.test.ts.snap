@@ -347,6 +347,13 @@ application/epub+zip
 <li><a href="text/0008.xhtml">奥付</a></li>
 </ol>
 </nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+<li><a epub:type="cover" href="text/0001.xhtml">表紙</a></li>
+<li><a epub:type="bodymatter" href="text/0002.xhtml">本文</a></li>
+<li><a epub:type="backmatter" href="text/0008.xhtml">後付け</a></li>
+</ol>
+</nav>
 </body>
 </html>
 
@@ -851,6 +858,13 @@ application/epub+zip
 <li><a href="text/0007.xhtml">奥付</a></li>
 </ol>
 </nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+<li><a epub:type="cover" href="text/0001.xhtml">表紙</a></li>
+<li><a epub:type="bodymatter" href="text/0002.xhtml">本文</a></li>
+<li><a epub:type="backmatter" href="text/0007.xhtml">後付け</a></li>
+</ol>
+</nav>
 </body>
 </html>
 
@@ -1071,6 +1085,11 @@ application/epub+zip
 <li><a href="text/0002.xhtml">epub:type</a></li>
 <li><a href="text/0003.xhtml">HTML の epub:type</a></li>
 <li><a href="text/0004.xhtml">脚注のポップアップ</a></li>
+</ol>
+</nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+<li><a epub:type="bodymatter" href="text/0001.xhtml">本文</a></li>
 </ol>
 </nav>
 </body>
@@ -1765,8 +1784,8 @@ html {
   -webkit-writing-mode: vertical-rl;
   writing-mode: vertical-rl;
 }
-body { font-family: serif; line-height: 1.8; }
-h1, h2 { font-family: sans-serif; }
+body { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.8; }
+h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
 p { text-indent: 1em; margin: 0; }
 
 == OEBPS/assets/images/cover.svg (372 bytes)'
@@ -1990,6 +2009,13 @@ application/epub+zip
 </li>
 <li><a href="text/0021.xhtml">エピローグ</a></li>
 <li><a href="text/0022.xhtml">奥付</a></li>
+</ol>
+</nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+<li><a epub:type="cover" href="text/0001.xhtml">表紙</a></li>
+<li><a epub:type="bodymatter" href="text/0002.xhtml">本文</a></li>
+<li><a epub:type="backmatter" href="text/0022.xhtml">後付け</a></li>
 </ol>
 </nav>
 </body>
@@ -2446,8 +2472,8 @@ html {
   -webkit-writing-mode: vertical-rl;
   writing-mode: vertical-rl;
 }
-body { font-family: serif; line-height: 1.8; }
-h1, h2 { font-family: sans-serif; }
+body { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.8; }
+h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
 p { text-indent: 1em; margin: 0; }
 
 == OEBPS/assets/images/cover.svg (372 bytes)'
@@ -4798,6 +4824,12 @@ application/epub+zip
 <li><a href="text/0151.xhtml">奥付</a></li>
 </ol>
 </nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+<li><a epub:type="bodymatter" href="text/0001.xhtml">本文</a></li>
+<li><a epub:type="backmatter" href="text/0151.xhtml">後付け</a></li>
+</ol>
+</nav>
 </body>
 </html>
 
@@ -5435,6 +5467,13 @@ application/epub+zip
 <li><a href="text/0008.xhtml">Colophon</a></li>
 </ol>
 </nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+<li><a epub:type="cover" href="text/0001.xhtml">Cover</a></li>
+<li><a epub:type="bodymatter" href="text/0002.xhtml">Start of Content</a></li>
+<li><a epub:type="backmatter" href="text/0008.xhtml">Back Matter</a></li>
+</ol>
+</nav>
 </body>
 </html>
 
@@ -5738,6 +5777,11 @@ application/epub+zip
 <li><a href="text/0001.xhtml">本文</a></li>
 </ol>
 </nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+<li><a epub:type="bodymatter" href="text/0001.xhtml">本文</a></li>
+</ol>
+</nav>
 </body>
 </html>
 
@@ -5947,6 +5991,11 @@ application/epub+zip
 <li><a href="text/0001.xhtml">同じ内容</a></li>
 <li><a href="text/0002.xhtml">同じ内容</a></li>
 <li><a href="text/0003.xhtml">同じ内容</a></li>
+</ol>
+</nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+<li><a epub:type="bodymatter" href="text/0001.xhtml">本文</a></li>
 </ol>
 </nav>
 </body>
@@ -6594,6 +6643,13 @@ application/epub+zip
 <li><a href="text/0009.xhtml#sec-2">発行</a></li>
 </ol>
 </li>
+</ol>
+</nav>
+<nav epub:type="landmarks" hidden="">
+<ol>
+<li><a epub:type="cover" href="text/0001.xhtml">表紙</a></li>
+<li><a epub:type="bodymatter" href="text/0002.xhtml">本文</a></li>
+<li><a epub:type="backmatter" href="text/0009.xhtml">後付け</a></li>
 </ol>
 </nav>
 </body>

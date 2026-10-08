@@ -3,6 +3,6 @@ html {
   -webkit-writing-mode: vertical-rl;
   writing-mode: vertical-rl;
 }
-body { font-family: serif; line-height: 1.8; }
-h1, h2 { font-family: sans-serif; }
+body { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.8; }
+h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
 p { text-indent: 1em; margin: 0; }

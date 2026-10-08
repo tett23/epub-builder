@@ -192,7 +192,8 @@ Deno.test('loadBook は index の節を子より前に、奥付の節を目次�
     expect(loaded.chapters[0].children![0].sections).toEqual([{ title: '章の節', id: 'sec-1' }]);
     expect(loaded.chapters[1].sections).toEqual([{ title: '奥付の節', id: 'sec-1' }]);
     expect(loaded.cover!.body).toBe('<h1>表紙</h1>\n<h2>表紙の節</h2>');
-    const nav = (await unzipText(await buildEpub(loaded, { version: '3.0' }))).get('OEBPS/nav.xhtml')!;
+    const nav = (await unzipText(await buildEpub(loaded, { version: '3.0' }))).get('OEBPS/nav.xhtml')!
+      .split('<nav epub:type="landmarks"')[0];
     expect(nav.indexOf('扉の節')).toBeLessThan(nav.indexOf('>章<'));
     expect(nav).not.toContain('表紙');
   } finally {

@@ -59,7 +59,8 @@ Deno.test('large-book：多くの文書', async () => {
   // 巻10 は巻2 より後（数字を数として比べない）ではなく、ゼロ詰めの名前の順
   expect(ncx.indexOf('<text>巻2</text>')).toBeLessThan(ncx.indexOf('<text>巻10</text>'));
   const nav = files.get('OEBPS/nav.xhtml')!;
-  expect(count(nav, /<li>/g)).toBe(161);
+  const tocNav = nav.slice(0, nav.indexOf('<nav epub:type="landmarks"'));
+  expect(count(tocNav, /<li>/g)).toBe(161);
 });
 
 Deno.test('tech-book：横書きの技術書', async () => {

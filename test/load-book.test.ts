@@ -123,7 +123,8 @@ Deno.test('目次と読み順を、ディレクトリの構成と見出しから
   expect(book.cover?.body).toBe('<p>表紙</p>');
   expect(book.chapters[2].body).toBe(undefined);
   const files = await unzipText(await buildEpub(book, { version: '3.0' }));
-  const nav = files.get('OEBPS/nav.xhtml')!;
+  // 目次の nav だけを見る（landmarks を除く）
+  const nav = files.get('OEBPS/nav.xhtml')!.split('<nav epub:type="landmarks"')[0];
   expect(nav).not.toContain('0001.xhtml');
   expect(nav).toContain('<a href="text/0003.xhtml">部の扉</a>');
   // index のない章は、最初の子の文書を指す

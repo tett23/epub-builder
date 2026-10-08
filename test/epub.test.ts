@@ -78,7 +78,8 @@ Deno.test('EPUB 3.0 のパッケージ文書、ナビゲーション文書、本
   );
   // 表紙は読み順の最初で、目次には入らない
   expect(opf.indexOf('idref="doc-0001"')).toBeLessThan(opf.indexOf('idref="doc-0002"'));
-  const nav = files.get('OEBPS/nav.xhtml')!;
+  // 目次の nav だけを見る（landmarks を除く）
+  const nav = files.get('OEBPS/nav.xhtml')!.split('<nav epub:type="landmarks"')[0];
   expect(nav).toContain('<nav epub:type="toc" id="toc">');
   expect(nav).not.toContain('0001.xhtml');
   expect(nav).toMatch(/<li><a href="text\/0003.xhtml">部<\/a>\s*<ol>/);
