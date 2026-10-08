@@ -18,12 +18,40 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 
 ディレクトリの例は [test/fixtures/sample-book/](test/fixtures/sample-book/) にある。
 
+## コマンドライン
+
+ディレクトリから、コードを書かずに EPUB を作れる。
+
+```bash
+deno install -g --allow-read --allow-write -n epub-builder cli.ts
+```
+
+```bash
+epub-builder init my-book
+```
+
+```bash
+epub-builder build my-book -e all
+```
+
+| コマンド         | 働き                                                               |
+| ---------------- | ------------------------------------------------------------------ |
+| `build [dir]`    | EPUB を作る（`-e 2.0.1\|3.0\|all`、`-o <path>`、`--strict`、`-q`） |
+| `check [dir]`    | EPUB を書かずに、誤りと警告を調べる                                |
+| `toc [dir]`      | 目次の木を表示する                                                 |
+| `init [dir]`     | 新しい本の雛形を作る                                               |
+| `help [command]` | 使い方を表示する                                                   |
+| `version`        | 版を表示する                                                       |
+
+インストールせずに `deno task cli build my-book` としても動く。
+
 設計上の決定とその理由は [docs/adr/](docs/adr/) に記録している。
 
 - 対応する仕様と出力の構成：[ADR 0003](docs/adr/0003-epub-2-0-1-and-3-0-output.md)
 - 公開 API と zip の作り方：[ADR 0004](docs/adr/0004-public-api-and-zip-writer.md)
 - 現在の仕様のまとめ：[docs/specifications.md](docs/specifications.md)
 - ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け：[ADR 0014](docs/adr/0014-back-matter.md)
+- コマンドライン：[ADR 0015](docs/adr/0015-command-line-interface.md)
 
 ## 開発
 
