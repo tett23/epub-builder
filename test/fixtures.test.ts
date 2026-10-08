@@ -18,8 +18,8 @@ Deno.test('novel-book：縦書きの長編', async (t) => {
   for (const version of ['2.0.1', '3.0'] as const) {
     await t.step(version, async () => {
       const files = await build('novel-book', version);
-      // 表紙、プロローグ、三部（扉と 4、5、6 章）、エピローグ、奥付
-      expect(textDocs(files).length).toBe(1 + 1 + 3 + 4 + 5 + 6 + 1 + 1);
+      // 表紙、扉、プロローグ、三部（扉と 4、5、6 章）、エピローグ、奥付
+      expect(textDocs(files).length).toBe(1 + 1 + 1 + 3 + 4 + 5 + 6 + 1 + 1);
       const ncx = files.get('OEBPS/toc.ncx')!;
       expect(ncx).toContain('<meta name="dtb:depth" content="2"/>');
       expect(count(ncx, /<navPoint /g)).toBe(1 + 3 + 15 + 1 + 1);
@@ -69,20 +69,20 @@ Deno.test('tech-book：横書きの技術書', async () => {
     const opf = files.get('OEBPS/content.opf')!;
     expect(opf).toContain('<dc:language>en</dc:language>');
     expect(opf).toContain('<dc:description>Literal string with "quotes" and \\backslashes\\</dc:description>');
-    const intro = files.get('OEBPS/text/0002.xhtml')!;
+    const intro = files.get('OEBPS/text/0003.xhtml')!;
     expect(intro).toContain('<a href="https://example.com/spec" title="Specification">the spec</a>');
-    expect(intro).toContain('<a href="0004.xhtml#tree">basics</a>');
+    expect(intro).toContain('<a href="0005.xhtml#tree">basics</a>');
     expect(intro).toContain('<img src="../assets/diagrams/flow.svg" alt="A flow diagram"/>');
     expect(intro).toContain('<code>code &lt;with&gt; &amp; entities</code>');
     const colophon = [...files].find(([n, c]) => n.startsWith('OEBPS/text/') && c.includes('Colophon'))![1];
-    expect(colophon).toContain('<a href="0002.xhtml#scope">the introduction</a>');
-    const ordering = files.get('OEBPS/text/0005.xhtml')!;
+    expect(colophon).toContain('<a href="0003.xhtml#scope">the introduction</a>');
+    const ordering = files.get('OEBPS/text/0006.xhtml')!;
     expect(ordering).toContain('<tbody><tr><td><code>01-a.md</code></td><td>1\n  </td></tr>');
     expect(ordering).toContain('— not “naturally”.');
-    const ns = files.get('OEBPS/text/0006.xhtml')!;
-    expect(ns).toContain('<a href="0005.xhtml">ordering</a>');
+    const ns = files.get('OEBPS/text/0007.xhtml')!;
+    expect(ns).toContain('<a href="0006.xhtml">ordering</a>');
     expect(ns).toContain('xlink:href="../assets/diagrams/cover.png"');
-    expect(files.get('OEBPS/text/0004.xhtml')).toContain('<a href="0002.xhtml">link back</a>');
+    expect(files.get('OEBPS/text/0005.xhtml')).toContain('<a href="0003.xhtml">link back</a>');
     // スタイルシートは文字コード順に、すべての文書に付ける
     for (const [name, content] of textDocs(files)) {
       expect(content.indexOf('assets/css/base.css'), name).toBeLessThan(content.indexOf('assets/css/code.css'));
@@ -141,11 +141,13 @@ Deno.test('sections-book：文書の中の見出しを節として目次に出�
     expect(labels).toContain('第二節　漢字の見出し');
     expect(labels).not.toContain('表紙の見出しは目次に入らない');
     expect(labels).not.toContain('表紙の小見出しも入らない');
+    expect(labels).not.toContain('扉の見出しは目次に入らない');
+    expect(labels).not.toContain('扉の小見出しも節にならない');
     expect(labels.slice(-3)).toEqual(['奥付', '著者', '発行']);
     // 部の扉の節は、子の章より前
     expect(labels.indexOf('第一部の概要')).toBeLessThan(labels.indexOf('第一章'));
     // 本文の id を避けて番号を付ける
-    const ids = files.get('OEBPS/text/0006.xhtml')!;
+    const ids = files.get('OEBPS/text/0007.xhtml')!;
     expect(ids).toContain('<h3 id="sec-2">id のない見出し</h3>');
     expect(ids).toContain('<h3 id="sec-5">次の id のない見出し</h3>');
     // playOrder は 1 から目次の順に増える

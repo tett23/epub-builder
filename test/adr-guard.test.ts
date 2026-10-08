@@ -15,7 +15,7 @@ describe('isAdrPath', () => {
 
 describe('onlyStatusLineChanged', () => {
   it('allows changing only the status line', () => {
-    const after = ADR.replace('ステータス: 採択', 'ステータス: 置換（ADR 0009）');
+    const after = ADR.replace('ステータス: 採択', 'ステータス: 置換（ADR 0013）');
     expect(onlyStatusLineChanged(ADR, after)).toBe(true);
   });
 

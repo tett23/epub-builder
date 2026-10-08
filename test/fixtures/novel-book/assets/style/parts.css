@@ -3,3 +3,5 @@
 .footnotes { margin-top: 2em; font-size: 0.9em; }
 .noteref { font-size: 0.7em; }
 .scene-break { text-align: center; text-indent: 0; }
+.titlepage { text-align: center; }
+.titlepage h1 { font-size: 1.6em; }

@@ -1,4 +1,4 @@
-// XHTML の断片を読む、自前の XML の解析器（ADR 0009）。
+// XHTML の断片を読む、自前の XML の解析器（ADR 0013）。
 // 対象は断片に要るもの（要素、属性、文字、コメント、CDATA 区間、事前定義の実体参照と文字参照）に限る。
 
 import type { Element, ElementContent, Root } from 'hast';

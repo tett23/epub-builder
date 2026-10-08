@@ -23,8 +23,7 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 - 対応する仕様と出力の構成：[ADR 0003](docs/adr/0003-epub-2-0-1-and-3-0-output.md)
 - 公開 API と zip の作り方：[ADR 0004](docs/adr/0004-public-api-and-zip-writer.md)
 - 現在の仕様のまとめ：[docs/specifications.md](docs/specifications.md)
-- ディレクトリから本を読む方法（構成、本文の変換、ルビと脚注、ファイル名の空白、警告、節）：[ADR 0009](docs/adr/0009-project-directory-layout.md)
-- 部・章・節の意味づけ、landmarks、guide：[ADR 0012](docs/adr/0012-structural-semantics-landmarks-and-guide.md)
+- ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉：[ADR 0013](docs/adr/0013-project-directory-layout-and-titlepage.md)
 
 ## 開発
 

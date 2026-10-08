@@ -1,4 +1,4 @@
-// EPUB 3.0 の部・章・節の意味づけ（ADR 0012）
+// EPUB 3.0 の部・章・節の意味づけ（ADR 0013）
 import { expect } from '@std/expect';
 import type { Element, Root } from 'hast';
 import { type Book, buildEpub, EpubInputError } from '../mod.ts';
@@ -114,7 +114,7 @@ Deno.test('loadBook はどちらの版でも文書の役割を epubType にす�
       ['部', 'bodymatter part', [['深い扉', 'bodymatter division', [['節の文書', 'bodymatter chapter']]]]],
       ['奥付', 'backmatter colophon'],
     ]);
-    // EPUB 2.0.1 でも guide のために役割を付ける（ADR 0012）
+    // EPUB 2.0.1 でも guide のために役割を付ける（ADR 0013）
     const v2 = await loadBook(dir, { version: '2.0.1' });
     expect(v2.cover!.epubType).toBe('frontmatter cover');
     expect(roles(v2.chapters)).toEqual(roles(v3.chapters));

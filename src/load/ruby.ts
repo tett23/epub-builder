@@ -1,4 +1,4 @@
-// ルビの記法（ADR 0009）。`｜親文字《ルビ》` と、漢字だけの親文字の `漢字《かんじ》`。
+// ルビの記法（ADR 0013）。`｜親文字《ルビ》` と、漢字だけの親文字の `漢字《かんじ》`。
 
 export type RubySegment = { type: 'text'; value: string } | { type: 'ruby'; base: string; reading: string };
 

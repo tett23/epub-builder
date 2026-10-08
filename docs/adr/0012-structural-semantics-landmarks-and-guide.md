@@ -1,6 +1,6 @@
 # ADR 0012: 部・章・節の構造を、EPUB 3.0 では本文の `epub:type`、見出しごとの `section` 要素、landmarks で、EPUB 2.0.1 では guide で表す
 
-ステータス: 採択
+ステータス: 置換（ADR 0013）
 
 ## 文脈
 

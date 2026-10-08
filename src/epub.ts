@@ -24,7 +24,7 @@ interface TocEntry {
   children: TocEntry[];
 }
 
-/** 内容文書のファイルの名前を、読み順の番号から作る（ADR 0009） */
+/** 内容文書のファイルの名前を、読み順の番号から作る（ADR 0013） */
 export function contentDocumentName(index: number, count: number): string {
   return `${String(index + 1).padStart(Math.max(4, String(count).length), '0')}.xhtml`;
 }
@@ -94,6 +94,7 @@ export function validateBook(book: Book, options: BuildOptions): void {
     }
   };
   checkStylesheets(book.cover?.stylesheets);
+  checkStylesheets(book.titlepage?.stylesheets);
   const checkEpubType = (epubType: string | undefined) => {
     if (epubType === undefined) return;
     if (typeof epubType !== 'string' || epubType.trim() === '' || hasInvalidXmlChar(epubType)) {
@@ -101,6 +102,7 @@ export function validateBook(book: Book, options: BuildOptions): void {
     }
   };
   checkEpubType(book.cover?.epubType);
+  checkEpubType(book.titlepage?.epubType);
   if (book.chapters.length === 0) throw new EpubInputError('本文の章がない');
   const checkChapter = (chapter: Chapter) => {
     if (typeof chapter.title !== 'string' || chapter.title.trim() === '') {
@@ -184,6 +186,14 @@ function collect(book: Book): { documents: ContentDocument[]; toc: TocEntry[] } 
       epubType: book.cover.epubType,
     });
   }
+  if (book.titlepage) {
+    pending.push({
+      title: book.metadata.title,
+      body: book.titlepage.body,
+      stylesheets: book.titlepage.stylesheets ?? [],
+      epubType: book.titlepage.epubType,
+    });
+  }
   type PendingEntry = {
     title: string;
     index: number | undefined;
@@ -219,7 +229,7 @@ function collect(book: Book): { documents: ContentDocument[]; toc: TocEntry[] } 
     href: `${path}#${encodeURIComponent(section.id)}`,
     children: (section.children ?? []).map(sectionToToc(path)),
   });
-  // 節を子の章より前に置く（ADR 0009）
+  // 節を子の章より前に置く（ADR 0013）
   const toToc = (entry: PendingEntry): TocEntry => ({
     title: entry.title,
     href: documents[firstIndex(entry)].path,
@@ -355,17 +365,20 @@ function hasTerm(epubType: string | undefined, term: string): boolean {
 
 interface Navigation {
   cover?: ContentDocument;
+  titlepage?: ContentDocument;
   bodymatter?: ContentDocument;
   backmatter?: ContentDocument;
   colophon?: ContentDocument;
   ja: boolean;
 }
 
-/** landmarks と guide が指す文書を、文書の役割から決める（ADR 0012） */
+/** landmarks と guide が指す文書を、文書の役割から決める（ADR 0013） */
 function navigation(book: Book, documents: ContentDocument[]): Navigation {
-  const chapterDocs = documents.slice(book.cover ? 1 : 0);
+  const front = (book.cover ? 1 : 0) + (book.titlepage ? 1 : 0);
+  const chapterDocs = documents.slice(front);
   return {
     cover: book.cover ? documents[0] : undefined,
+    titlepage: book.titlepage ? documents[front - 1] : undefined,
     bodymatter: chapterDocs.find((d) => hasTerm(d.epubType, 'bodymatter')) ?? chapterDocs[0],
     backmatter: chapterDocs.find((d) => hasTerm(d.epubType, 'backmatter')),
     colophon: chapterDocs.find((d) => hasTerm(d.epubType, 'colophon')),
@@ -375,9 +388,10 @@ function navigation(book: Book, documents: ContentDocument[]): Navigation {
 
 /** landmarks の項目（EPUB 3.0） */
 function landmarks(book: Book, documents: ContentDocument[]): { type: string; href: string; label: string }[] {
-  const { cover, bodymatter, backmatter, ja } = navigation(book, documents);
+  const { cover, titlepage, bodymatter, backmatter, ja } = navigation(book, documents);
   const items: { type: string; href: string; label: string }[] = [];
   if (cover) items.push({ type: 'cover', href: cover.path, label: ja ? '表紙' : 'Cover' });
+  if (titlepage) items.push({ type: 'titlepage', href: titlepage.path, label: ja ? '扉' : 'Title Page' });
   // toc は書かない。ナビゲーション文書は spine にないため、指すと EPUBCheck で誤り（RSC-011）になる
   if (bodymatter) items.push({ type: 'bodymatter', href: bodymatter.path, label: ja ? '本文' : 'Start of Content' });
   if (backmatter) items.push({ type: 'backmatter', href: backmatter.path, label: ja ? '後付け' : 'Back Matter' });
@@ -386,12 +400,13 @@ function landmarks(book: Book, documents: ContentDocument[]): { type: string; hr
 
 /** guide の項目（EPUB 2.0.1）。toc は目次の XHTML の文書がないため書かない */
 function guide(book: Book, documents: ContentDocument[]): string {
-  const { cover, bodymatter, colophon, ja } = navigation(book, documents);
+  const { cover, titlepage, bodymatter, colophon, ja } = navigation(book, documents);
   const items: string[] = [];
   const add = (type: string, doc: ContentDocument | undefined, title: string) => {
     if (doc) items.push(`<reference type="${type}" title="${escapeAttribute(title)}" href="${doc.path}"/>`);
   };
   add('cover', cover, ja ? '表紙' : 'Cover');
+  add('title-page', titlepage, ja ? '扉' : 'Title Page');
   add('text', bodymatter, ja ? '本文' : 'Start of Content');
   add('colophon', colophon, ja ? '奥付' : 'Colophon');
   return items.length > 0 ? `<guide>\n${items.join('\n')}\n</guide>\n` : '';

@@ -5,8 +5,7 @@
 
 - ADR 0003：対応する仕様と、版ごとの出力の構成
 - ADR 0004：公開 API と zip の書き出し
-- ADR 0009：ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節（ADR 0005 から 0008 を置き換えた）
-- ADR 0012：部・章・節の意味づけ（`epub:type` と `section` 要素）、EPUB 3.0 の landmarks、EPUB 2.0.1 の guide（ADR 0010、0011 を置き換えた）
+- ADR 0013：ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉（ADR 0005 から 0012 を置き換えた）
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 
@@ -116,6 +115,7 @@ interface Book {
   images?: { path: string; mediaType: ImageMediaType; data: Uint8Array }[];
   coverImage?: string; // images のいずれかのパス
   cover?: { body: string; epubType?: string; stylesheets?: string[] }; // 表紙の文書
+  titlepage?: { body: string; epubType?: string; stylesheets?: string[] }; // 扉の文書
   chapters: Chapter[]; // 一つ以上
 }
 
@@ -183,27 +183,27 @@ zip の書き方は次のとおり。
 ### 内容文書の名前と ID
 
 - 内容文書は、読み順の番号を 4 桁以上にゼロ詰めした名前（`0001.xhtml`、`0002.xhtml` …）で `OEBPS/text/` に置く。文書が 10000 以上あるときは、桁を文書の数に合わせる。
-- 読み順は、表紙（`cover`）、章を深さ優先でたどった順（章自身の文書を子より先に）である。
+- 読み順は、表紙（`cover`）、扉（`titlepage`）、章を深さ優先でたどった順（章自身の文書を子より先に）である。
 - manifest の ID は、内容文書が `doc-0001` …、スタイルシートが `css-1` …、画像が `img-1` …、NCX が `ncx`、ナビゲーション文書が `nav`。
 - パッケージの識別子の ID は `bookid`。
 
 ### 版ごとの違い
 
-|                            | EPUB 2.0.1                                   | EPUB 3.0                                                        |
-| -------------------------- | -------------------------------------------- | --------------------------------------------------------------- |
-| パッケージ文書の `version` | `2.0`                                        | `3.0`                                                           |
-| 更新日時                   | `<dc:date opf:event="modification">`（日付） | `<meta property="dcterms:modified">`（秒まで、UTC）             |
-| 著者                       | `<dc:creator opf:role="aut">`                | `<dc:creator>`                                                  |
-| 表紙の画像                 | `<meta name="cover" content="…">`            | `properties="cover-image"`                                      |
-| landmarks、guide           | `guide`（cover、text、colophon）             | ナビゲーション文書の landmarks（cover、bodymatter、backmatter） |
-| 頁送りの向き               | 書かない                                     | spine の `page-progression-direction`                           |
-| 目次                       | NCX                                          | ナビゲーション文書と NCX                                        |
-| 内容文書                   | XHTML 1.1 の DOCTYPE                         | `<!DOCTYPE html>`、`xmlns:epub` を宣言                          |
-| 内容文書の `properties`    | なし                                         | インラインの SVG を含めば `svg`、MathML を含めば `mathml`       |
-| `body` の `epub:type`      | 書かない                                     | `epubType` を書く                                               |
+|                            | EPUB 2.0.1                                   | EPUB 3.0                                                                   |
+| -------------------------- | -------------------------------------------- | -------------------------------------------------------------------------- |
+| パッケージ文書の `version` | `2.0`                                        | `3.0`                                                                      |
+| 更新日時                   | `<dc:date opf:event="modification">`（日付） | `<meta property="dcterms:modified">`（秒まで、UTC）                        |
+| 著者                       | `<dc:creator opf:role="aut">`                | `<dc:creator>`                                                             |
+| 表紙の画像                 | `<meta name="cover" content="…">`            | `properties="cover-image"`                                                 |
+| landmarks、guide           | `guide`（cover、title-page、text、colophon） | ナビゲーション文書の landmarks（cover、titlepage、bodymatter、backmatter） |
+| 頁送りの向き               | 書かない                                     | spine の `page-progression-direction`                                      |
+| 目次                       | NCX                                          | ナビゲーション文書と NCX                                                   |
+| 内容文書                   | XHTML 1.1 の DOCTYPE                         | `<!DOCTYPE html>`、`xmlns:epub` を宣言                                     |
+| 内容文書の `properties`    | なし                                         | インラインの SVG を含めば `svg`、MathML を含めば `mathml`                  |
+| `body` の `epub:type`      | 書かない                                     | `epubType` を書く                                                          |
 
 - 内容文書の `html` 要素には `xml:lang`（EPUB 3.0 では `lang` も）に書誌情報の言語を書く。
-- 内容文書の `title` は、章の題名（表紙は本の題名）とする。
+- 内容文書の `title` は、章の題名（表紙と扉は本の題名）とする。
 - スタイルシートは、`../` から始まる相対パスの `link` 要素で参照する。パスは区切りごとにパーセントエンコードする。
 - 書誌情報、題名、属性の値は、XML の実体参照に直して書く。
 
@@ -214,7 +214,7 @@ zip の書き方は次のとおり。
 - `dtb:depth` は目次の入れ子の深さとする。
 - ナビゲーション文書は `<nav epub:type="toc" id="toc">` の中に `ol` を入れ子にして書く。見出しは書かない。読み順（spine）には入れない。
 - EPUB 3.0 のナビゲーション文書には、目次の後に landmarks を書く（13 節）。
-- 表紙は目次に入れない。
+- 表紙と扉は目次に入れない。
 
 ## 5. ディレクトリの構成（`loadBook`）
 
@@ -228,8 +228,9 @@ zip の書き方は次のとおり。
       01-first.md
       02-second.xhtml
       03-third.html
-  meta/              表紙と奥付（任意）
+  meta/              表紙、扉、奥付（任意）
     cover.md
+    titlepage.md
     colophon.xhtml
   assets/            スタイルシートと画像（任意）
     style.css
@@ -252,7 +253,8 @@ zip の書き方は次のとおり。
 
 ### `meta/`
 
-- 表紙 `cover` と奥付 `colophon` を、`.md`、`.xhtml`、`.html` のいずれかで置ける。どちらも任意。
+- 表紙 `cover`、扉 `titlepage`、奥付 `colophon` を、`.md`、`.xhtml`、`.html` のいずれかで置ける。どれも任意。
+- 扉は、置いた文書をそのまま使う。書誌情報から扉を自動で作ることはしない。
 - ほかの名前のファイル、サブディレクトリ、拡張子を除いて同じ名前の組があれば例外とする。
 
 ### `assets/`
@@ -315,7 +317,7 @@ cover_image = "assets/images/cover.jpg"
 - 数字を数として比べない。`10-` は `2-` より前に来るため、連番の桁はユーザーがそろえる。
 - サブディレクトリは、その位置で中身を展開する（深さ優先）。
 - サブディレクトリの中の `index`（`.md`、`.xhtml`、`.html`）は、名前の順に関わらず、そのディレクトリの最初の文書とする。`body/` の直下の `index` は普通の文書として扱う。
-- 本全体の読み順は、`meta/cover`、`body/` の文書、`meta/colophon` の順とする。
+- 本全体の読み順は、`meta/cover`、`meta/titlepage`、`body/` の文書、`meta/colophon` の順とする。
 
 ## 8. 目次
 
@@ -332,14 +334,14 @@ cover_image = "assets/images/cover.jpg"
   2. 見出しがなければ、ファイルの名前から拡張子と先頭の連番を除いたもの。
 - `index` のないディレクトリの題名は、ディレクトリの名前から先頭の連番を除いたものとする。
 - 先頭の連番は、正規表現 `^[0-9]+[-_.]` に合う部分とする。除くと空になる場合（`01.md`）は除かない。
-- 表紙は目次に入れない。奥付は目次の最後の項目とする。
+- 表紙と扉は目次に入れない。奥付は目次の最後の項目とする。
 
 ### 節（文書の中の見出し）
 
 - 各文書の項目の下に、その文書の中の見出しを節として続ける。対象は、文書の題名に使った最初の見出しを除く、すべての `h1` から `h6` である。
 - 入れ子はレベルで決める。ある見出しは、それより前にある、レベルの数がより小さい見出しのうち最も近いものの子とする。そのような見出しがなければ、文書の項目の直下に置く。レベルが飛んでもよい。
 - ディレクトリの `index` の節は、そのディレクトリの項目の下に、子の項目より前に置く。
-- 奥付の見出しも節にする。表紙の見出しは節にしない（`id` も付けない）。
+- 奥付の見出しも節にする。表紙と扉の見出しは節にしない（`id` も付けない）。
 - 脚注の欄（`<div class="footnotes">`）の中の見出しは節にしない。
 - 節の題名は、文書の題名と同じ規則で決める。空になる見出しは節にしない。
 - 見出しに `id` があれば、それを行き先に使う。なければ、文書ごとに `sec-1`、`sec-2` … を文書の順に付け、本文の見出しに書き出す。本文に同じ `id` があれば、その番号を飛ばす。
@@ -490,7 +492,7 @@ GFM の脚注の記法で書く。
 
 ### スタイルシート
 
-- `assets/` の下のすべての `.css` を、すべての内容文書（表紙、本文、奥付）に適用する。
+- `assets/` の下のすべての `.css` を、すべての内容文書（表紙、扉、本文、奥付）に適用する。
 - 順は、パスの符号位置の順とする。
 - スタイルシートの中身は解析も書き換えもしない。ディレクトリの構成を保つため、`url()` の相対パスはそのまま使える。
 
@@ -526,16 +528,17 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 
 ### 文書の役割
 
-`Book` の章と表紙の `epubType` を、EPUB 3.0 では内容文書の `body` 要素の `epub:type` に書く。EPUB 2.0.1 では本文に書かず、guide を作るためにだけ使う。
+`Book` の章、表紙、扉の `epubType` を、EPUB 3.0 では内容文書の `body` 要素の `epub:type` に書く。EPUB 2.0.1 では本文に書かず、guide を作るためにだけ使う。
 `loadBook` は、渡した版に関わらず、次の値を付ける。
 
-| 文書                                             | `epub:type`           |
-| ------------------------------------------------ | --------------------- |
-| 表紙（`meta/cover`）                             | `frontmatter cover`   |
-| `body/` の直下のディレクトリの `index`（部の扉） | `bodymatter part`     |
-| それより深いディレクトリの `index`               | `bodymatter division` |
-| `body/` のほかの文書                             | `bodymatter chapter`  |
-| 奥付（`meta/colophon`）                          | `backmatter colophon` |
+| 文書                                             | `epub:type`             |
+| ------------------------------------------------ | ----------------------- |
+| 表紙（`meta/cover`）                             | `frontmatter cover`     |
+| 扉（`meta/titlepage`）                           | `frontmatter titlepage` |
+| `body/` の直下のディレクトリの `index`（部の扉） | `bodymatter part`       |
+| それより深いディレクトリの `index`               | `bodymatter division`   |
+| `body/` のほかの文書                             | `bodymatter chapter`    |
+| 奥付（`meta/colophon`）                          | `backmatter colophon`   |
 
 - `index` のないディレクトリの項目は文書を持たないため、役割も持たない。
 - 役割の語を、題名（「プロローグ」など）から推し量ることはしない。
@@ -576,36 +579,39 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 | 項目         | 行き先                                                                  | 表示名（`ja`） | 表示名（ほか）   |
 | ------------ | ----------------------------------------------------------------------- | -------------- | ---------------- |
 | `cover`      | 表紙の文書                                                              | 表紙           | Cover            |
+| `titlepage`  | 扉の文書                                                                | 扉             | Title Page       |
 | `bodymatter` | `epubType` に `bodymatter` を含む最初の章の文書。なければ最初の章の文書 | 本文           | Start of Content |
 | `backmatter` | `epubType` に `backmatter` を含む最初の章の文書                         | 後付け         | Back Matter      |
 
 - 行き先がある項目だけを、この順で書く。
 - 表示名は、書誌情報の言語が `ja` か `ja-` で始まるときに日本語、それ以外は英語とする。
 - 目次（`toc`）の項目は書かない。ナビゲーション文書は spine に入れないため、landmarks から指すと EPUBCheck で誤り（RSC-011）になる。
-- `loadBook` で読んだ本では、表紙、本文の最初の文書、奥付が入る。
+- `loadBook` で読んだ本では、表紙、扉、本文の最初の文書、奥付が入る。
 
 ### guide
 
 `buildEpub` は、EPUB 2.0.1 のパッケージ文書に、`spine` の後に `<guide>` を書く。EPUB 3.0 では書かない。
 
-| `type`     | 行き先                                        | `title`（`ja`） | `title`（ほか）  |
-| ---------- | --------------------------------------------- | --------------- | ---------------- |
-| `cover`    | 表紙の文書                                    | 表紙            | Cover            |
-| `text`     | landmarks の `bodymatter` と同じ文書          | 本文            | Start of Content |
-| `colophon` | `epubType` に `colophon` を含む最初の章の文書 | 奥付            | Colophon         |
+| `type`       | 行き先                                        | `title`（`ja`） | `title`（ほか）  |
+| ------------ | --------------------------------------------- | --------------- | ---------------- |
+| `cover`      | 表紙の文書                                    | 表紙            | Cover            |
+| `title-page` | 扉の文書                                      | 扉              | Title Page       |
+| `text`       | landmarks の `bodymatter` と同じ文書          | 本文            | Start of Content |
+| `colophon`   | `epubType` に `colophon` を含む最初の章の文書 | 奥付            | Colophon         |
 
 - 行き先がある項目だけを、この順で書く。項目が一つもなければ `guide` を書かない。
 - `title` は、書誌情報の言語が `ja` か `ja-` で始まるときに日本語、それ以外は英語とする。
 - 目次（`toc`）の項目は書かない。guide は XHTML の文書を指すものだが、EPUB 2.0.1 では目次を NCX だけで持つため。
-- `loadBook` で読んだ本では、表紙、本文の最初の文書、奥付が入る。
+- `loadBook` で読んだ本では、表紙、扉、本文の最初の文書、奥付が入る。
 
 例：
 
 ```xml
 <guide>
 <reference type="cover" title="表紙" href="text/0001.xhtml"/>
-<reference type="text" title="本文" href="text/0002.xhtml"/>
-<reference type="colophon" title="奥付" href="text/0008.xhtml"/>
+<reference type="title-page" title="扉" href="text/0002.xhtml"/>
+<reference type="text" title="本文" href="text/0003.xhtml"/>
+<reference type="colophon" title="奥付" href="text/0009.xhtml"/>
 </guide>
 ```
 
@@ -645,7 +651,7 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 - 本文の id は、文書（内容文書）ごとに一意であればよい。番号は文書ごとに 1 から振る。
 - 脚注の id が、本文に書いた id と重なれば例外とする。
 - 節の id は、本文に書いた id と重なる番号を飛ばす（`sec-1` があれば `sec-2` から付ける）。
-- 題名に使った見出しと、表紙の見出しには id を付けない。
+- 題名に使った見出しと、表紙と扉の見出しには id を付けない。
 
 ### 本文に書いた id
 
@@ -699,7 +705,8 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 - 特定のリーダーや配信サービスに固有の拡張
 - EPUB を読むこと、書き換えること
 - ストリームでの書き出し、ZIP64
-- landmarks の `cover`、`bodymatter`、`backmatter`、guide の `cover`、`text`、`colophon` のほかの項目（`toc`、`titlepage` など）、landmarks と guide の表示名の設定
+- landmarks の `cover`、`titlepage`、`bodymatter`、`backmatter`、guide の `cover`、`title-page`、`text`、`colophon` のほかの項目（`toc`、`index` など）、landmarks と guide の表示名の設定
+- 書誌情報から扉を自動で作ること
 - EPUB 2.0.1 で `div` などを使って部・章・節の構造を表すこと、`book.toml` やファイルの名前で文書の役割を指定すること
 - 直接書いた `section` 要素や `epub:type` を書き換えたり取り除いたりすること
 - 目次のページを読み順に入れること
@@ -715,7 +722,7 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 
 - `deno task test` で単体テストを走らせる。
 - `test/fixtures/` のフィクスチャは、すべて合成したデータで、著作物を含まない。
-  - `sample-book`：ADR の要素を一通り含む
+  - `sample-book`：ADR の要素を一通り含む（表紙、扉、奥付を含む）
   - `edge-book`：深い入れ子、HTML の表と文字参照、インラインの SVG、JPEG、GIF、PNG、ASCII 以外の名前、実体参照が要る書誌情報
   - `epub3-book`：MathML と `epub:type`（EPUB 3.0 だけ）
   - `novel-book`：縦書き、rtl、三部構成の長編。ルビと脚注を多く含む
