@@ -522,6 +522,7 @@ application/epub+zip
 <item id="img-1" href="assets/%E7%94%BB%E5%83%8F%E9%9B%86/anim.gif" media-type="image/gif"/>
 <item id="img-2" href="assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E5%86%99%E7%9C%9F.jpg" media-type="image/jpeg"/>
 <item id="img-3" href="assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E5%9B%B31.png" media-type="image/png"/>
+<item id="img-4" href="assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E7%A9%BA%E7%99%BD_%E3%82%92%E5%90%AB%E3%82%80_%E5%90%8D%E5%89%8D.png" media-type="image/png"/>
 </manifest>
 <spine toc="ncx">
 <itemref idref="doc-0001"/>
@@ -641,6 +642,7 @@ application/epub+zip
 </td></tr><tr><th>二行目</th><td>© —  
 </td></tr></tbody></table>
 <p><img src="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E5%9B%B31.png" alt="図"/><img src="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/anim.gif" alt="GIF"/>
+</p><p><img src="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E7%A9%BA%E7%99%BD_%E3%82%92%E5%90%AB%E3%82%80_%E5%90%8D%E5%89%8D.png" alt="空白を含む名前の画像"/>
 </p><dl><dt>用語</dt><dd>説明</dd></dl>
 
 </body>
@@ -716,7 +718,8 @@ application/epub+zip
 
 == OEBPS/assets/画像集/anim.gif (485 bytes)
 == OEBPS/assets/画像集/写真.jpg (830 bytes)
-== OEBPS/assets/画像集/図1.png (160 bytes)'
+== OEBPS/assets/画像集/図1.png (160 bytes)
+== OEBPS/assets/画像集/空白_を含む_名前.png (160 bytes)'
 `;
 
 snapshot[`出力のスナップショット > edge-book 3.0 1`] = `
@@ -754,6 +757,7 @@ application/epub+zip
 <item id="img-1" href="assets/%E7%94%BB%E5%83%8F%E9%9B%86/anim.gif" media-type="image/gif"/>
 <item id="img-2" href="assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E5%86%99%E7%9C%9F.jpg" media-type="image/jpeg" properties="cover-image"/>
 <item id="img-3" href="assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E5%9B%B31.png" media-type="image/png"/>
+<item id="img-4" href="assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E7%A9%BA%E7%99%BD_%E3%82%92%E5%90%AB%E3%82%80_%E5%90%8D%E5%89%8D.png" media-type="image/png"/>
 </manifest>
 <spine toc="ncx" page-progression-direction="ltr">
 <itemref idref="doc-0001"/>
@@ -906,6 +910,7 @@ application/epub+zip
 </td></tr><tr><th>二行目</th><td>© —  
 </td></tr></tbody></table>
 <p><img src="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E5%9B%B31.png" alt="図"/><img src="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/anim.gif" alt="GIF"/>
+</p><p><img src="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E7%A9%BA%E7%99%BD_%E3%82%92%E5%90%AB%E3%82%80_%E5%90%8D%E5%89%8D.png" alt="空白を含む名前の画像"/>
 </p><dl><dt>用語</dt><dd>説明</dd></dl>
 
 </body>
@@ -981,7 +986,8 @@ application/epub+zip
 
 == OEBPS/assets/画像集/anim.gif (485 bytes)
 == OEBPS/assets/画像集/写真.jpg (830 bytes)
-== OEBPS/assets/画像集/図1.png (160 bytes)'
+== OEBPS/assets/画像集/図1.png (160 bytes)
+== OEBPS/assets/画像集/空白_を含む_名前.png (160 bytes)'
 `;
 
 snapshot[`出力のスナップショット > epub3-book 3.0 1`] = `

@@ -18,7 +18,35 @@ import { type SourceFormat, sourceToTree } from './convert.ts';
 import { parseToml, TomlDateTime, TomlError, type TomlTable } from './toml.ts';
 import { ConversionError, writeXhtml } from './xhtml-writer.ts';
 
-export type LoadOptions = BuildOptions;
+/** loadBook の警告（ADR 0007） */
+export interface LoadWarning {
+  /**
+   * - `renamed-file`：assets/ のファイル名の空白を `_` に置き換えた
+   * - `mathml-in-epub-2`：EPUB 2.0.1 の本文に MathML がある
+   * - `ruby-in-epub-2`：EPUB 2.0.1 の本文に ruby 要素がある
+   */
+  code: 'renamed-file' | 'mathml-in-epub-2' | 'ruby-in-epub-2';
+  /** プロジェクトからの相対パス */
+  path: string;
+  line?: number;
+  column?: number;
+  message: string;
+}
+
+export interface LoadOptions extends BuildOptions {
+  /** 警告を受け取る。省略したら console.warn に書く */
+  onWarning?: (warning: LoadWarning) => void;
+}
+
+function defaultOnWarning(warning: LoadWarning): void {
+  const at = warning.line !== undefined ? `:${warning.line}:${warning.column}` : '';
+  console.warn(`警告: ${warning.path}${at}: ${warning.message}`);
+}
+
+/** EPUB の中のファイル名に空白類を使わないよう、`_` に置き換える（ADR 0007） */
+export function replaceSpaces(path: string): string {
+  return path.replace(/\s/gu, '_');
+}
 
 const DOCUMENT_EXTENSIONS: Record<string, SourceFormat> = { '.md': 'md', '.xhtml': 'xhtml', '.html': 'html' };
 const ASSET_TYPES: Record<string, ImageMediaType | 'text/css'> = {
@@ -185,7 +213,10 @@ async function readMeta(root: string): Promise<{ cover?: SourceDocument; colopho
 }
 
 interface Asset {
+  /** プロジェクトからの相対パス（NFC） */
   path: string;
+  /** EPUB の中のパス（空白類を `_` に置き換えたもの） */
+  outputPath: string;
   diskPath: string;
   mediaType: ImageMediaType | 'text/css';
 }
@@ -206,7 +237,7 @@ async function readAssets(root: string, path = 'assets', diskPath = 'assets'): P
         `assets/ に置けない拡張子のファイル: ${childPath}（.css、.jpg、.jpeg、.png、.gif、.svg）`,
       );
     }
-    assets.push({ path: childPath, diskPath: `${root}/${childDisk}`, mediaType });
+    assets.push({ path: childPath, outputPath: replaceSpaces(childPath), diskPath: `${root}/${childDisk}`, mediaType });
   }
   return assets;
 }
@@ -319,8 +350,9 @@ function normalizePath(path: string): string | undefined {
 }
 
 interface ReferenceTargets {
-  images: Set<string>;
-  assets: Set<string>;
+  /** 元のパスから、EPUB の中のパスへ */
+  images: Map<string, string>;
+  assets: Map<string, string>;
   /** 元のパスから、EPUB の中の文書の名前へ */
   documents: Map<string, string>;
 }
@@ -348,10 +380,12 @@ function rewriteReferences(tree: HastRoot, sourcePath: string, targets: Referenc
     const target = normalizePath(join(sourceDir, decoded).normalize('NFC'));
     if (target === undefined) fail(`プロジェクトの外を指す参照: ${value}`, node);
     if (kind === 'image') {
-      if (!targets.images.has(target)) fail(`assets/ の下にない画像を指す参照: ${value}`, node);
-      return `../${encodePath(target)}`;
+      const image = targets.images.get(target);
+      if (image === undefined) fail(`assets/ の下にない画像を指す参照: ${value}`, node);
+      return `../${encodePath(image)}`;
     }
-    if (targets.assets.has(target)) return `../${encodePath(target)}${fragment}`;
+    const asset = targets.assets.get(target);
+    if (asset !== undefined) return `../${encodePath(asset)}${fragment}`;
     const document = targets.documents.get(target);
     if (document !== undefined) return `${document}${fragment}`;
     fail(`指す先のない参照: ${value}`, node);
@@ -380,10 +414,39 @@ interface ConvertedDocument {
   body: string;
 }
 
+/** EPUB 2.0.1 で使えない要素を警告する（ADR 0007） */
+function warnEpub2Markup(tree: HastRoot, path: string, onWarning: (warning: LoadWarning) => void): void {
+  const walk = (node: HastNodes) => {
+    if (node.type === 'element' && (node.tagName === 'math' || node.tagName === 'ruby')) {
+      const start = node.position?.start;
+      onWarning(
+        node.tagName === 'math'
+          ? {
+            code: 'mathml-in-epub-2',
+            path,
+            line: start?.line,
+            column: start?.column,
+            message: 'EPUB 2.0.1 の本文に MathML は書けない。作った EPUB は EPUBCheck で誤りになる',
+          }
+          : {
+            code: 'ruby-in-epub-2',
+            path,
+            line: start?.line,
+            column: start?.column,
+            message: 'EPUB 2.0.1 の本文に ruby 要素は書けない。作った EPUB は EPUBCheck で誤りになる',
+          },
+      );
+    }
+    if ('children' in node) node.children.forEach(walk);
+  };
+  walk(tree);
+}
+
 async function convert(
   doc: SourceDocument,
   version: BuildOptions['version'],
   targets: ReferenceTargets,
+  onWarning: (warning: LoadWarning) => void,
 ): Promise<ConvertedDocument> {
   let src: string;
   try {
@@ -395,6 +458,7 @@ async function convert(
   try {
     const tree = sourceToTree(src, doc.format, version);
     rewriteReferences(tree, doc.path, targets);
+    if (version === '2.0.1') warnEpub2Markup(tree, doc.path, onWarning);
     return { title: headingTitle(tree) ?? doc.fallbackTitle, body: writeXhtml(tree, version) };
   } catch (e) {
     if (e instanceof ConversionError) {
@@ -419,6 +483,24 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
   const body = await readBodyDirectory(root, 'body', 'body');
   const meta = await readMeta(root);
   const assets = await readAssets(root);
+  const onWarning = options.onWarning ?? defaultOnWarning;
+  const outputPaths = new Map<string, string>();
+  for (const asset of assets) {
+    const key = asset.outputPath.toLowerCase();
+    const other = outputPaths.get(key);
+    if (other !== undefined) {
+      throw new EpubInputError(`空白を _ に置き換えると、ファイルのパスが重なる: ${other} と ${asset.path}`);
+    }
+    outputPaths.set(key, asset.path);
+    if (asset.outputPath !== asset.path) {
+      onWarning({
+        code: 'renamed-file',
+        path: asset.path,
+        message:
+          `EPUB の中では ${asset.outputPath} とする。スタイルシートの url() で元の名前を指していると、参照が切れる`,
+      });
+    }
+  }
 
   // 読み順：表紙、本文（ディレクトリは index を先に）、奥付
   const spine: SourceDocument[] = [];
@@ -437,24 +519,25 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
   if (meta.colophon) spine.push(meta.colophon);
 
   const targets: ReferenceTargets = {
-    images: new Set(assets.filter((a) => a.mediaType !== 'text/css').map((a) => a.path)),
-    assets: new Set(assets.map((a) => a.path)),
+    images: new Map(assets.filter((a) => a.mediaType !== 'text/css').map((a) => [a.path, a.outputPath])),
+    assets: new Map(assets.map((a) => [a.path, a.outputPath])),
     documents: new Map(spine.map((doc, i) => [doc.path, contentDocumentName(i, spine.length)])),
   };
-  if (coverImage !== undefined && !targets.images.has(coverImage.normalize('NFC'))) {
+  const coverImagePath = coverImage === undefined ? undefined : targets.images.get(coverImage.normalize('NFC'));
+  if (coverImage !== undefined && coverImagePath === undefined) {
     throw new EpubInputError(`book.toml の cover_image が assets/ の下の画像を指していない: ${coverImage}`);
   }
 
   const converted = new Map<SourceDocument, ConvertedDocument>();
-  for (const doc of spine) converted.set(doc, await convert(doc, options.version, targets));
+  for (const doc of spine) converted.set(doc, await convert(doc, options.version, targets, onWarning));
 
   const stylesheets: Stylesheet[] = [];
   const images: Image[] = [];
   for (const asset of assets) {
     if (asset.mediaType === 'text/css') {
-      stylesheets.push({ path: asset.path, content: await Deno.readTextFile(asset.diskPath) });
+      stylesheets.push({ path: asset.outputPath, content: await Deno.readTextFile(asset.diskPath) });
     } else {
-      images.push({ path: asset.path, mediaType: asset.mediaType, data: await Deno.readFile(asset.diskPath) });
+      images.push({ path: asset.outputPath, mediaType: asset.mediaType, data: await Deno.readFile(asset.diskPath) });
     }
   }
   stylesheets.sort((a, b) => compareCodePoints(a.path, b.path));
@@ -484,7 +567,7 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
     pageProgressionDirection,
     stylesheets,
     images,
-    coverImage: coverImage?.normalize('NFC'),
+    coverImage: coverImagePath,
     cover: meta.cover ? { body: converted.get(meta.cover)!.body, stylesheets: stylesheetPaths } : undefined,
     chapters,
   };

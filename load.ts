@@ -6,7 +6,7 @@
  * @module
  */
 
-export { loadBook, type LoadOptions } from './src/load/load-book.ts';
+export { loadBook, type LoadOptions, type LoadWarning } from './src/load/load-book.ts';
 export {
   parseToml,
   TomlDateTime,

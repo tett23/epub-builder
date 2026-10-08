@@ -6,6 +6,7 @@
 - ADR 0003：対応する仕様と、版ごとの出力の構成
 - ADR 0004：公開 API と zip の書き出し
 - ADR 0006：ディレクトリから本を読む方法、本文の変換、ルビと脚注（ADR 0005 を置き換えた）
+- ADR 0007：`assets/` のファイル名の空白の置き換えと、EPUB 2.0.1 で使えない要素の警告（ADR 0006 の一部を改めた）
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 
@@ -23,7 +24,7 @@
 10. ルビ
 11. 脚注
 12. スタイルシートと画像、参照の書き換え
-13. 誤りの扱い
+13. 誤りと警告の扱い
 14. 扱わないこと
 15. 試験
 
@@ -48,10 +49,10 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 
 ## 2. 公開するモジュールと関数
 
-| モジュール | 公開するもの                                                                       | 外部の依存             |
-| ---------- | ---------------------------------------------------------------------------------- | ---------------------- |
-| `mod.ts`   | `buildEpub`、`Book` などの型、`EpubInputError`                                     | なし                   |
-| `load.ts`  | `loadBook`、`LoadOptions`、`parseToml`、`TomlDateTime`、`TomlError`、TOML の値の型 | unified 系のライブラリ |
+| モジュール | 公開するもの                                                                                      | 外部の依存             |
+| ---------- | ------------------------------------------------------------------------------------------------- | ---------------------- |
+| `mod.ts`   | `buildEpub`、`Book` などの型、`EpubInputError`                                                    | なし                   |
+| `load.ts`  | `loadBook`、`LoadOptions`、`LoadWarning`、`parseToml`、`TomlDateTime`、`TomlError`、TOML の値の型 | unified 系のライブラリ |
 
 ### `buildEpub(book, options): Promise<Uint8Array>`
 
@@ -65,6 +66,17 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 - `dir` はプロジェクトのディレクトリ。末尾の `/` はあってもよい。
 - `options.version` は `"2.0.1"` か `"3.0"`。
 - 誤りがあれば `EpubInputError` を投げる。メッセージは、ファイルのパスと、分かる場合は行と列を先頭に持つ（例：`body/a.xhtml:2:4: 終了タグ p が開始タグと合わない`）。
+- `options.onWarning` に関数を渡すと、警告（`LoadWarning`）をその関数で受け取る。渡さなければ `console.warn` に `警告: <パス>[:<行>:<列>]: <メッセージ>` の形で書く。警告では処理を止めない。
+
+```ts
+interface LoadWarning {
+  code: 'renamed-file' | 'mathml-in-epub-2' | 'ruby-in-epub-2';
+  path: string; // プロジェクトからの相対パス（元のファイルの名前）
+  line?: number;
+  column?: number;
+  message: string;
+}
+```
 
 ### `parseToml(src): TomlTable`
 
@@ -239,8 +251,17 @@ zip の書き方は次のとおり。
 | `.gif`          | `image/gif`     |
 | `.svg`          | `image/svg+xml` |
 
-- `assets/` の下のファイルは、参照されていなくてもすべて EPUB に入れる。パスはプロジェクトからの相対パス（`assets/images/cover.jpg`）のままとする。
-- ファイル名に空白を含めることはできるが、EPUBCheck が警告（PKG-010）を出す。
+- `assets/` の下のファイルは、参照されていなくてもすべて EPUB に入れる。EPUB の中のパスは、プロジェクトからの相対パス（`assets/images/cover.jpg`）とする。
+
+### ファイル名の空白
+
+- `assets/` の下のファイルとディレクトリの名前に含まれる空白類は、一文字ずつ `_` に置き換えて EPUB に入れる（`assets/画像 集/図 1.png` は `assets/画像_集/図_1.png`）。EPUBCheck が空白を含む名前を警告（PKG-010）するためである。
+- 空白類は、JavaScript の正規表現の `\s` に合う文字（ASCII の空白とタブ、改行、U+00A0、U+3000 など）とする。
+- 本文の中の参照と `book.toml` の `cover_image` は、元の名前で書く。`loadBook` が置き換えた後のパスに書き換える。
+- 名前を置き換えたファイルごとに、`renamed-file` の警告を出す。スタイルシートの `url()` は書き換えないため、`url()` で元の名前を指していると参照が切れる。
+- 置き換えた結果、二つ以上のファイルが同じパスになる場合（`a b.png` と `a_b.png`、大文字と小文字だけ違うものを含む）は例外とする。
+- 本文と `meta/` のファイルの名前は、EPUB の中では読み順の番号になるため、置き換えも警告もしない。
+- `buildEpub` は、`Book` のパスを置き換えない。
 
 ## 6. 書誌情報（`book.toml`）
 
@@ -364,7 +385,13 @@ Markdown の中だけで解釈する。XHTML と HTML では `ruby` 要素を直
 
 EPUB 2.0.1 では `ruby` 要素を書けないため（OPS 2.0.1 はルビのモジュールを含まない）、括弧書きの文字になる。
 スタイルシートで `.ruby .rp { display: none; }` などとすれば、括弧を隠せる。
-XHTML と HTML に直接書いた `ruby` 要素は、EPUB 2.0.1 のために書き換えない（EPUBCheck で誤りになる）。
+XHTML と HTML に直接書いた `ruby` 要素（Markdown の中の生の HTML を含む）は、EPUB 2.0.1 のために書き換えない。
+EPUB 2.0.1 では、例外にせず `ruby-in-epub-2` の警告を要素ごとに出し、要素をそのまま出す（作った EPUB は EPUBCheck で誤りになる）。
+
+### EPUB 2.0.1 の MathML
+
+EPUB 2.0.1 の本文に MathML の `math` 要素があれば、例外にせず `mathml-in-epub-2` の警告を要素ごとに出し、要素をそのまま出す（作った EPUB は EPUBCheck で誤りになる）。
+EPUB 3.0 では警告しない。
 
 ## 11. 脚注
 
@@ -422,12 +449,12 @@ GFM の脚注の記法で書く。
 
 `loadBook` は、文書の中の次の参照を、元のファイルの位置からの相対パスとして解決し、EPUB の中での位置からの相対パスに書き換える。
 
-| 要素と属性                             | 指してよいもの                                      | 書き換えた後      |
-| -------------------------------------- | --------------------------------------------------- | ----------------- |
-| `img` の `src`                         | `assets/` の下の画像                                | `../assets/…`     |
-| SVG の `image` の `href`、`xlink:href` | `assets/` の下の画像                                | `../assets/…`     |
-| `a` の `href`                          | `assets/` の下のファイル                            | `../assets/…`     |
-| `a` の `href`                          | `body/`、`meta/` の文書（元のファイルの名前で書く） | `0003.xhtml` など |
+| 要素と属性                             | 指してよいもの                                      | 書き換えた後                                   |
+| -------------------------------------- | --------------------------------------------------- | ---------------------------------------------- |
+| `img` の `src`                         | `assets/` の下の画像                                | `../assets/…`（空白類は `_` に置き換えた名前） |
+| SVG の `image` の `href`、`xlink:href` | `assets/` の下の画像                                | `../assets/…`                                  |
+| `a` の `href`                          | `assets/` の下のファイル                            | `../assets/…`                                  |
+| `a` の `href`                          | `body/`、`meta/` の文書（元のファイルの名前で書く） | `0003.xhtml` など                              |
 
 - 断片識別子（`#…`）は保つ。指す先が文書の中にあるかは確かめない。
 - パスはパーセントエンコードを解いてから解決し、NFC に正規化する。書き換えた後は、区切りごとにパーセントエンコードする。
@@ -443,11 +470,21 @@ GFM の脚注の記法で書く。
   - 指す先のファイルがない参照、ディレクトリを指す参照
 - 上に挙げた要素と属性以外の参照（`srcset`、`style` 属性の `url()`、SVG の `a` の `xlink:href` など）は書き換えない。
 
-## 13. 誤りの扱い
+## 13. 誤りと警告の扱い
 
 - 誤りや曖昧さは黙って解決せず、`EpubInputError` を投げる。
 - `loadBook` の誤りは、ファイルのパスと、分かる場合は `行:列` を先頭に付ける。
 - 例外になる場合の一覧は、各節と `test/invalid-fixtures/` にある。
+- 警告は、処理を止めずに `onWarning`（省略したら `console.warn`）で知らせる。警告になるのは次の三つである。
+
+| `code`             | 場合                                              |
+| ------------------ | ------------------------------------------------- |
+| `renamed-file`     | `assets/` のファイル名の空白類を `_` に置き換えた |
+| `mathml-in-epub-2` | EPUB 2.0.1 の本文に MathML がある                 |
+| `ruby-in-epub-2`   | EPUB 2.0.1 の本文に `ruby` 要素がある             |
+
+- 警告を誤りとして扱いたい場合は、`onWarning` の中で例外を投げる。
+- 作った EPUB が EPUBCheck で誤りも警告もないことは、`mathml-in-epub-2` と `ruby-in-epub-2` の警告が出ない入力に対してだけ保証する。
 
 ## 14. 扱わないこと
 
@@ -461,7 +498,9 @@ GFM の脚注の記法で書く。
 - GFM の表などの拡張記法、モノルビ、熟語ルビ、両側ルビ、後注
 - 文書ごとにスタイルシートを選ぶこと
 - フォント、音声、動画を `assets/` に置くこと
-- 変換した XHTML が、版ごとの仕様（使える要素や属性）に合うかの検査。たとえば EPUB 2.0.1 で MathML を書いても例外にならず、EPUBCheck で誤りになる
+- 変換した XHTML が、版ごとの仕様（使える要素や属性）に合うかの検査。MathML と `ruby` 要素の警告（13 節）を除く
+- 空白以外の、EPUBCheck が誤りや警告にするファイル名の文字（`"`、`*`、`:`、`<`、`>`、`?`、`\`、`|` など）の置き換えや検査
+- `buildEpub` での警告
 
 ## 15. 試験
 
@@ -477,5 +516,6 @@ GFM の脚注の記法で書く。
   - `mixed-format-book`：同じ内容を三つの形式で書いたもの
 - フィクスチャと作る版の一覧は `test/fixtures.ts` にある。テストは、一覧とディレクトリが合うことを確かめる。
 - `test/__snapshots__/` に、各フィクスチャから作った EPUB の中身を記録している。出力を変えたときは `deno test --allow-read --allow-write --allow-run=git,unzip test/fixtures.test.ts -- --update` で更新し、差分を確かめる。
+- `edge-book` には空白類を含む名前の画像を置き、置き換えた EPUB が EPUBCheck を通ることを確かめる。
 - `test/invalid-fixtures/` の壊れたプロジェクトは、`expected-error.txt` の文字列を含む例外になることを、両方の版で確かめる。
 - CI は、整形、lint、型検査、テストに加え、`deno task build:sample` で全フィクスチャから EPUB を作り、EPUBCheck に `--failonwarnings` を付けて掛ける。誤りも警告もないことを求める。

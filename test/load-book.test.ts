@@ -174,12 +174,12 @@ Deno.test('参照を EPUB の中での相対パスに書き換える', async () 
     'assets/img/a b.png': new Uint8Array([1]),
   });
   expect(book.chapters[0].body).toBe(
-    '<p><a href="0002.xhtml#x">次</a> <a href="../assets/img/a%20b.png">画像</a> <a href="https://example.com/">外</a> <a href="#y">内</a></p>',
+    '<p><a href="0002.xhtml#x">次</a> <a href="../assets/img/a_b.png">画像</a> <a href="https://example.com/">外</a> <a href="#y">内</a></p>',
   );
   expect(book.chapters[1].children![0].body).toBe(
-    '<p id="x"><img src="../assets/img/a%20b.png"/></p><a href="0001.xhtml">戻る</a>',
+    '<p id="x"><img src="../assets/img/a_b.png"/></p><a href="0001.xhtml">戻る</a>',
   );
-  expect(book.chapters[1].children![1].body).toContain('<image href="../assets/img/a%20b.png"/>');
+  expect(book.chapters[1].children![1].body).toContain('<image href="../assets/img/a_b.png"/>');
 });
 
 Deno.test('参照の誤りは例外になる', async () => {
