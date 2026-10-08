@@ -6,7 +6,7 @@
 - ADR 0003：対応する仕様と、版ごとの出力の構成
 - ADR 0004：公開 API と zip の書き出し
 - ADR 0014：ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け（ADR 0005 から 0013 を置き換えた）
-- ADR 0015：コマンドライン
+- ADR 0016：コマンドライン（ADR 0015 を置き換えた）
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 
@@ -735,7 +735,7 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 
 ## 16. コマンドライン
 
-`cli.ts` が入口である。`deno install -g --allow-read --allow-write -n epub-builder cli.ts` で `epub-builder` というコマンドとして入れられ、`deno task cli <command>` でも動く。
+`cli.ts` が入口である。`deno task install`（`deno install -g -f --allow-read --allow-write --config deno.json -n epub-builder cli.ts`）で `epub-builder` というコマンドとして入れられ、`deno task cli <command>` でも動く。
 
 ### コマンド
 

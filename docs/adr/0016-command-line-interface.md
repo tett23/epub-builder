@@ -1,8 +1,13 @@
-# ADR 0015: ディレクトリから EPUB を作る CLI を、build、check、toc、init、help、version のコマンドで提供する
+# ADR 0016: ディレクトリから EPUB を作る CLI を、build、check、toc、init、help、version のコマンドで提供し、`deno.json` を設定として渡してインストールする
 
-ステータス: 置換（ADR 0016）
+ステータス: 採択
 
 ## 文脈
+
+この ADR は ADR 0015 を置き換える。
+ADR 0015 では、`deno install -g --allow-read --allow-write -n epub-builder cli.ts` でインストールできるとした。
+しかし、`deno install -g` は、`--config` を付けないと `deno.json` を読まず、`imports` に書いた依存（`@std/cli`、unified 系のライブラリなど）を解決できない。そのため、このコマンドでは `Import "@std/cli/parse-args" not a dependency` の誤りになり、インストールできなかった。
+そこで、インストールのコマンドを改め、決定の全体をこの ADR に写す。インストールの方法のほかは、ADR 0015 の決定の中身を変えない。
 
 ADR 0014 では、決まった形に並べたディレクトリから本を読む `loadBook` を定めた。
 しかし、使うには TypeScript のコードを書いて `loadBook` と `buildEpub` を呼ぶ必要がある。
@@ -14,7 +19,10 @@ EPUB を作る前に誤りや警告だけを確かめたい、目次がどうな
 ### 入口と実行
 
 - CLI の入口を `cli.ts` に置く。`deno run --allow-read --allow-write cli.ts <command> ...` で動く
-- `deno install -g --allow-read --allow-write -n epub-builder cli.ts` で、`epub-builder` というコマンドとして入れられるようにする
+- `deno install -g --allow-read --allow-write --config deno.json -n epub-builder cli.ts` で、`epub-builder` というコマンドとして入れられるようにする
+  - `--config deno.json` は必須とする。`deno.json` の `imports` で依存を解決するためである
+  - 同じコマンドを `deno.json` のタスク `install` に置き、`deno task install` で入れられるようにする。すでに入っている場合も上書きする（`-f`）
+- CI で、一時的な場所にインストールし、入れたコマンドで `--version` が動くことを確かめる
 - `deno.json` のタスク `cli` から呼べるようにする
 - CLI の処理は、引数、標準出力と標準エラー出力への書き込みを受け取り、終了コードを返す関数 `main` に置く。`cli.ts` を直接実行したときだけ、その終了コードでプロセスを終える
 - 引数の解析には `@std/cli` の `parseArgs` を使う
@@ -77,7 +85,7 @@ EPUB を作る前に誤りや警告だけを確かめたい、目次がどうな
 - 設定ファイルや環境変数でオプションを与えることはしない
 - 色付きの出力、対話的な入力はしない
 - `init` で既存のディレクトリに雛形を足すこと、既存のファイルを上書きすることはしない
-- 配布の方法（JSR、単一の実行ファイルにすることなど）は、この ADR では決めない
+- 配布の方法（JSR、単一の実行ファイルにすることなど）は、この ADR では決めない。インストールはリポジトリを clone した上で行う
 
 ## テスト設計
 
@@ -88,10 +96,12 @@ EPUB を作る前に誤りや警告だけを確かめたい、目次がどうな
 - `init`：作るファイルとその中身、作った雛形が `check` を通ること、空でないディレクトリを誤りにすること、`--title` と `--language`
 - `help`：全体、コマンドごと、`-h` と `--help`、知らないコマンド
 - `version` と `--version`
+- `deno task install` と同じコマンドで一時的な場所にインストールしたコマンドが動くこと（CI）
 - 使い方の誤り：コマンドなし、知らないコマンド、知らないオプション、知らない版、値のないオプション、余分な引数で 2
 
 ## トレードオフ
 
+- インストールには `--config deno.json` が要るため、リポジトリの外からファイルの URL だけでインストールすることはできない
 - 既定の版を `3.0` にしたため、EPUB 2.0.1 が欲しいときは毎回 `--epub-version` を付ける必要がある
 - `--version` を CLI の版に使うため、EPUB の版のオプションの名前が長くなる（短い名前は `-e`）
 - `check` は EPUBCheck を呼ばないため、`check` を通っても EPUBCheck で誤りになることがある（直接書いた XHTML の誤りなど）

@@ -1,5 +1,5 @@
 /**
- * ディレクトリから EPUB を作るコマンドラインの入口（ADR 0015）。
+ * ディレクトリから EPUB を作るコマンドラインの入口（ADR 0016）。
  *
  * ```sh
  * deno run --allow-read --allow-write cli.ts build my-book

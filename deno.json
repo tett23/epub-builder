@@ -6,7 +6,8 @@
     "fmt": "deno fmt",
     "test": "deno test --allow-read --allow-write --allow-run=git,unzip test/",
     "build:sample": "deno run --allow-read --allow-write scripts/build-sample.ts",
-    "cli": "deno run --allow-read --allow-write cli.ts"
+    "cli": "deno run --allow-read --allow-write cli.ts",
+    "install": "deno install -g -f --allow-read --allow-write --config deno.json -n epub-builder cli.ts"
   },
   "compilerOptions": {
     "strict": true

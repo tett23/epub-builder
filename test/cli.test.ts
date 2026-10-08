@@ -1,4 +1,4 @@
-// コマンドラインの入口（ADR 0015）
+// コマンドラインの入口（ADR 0016）
 import { expect } from '@std/expect';
 import { main } from '../cli.ts';
 import { VERSION } from '../src/version.ts';

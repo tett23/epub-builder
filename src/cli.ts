@@ -1,4 +1,4 @@
-// コマンドラインの入口の処理（ADR 0015）
+// コマンドラインの入口の処理（ADR 0016）
 
 import { parseArgs } from '@std/cli/parse-args';
 import { basename, resolve } from 'node:path';

@@ -25,6 +25,12 @@ jobs:
       - run: deno lint
       - run: deno task check
       - run: deno task test
+      # ADR 0016：インストールしたコマンドが deno.json の依存を解決できること
+      - name: Install the CLI
+        run: |
+          deno install -g -f --root "$RUNNER_TEMP/deno" --allow-read --allow-write --config deno.json -n epub-builder cli.ts
+          "$RUNNER_TEMP/deno/bin/epub-builder" --version
+          "$RUNNER_TEMP/deno/bin/epub-builder" check test/fixtures/sample-book -e all
 
   epubcheck:
     name: EPUBCheck
