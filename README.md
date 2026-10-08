@@ -33,17 +33,17 @@ epub-builder init my-book
 ```
 
 ```bash
-epub-builder build my-book -e all
+epub-builder build my-book
 ```
 
-| コマンド         | 働き                                                               |
-| ---------------- | ------------------------------------------------------------------ |
-| `build [dir]`    | EPUB を作る（`-e 2.0.1\|3.0\|all`、`-o <path>`、`--strict`、`-q`） |
-| `check [dir]`    | EPUB を書かずに、誤りと警告を調べる                                |
-| `toc [dir]`      | 目次の木を表示する                                                 |
-| `init [dir]`     | 新しい本の雛形を作る                                               |
-| `help [command]` | 使い方を表示する                                                   |
-| `version`        | 版を表示する                                                       |
+| コマンド         | 働き                                                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `build [dir]`    | EPUB を作る。既定で 2.0.1 と 3.0 の両方。`-e 2.0.1` か `-e 3.0` で一つの版だけ（ほかに `-o <path>`、`--strict`、`-q`） |
+| `check [dir]`    | EPUB を書かずに、誤りと警告を調べる                                                                                    |
+| `toc [dir]`      | 目次の木を表示する                                                                                                     |
+| `init [dir]`     | 新しい本の雛形を作る                                                                                                   |
+| `help [command]` | 使い方を表示する                                                                                                       |
+| `version`        | 版を表示する                                                                                                           |
 
 インストールせずに `deno task cli build my-book` としても動く。
 
@@ -53,7 +53,7 @@ epub-builder build my-book -e all
 - 公開 API と zip の作り方：[ADR 0004](docs/adr/0004-public-api-and-zip-writer.md)
 - 現在の仕様のまとめ：[docs/specifications.md](docs/specifications.md)
 - ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け：[ADR 0014](docs/adr/0014-back-matter.md)
-- コマンドライン：[ADR 0016](docs/adr/0016-command-line-interface.md)
+- コマンドライン：[ADR 0017](docs/adr/0017-command-line-interface-build-all-by-default.md)
 
 ## 開発
 

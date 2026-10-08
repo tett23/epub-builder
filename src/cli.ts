@@ -1,4 +1,4 @@
-// コマンドラインの入口の処理（ADR 0016）
+// コマンドラインの入口の処理（ADR 0017）
 
 import { parseArgs } from '@std/cli/parse-args';
 import { basename, resolve } from 'node:path';
@@ -31,7 +31,7 @@ const HELP: Record<string, string> = {
   epub-builder <command> [options]
 
 コマンド:
-  build [dir]      ディレクトリから EPUB を作る
+  build [dir]      ディレクトリから EPUB を作る（既定で 2.0.1 と 3.0 の両方）
   check [dir]      EPUB を書かずに、誤りと警告を調べる
   toc [dir]        目次の木を表示する
   init [dir]       新しい本の雛形を作る
@@ -48,19 +48,21 @@ dir を省いたときは、今のディレクトリを使う。
   epub-builder build [dir] [options]
 
 ディレクトリ（book.toml、body/、meta/、assets/）から EPUB を作る。
+既定では EPUB 2.0.1 と EPUB 3.0 の両方を作る。
 
 オプション:
-  -e, --epub-version <v>  作る版。2.0.1、3.0、all（両方）のいずれか。既定は 3.0
+  -e, --epub-version <v>  作る版。2.0.1、3.0、all（両方）のいずれか。既定は all
   -o, --output <path>     出力するファイル。既定は <dir の名前>.epub
-                          all のときは、拡張子の前に版を付けた二つのファイルを書く
+                          両方の版を作るときは、拡張子の前に版を付けた二つのファイルを書く
                           （book.epub なら book-2.0.1.epub と book-3.0.epub）
       --strict            警告を誤りとして扱い、EPUB を書かずに終了コード 1 で終える
   -q, --quiet             警告を表示しない
   -h, --help              この使い方を表示する
 
 例:
-  epub-builder build my-book
-  epub-builder build my-book -e all -o out/my-book.epub`,
+  epub-builder build my-book                  my-book-2.0.1.epub と my-book-3.0.epub を作る
+  epub-builder build my-book -e 3.0           my-book.epub（EPUB 3.0）だけを作る
+  epub-builder build my-book -o out/book.epub out/book-2.0.1.epub と out/book-3.0.epub を作る`,
   check: `使い方:
   epub-builder check [dir] [options]
 
@@ -131,8 +133,8 @@ function parse(
   return { positional: options._.map(String), options };
 }
 
-function versions(value: unknown, allowAll: boolean): EpubVersion[] {
-  if (value === undefined) return ['3.0'];
+function versions(value: unknown, allowAll: boolean, fallback: EpubVersion[] = ['3.0']): EpubVersion[] {
+  if (value === undefined) return fallback;
   if (value === '2.0.1' || value === '3.0') return [value];
   if (value === 'all' && allowAll) return ['2.0.1', '3.0'];
   throw new UsageError(`知らない版: ${String(value)}（${allowAll ? '2.0.1、3.0、all' : '2.0.1、3.0'} のいずれか）`);
@@ -191,7 +193,8 @@ async function build(args: string[], io: Io): Promise<number> {
   });
   if (options.help) return help(['build'], io);
   const dir = singleDir(positional);
-  const targets = versions(options['epub-version'], true);
+  // build は既定で両方の版を作る（ADR 0017）
+  const targets = versions(options['epub-version'], true, ['2.0.1', '3.0']);
   const books = await loadAll(dir, targets, options, io);
   if (!books) return EXIT_INPUT;
   const paths = outputPaths(dir, options.output, targets);
