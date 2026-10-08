@@ -1,4 +1,4 @@
-// コマンドラインの入口（ADR 0017）
+// コマンドラインの入口（ADR 0018）
 import { expect } from '@std/expect';
 import { main } from '../cli.ts';
 import { VERSION } from '../src/version.ts';
@@ -142,7 +142,7 @@ Deno.test('build', async (t) => {
 
 Deno.test('check', async (t) => {
   await t.step('誤りがなければ版ごとに知らせて 0 で終える', async () => {
-    expect(await run('check', 'test/fixtures/sample-book', '-e', 'all')).toEqual({
+    expect(await run('check', 'test/fixtures/sample-book')).toEqual({
       code: 0,
       stdout: ['2.0.1: 誤りはない', '3.0: 誤りはない'],
       stderr: [],
@@ -159,7 +159,12 @@ Deno.test('check', async (t) => {
   await t.step('警告と --strict', async () => {
     const warn = await run('check', 'test/fixtures/edge-book');
     expect(warn.code).toBe(0);
-    expect(warn.stderr.length).toBe(1);
+    // 既定で両方の版を調べ、警告に版を付ける
+    expect(warn.stderr.map((l) => l.slice(0, 11))).toEqual(['[2.0.1] 警告:', '[3.0] 警告: a']);
+    expect(warn.stdout).toEqual(['2.0.1: 誤りはない', '3.0: 誤りはない']);
+    const single = await run('check', 'test/fixtures/edge-book', '-e', '3.0');
+    expect(single.stdout).toEqual(['3.0: 誤りはない']);
+    expect(single.stderr).toEqual([expect.stringMatching(/^警告: /)]);
     expect((await run('check', 'test/fixtures/edge-book', '--strict')).code).toBe(1);
   });
   await t.step('EPUB 3.0 だけの機能を使う本を EPUB 2.0.1 で調べると誤りになる', async () => {
@@ -170,7 +175,7 @@ Deno.test('check', async (t) => {
 });
 
 Deno.test('toc は目次の木を題名の入れ子で出す', async () => {
-  const result = await run('toc', 'test/fixtures/sections-book');
+  const result = await run('toc', 'test/fixtures/sections-book', '-e', '3.0');
   expect(result.code).toBe(0);
   expect(result.stdout.slice(0, 6)).toEqual([
     'はじめに',
@@ -182,6 +187,15 @@ Deno.test('toc は目次の木を題名の入れ子で出す', async () => {
   ]);
   expect(result.stdout.at(-1)).toBe('  発行');
   expect(result.stdout).not.toContain('扉の見出しは目次に入らない');
+});
+
+Deno.test('toc は既定で両方の版を、版ごとの見出しの下に出す', async () => {
+  const single = (await run('toc', 'test/fixtures/minimal-book', '-e', '2.0.1')).stdout;
+  expect(single).toEqual(['本文']);
+  for (const args of [[], ['-e', 'all']]) {
+    const result = await run('toc', 'test/fixtures/minimal-book', ...args);
+    expect(result).toEqual({ code: 0, stdout: ['EPUB 2.0.1', '  本文', 'EPUB 3.0', '  本文'], stderr: [] });
+  }
 });
 
 Deno.test('init', async (t) => {
@@ -199,7 +213,7 @@ Deno.test('init', async (t) => {
       const toml = await Deno.readTextFile(`${dir}/book.toml`);
       expect(toml).toMatch(/^identifier = "urn:uuid:[0-9a-f-]{36}"\ntitle = "新しい本"\nlanguage = "ja"\n/);
       expect((await run('check', dir, '-e', 'all', '--strict')).code).toBe(0);
-      expect((await run('toc', dir)).stdout).toEqual(['はじめに', '  節', '奥付']);
+      expect((await run('toc', dir, '-e', '3.0')).stdout).toEqual(['はじめに', '  節', '奥付']);
       expect((await run('build', dir, '-e', 'all', '-o', `${tmp}/b.epub`)).code).toBe(0);
     });
   });
@@ -270,7 +284,7 @@ Deno.test('使い方の誤りは 2 で終え、使い方を標準エラー出力
     ['知らないオプション', ['build', '--fast'], '知らないオプション: --fast'],
     ['知らない短いオプション', ['check', '-x'], '知らないオプション: -x'],
     ['知らない版', ['build', '-e', '3.3'], '知らない版: 3.3（2.0.1、3.0、all のいずれか）'],
-    ['toc の all', ['toc', '-e', 'all'], '知らない版: all（2.0.1、3.0 のいずれか）'],
+    ['toc の知らない版', ['toc', '-e', '2'], '知らない版: 2（2.0.1、3.0、all のいずれか）'],
     ['値のないオプション', ['build', '-o'], '--output に値が要る'],
     ['余分な引数', ['check', 'a', 'b'], '余分な引数: b'],
     ['version の余分な引数', ['version', 'x'], '余分な引数: x'],

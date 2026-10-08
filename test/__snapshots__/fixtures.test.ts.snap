@@ -1873,7 +1873,7 @@ application/epub+zip
 .noteref { font-size: 0.7em; }
 .scene-break { text-align: center; text-indent: 0; }
 .titlepage { text-align: center; }
-.titlepage h1 { font-size: 1.6em; }
+.titlepage h1 { font-size: 1.5em; }
 
 == OEBPS/assets/style/vertical.css
 html {
@@ -1882,7 +1882,10 @@ html {
   writing-mode: vertical-rl;
 }
 body { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.8; }
-h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.5; }
+/* 見出しは本文より一回り大きい程度にとどめる（既定の 2 倍、1.5 倍は縦書きでは大きすぎる） */
+h1 { font-size: 1.3em; margin: 0 0 0 2em; }
+h2 { font-size: 1.15em; margin: 0 0 0 1.5em; }
 p { text-indent: 1em; margin: 0; }
 
 == OEBPS/assets/images/cover.svg (372 bytes)'
@@ -2609,7 +2612,7 @@ application/epub+zip
 .noteref { font-size: 0.7em; }
 .scene-break { text-align: center; text-indent: 0; }
 .titlepage { text-align: center; }
-.titlepage h1 { font-size: 1.6em; }
+.titlepage h1 { font-size: 1.5em; }
 
 == OEBPS/assets/style/vertical.css
 html {
@@ -2618,7 +2621,10 @@ html {
   writing-mode: vertical-rl;
 }
 body { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.8; }
-h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.5; }
+/* 見出しは本文より一回り大きい程度にとどめる（既定の 2 倍、1.5 倍は縦書きでは大きすぎる） */
+h1 { font-size: 1.3em; margin: 0 0 0 2em; }
+h2 { font-size: 1.15em; margin: 0 0 0 1.5em; }
 p { text-indent: 1em; margin: 0; }
 
 == OEBPS/assets/images/cover.svg (372 bytes)'

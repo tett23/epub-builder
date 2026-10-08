@@ -1,4 +1,4 @@
-// コマンドラインの入口の処理（ADR 0017）
+// コマンドラインの入口の処理（ADR 0018）
 
 import { parseArgs } from '@std/cli/parse-args';
 import { basename, resolve } from 'node:path';
@@ -32,8 +32,8 @@ const HELP: Record<string, string> = {
 
 コマンド:
   build [dir]      ディレクトリから EPUB を作る（既定で 2.0.1 と 3.0 の両方）
-  check [dir]      EPUB を書かずに、誤りと警告を調べる
-  toc [dir]        目次の木を表示する
+  check [dir]      EPUB を書かずに、誤りと警告を調べる（既定で両方の版）
+  toc [dir]        目次の木を表示する（既定で両方の版）
   init [dir]       新しい本の雛形を作る
   help [command]   使い方を表示する
   version          版を表示する
@@ -70,7 +70,7 @@ EPUB を書かずに、ディレクトリを読み込んで、誤りと警告を
 EPUBCheck は呼ばない。
 
 オプション:
-  -e, --epub-version <v>  調べる版。2.0.1、3.0、all（両方）のいずれか。既定は 3.0
+  -e, --epub-version <v>  調べる版。2.0.1、3.0、all（両方）のいずれか。既定は all
       --strict            警告を誤りとして扱い、終了コード 1 で終える
   -q, --quiet             警告を表示しない
   -h, --help              この使い方を表示する`,
@@ -78,9 +78,10 @@ EPUBCheck は呼ばない。
   epub-builder toc [dir] [options]
 
 目次の木を、題名の入れ子で表示する。表紙と扉は目次に入らない。
+両方の版を扱うときは、版ごとに「EPUB <版>」の行の下に字下げして表示する。
 
 オプション:
-  -e, --epub-version <v>  目次を作る版。2.0.1 か 3.0。既定は 3.0
+  -e, --epub-version <v>  目次を作る版。2.0.1、3.0、all（両方）のいずれか。既定は all
   -h, --help              この使い方を表示する`,
   init: `使い方:
   epub-builder init [dir] [options]
@@ -133,11 +134,11 @@ function parse(
   return { positional: options._.map(String), options };
 }
 
-function versions(value: unknown, allowAll: boolean, fallback: EpubVersion[] = ['3.0']): EpubVersion[] {
-  if (value === undefined) return fallback;
+/** --epub-version の値を版の並びにする。省けば両方の版（ADR 0018） */
+function versions(value: unknown): EpubVersion[] {
+  if (value === undefined || value === 'all') return ['2.0.1', '3.0'];
   if (value === '2.0.1' || value === '3.0') return [value];
-  if (value === 'all' && allowAll) return ['2.0.1', '3.0'];
-  throw new UsageError(`知らない版: ${String(value)}（${allowAll ? '2.0.1、3.0、all' : '2.0.1、3.0'} のいずれか）`);
+  throw new UsageError(`知らない版: ${String(value)}（2.0.1、3.0、all のいずれか）`);
 }
 
 function singleDir(positional: string[]): string {
@@ -193,8 +194,7 @@ async function build(args: string[], io: Io): Promise<number> {
   });
   if (options.help) return help(['build'], io);
   const dir = singleDir(positional);
-  // build は既定で両方の版を作る（ADR 0017）
-  const targets = versions(options['epub-version'], true, ['2.0.1', '3.0']);
+  const targets = versions(options['epub-version']);
   const books = await loadAll(dir, targets, options, io);
   if (!books) return EXIT_INPUT;
   const paths = outputPaths(dir, options.output, targets);
@@ -220,7 +220,7 @@ async function check(args: string[], io: Io): Promise<number> {
   });
   if (options.help) return help(['check'], io);
   const dir = singleDir(positional);
-  const targets = versions(options['epub-version'], true);
+  const targets = versions(options['epub-version']);
   const books = await loadAll(dir, targets, options, io);
   if (!books) return EXIT_INPUT;
   for (const { version, book } of books) {
@@ -249,9 +249,18 @@ async function toc(args: string[], io: Io): Promise<number> {
   const { positional, options } = parse(args, { string: ['epub-version'], alias: { e: 'epub-version' } });
   if (options.help) return help(['toc'], io);
   const dir = singleDir(positional);
-  const [version] = versions(options['epub-version'], false);
-  const book = await loadBook(dir, { version, onWarning: () => {} });
-  for (const line of renderToc(book.chapters)) io.stdout(line);
+  const targets = versions(options['epub-version']);
+  for (const version of targets) {
+    const book = await loadBook(dir, { version, onWarning: () => {} });
+    const lines = renderToc(book.chapters);
+    if (targets.length === 1) {
+      for (const line of lines) io.stdout(line);
+    } else {
+      // 両方の版を扱うときは、版ごとの見出しの下に字下げして出す
+      io.stdout(`EPUB ${version}`);
+      for (const line of lines) io.stdout(`  ${line}`);
+    }
+  }
   return EXIT_OK;
 }
 
@@ -300,7 +309,11 @@ language = ${tomlString(language)}
 
 ${title}
 `,
-    'assets/style.css': `.footnotes { margin-top: 2em; font-size: 0.9em; }
+    'assets/style.css': `/* 見出しは本文より一回り大きい程度にとどめる */
+h1 { font-size: 1.4em; }
+h2 { font-size: 1.2em; }
+h3, h4, h5, h6 { font-size: 1em; }
+.footnotes { margin-top: 2em; font-size: 0.9em; }
 .noteref { font-size: 0.7em; }
 /* EPUB 2.0.1 ではルビが括弧書きになる。括弧を隠すには次を使う */
 .ruby .rp { display: none; }
