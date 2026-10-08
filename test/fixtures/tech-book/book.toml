@@ -1,0 +1,10 @@
+# 横書きの技術書の形をした合成データ。英語と日本語の混在、コード、表、章をまたぐリンク
+identifier = "urn:isbn:9780000000002"
+title = "Building Books: A Synthetic Guide"
+language = "en"
+authors = ["Example Author", "共著 者"]
+publisher = "Fixture Press"
+description = 'Literal string with "quotes" and \backslashes\'
+modified = 2026-10-09T12:00:00-05:00
+page_progression_direction = "ltr"
+cover_image = "assets/diagrams/cover.png"

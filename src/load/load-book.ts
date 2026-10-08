@@ -298,7 +298,8 @@ export function headingTitle(tree: HastRoot): string | undefined {
     if (Array.isArray(className) && ['rt', 'rp', 'noteref'].some((c) => className.includes(c))) return '';
     return node.children.map(text).join('');
   };
-  const title = found.children.map(text).join('').replace(/\s+/g, ' ').trim();
+  // HTML の空白（ASCII の空白類）だけをまとめる。全角空白などは題名の一部として残す
+  const title = found.children.map(text).join('').replace(/[ \t\n\f\r]+/g, ' ').replace(/^ | $/g, '');
   return title === '' ? undefined : title;
 }
 

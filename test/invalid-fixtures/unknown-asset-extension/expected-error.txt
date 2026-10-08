@@ -1,0 +1,1 @@
+assets/ に置けない拡張子のファイル: assets/font.otf

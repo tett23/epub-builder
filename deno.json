@@ -15,7 +15,8 @@
     "singleQuote": true,
     "proseWrap": "preserve",
     "exclude": [
-      "test/fixtures/"
+      "test/fixtures/",
+      "test/invalid-fixtures/"
     ]
   },
   "imports": {

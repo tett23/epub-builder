@@ -1,0 +1,4 @@
+pre, code { font-family: monospace; }
+pre { white-space: pre-wrap; background: #f4f4f4; }
+table { border-collapse: collapse; }
+td, th { border: 1px solid #999; padding: 0.2em 0.5em; }

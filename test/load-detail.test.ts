@@ -36,6 +36,10 @@ Deno.test('題名の決め方の細かな場合', async (t) => {
     const book = await load({ 'body/a.html': '<h2>\n  題\n\t名  </h2>' });
     expect(book.chapters[0].title).toBe('題 名');
   });
+  await t.step('全角空白はまとめず、題名の一部として残す', async () => {
+    const book = await load({ 'body/a.md': '# \u3000第一章\u3000\u3000港\u3000' });
+    expect(book.chapters[0].title).toBe('\u3000第一章\u3000\u3000港\u3000');
+  });
   await t.step('空の見出しはファイルの名前にする', async () => {
     const book = await load({ 'body/01-名前.html': '<h1> </h1><h2>次</h2>' });
     expect(book.chapters[0].title).toBe('名前');

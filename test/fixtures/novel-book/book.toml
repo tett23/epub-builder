@@ -1,0 +1,12 @@
+# 縦書きの長編小説の形をした合成データ。文章は語彙を組み合わせて作った
+identifier = "urn:uuid:5b0c9d8e-7f6a-4b5c-9d4e-3f2a1b0c9d8e"
+title = "灯台と羅針盤の記録"
+language = "ja"
+authors = ["合成 作者"]
+publisher = "epub-builder のフィクスチャ"
+description = """
+三部からなる合成の物語。
+ルビと脚注を多く含む。"""
+modified = 2026-10-09T00:00:00Z
+page_progression_direction = "rtl"
+cover_image = "assets/images/cover.svg"

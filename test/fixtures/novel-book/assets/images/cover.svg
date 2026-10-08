@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1600" viewBox="0 0 1200 1600">
+<rect width="1200" height="1600" fill="#1d2a3a"/>
+<circle cx="600" cy="500" r="180" fill="#f2d16b"/>
+<rect x="560" y="700" width="80" height="600" fill="#e9e4d8"/>
+<text x="600" y="1450" fill="#ffffff" font-size="72" text-anchor="middle">灯台と羅針盤の記録</text>
+</svg>

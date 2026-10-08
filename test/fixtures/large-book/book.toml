@@ -1,0 +1,5 @@
+# 文書の数が多い本の合成データ。番号付け、目次、zip の量を確かめる
+identifier = "urn:uuid:1e2d3c4b-5a69-4788-9a0b-1c2d3e4f5a6b"
+title = "多くの文書"
+language = "ja"
+modified = 2026-10-09T00:00:00Z

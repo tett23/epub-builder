@@ -1,0 +1,1 @@
+assets/ の下にない画像を指す参照: ../figure.png
