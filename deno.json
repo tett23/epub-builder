@@ -4,7 +4,7 @@
     "check": "deno check mod.ts load.ts src/ scripts/ test/",
     "lint": "deno lint",
     "fmt": "deno fmt",
-    "test": "deno test --allow-read --allow-write --allow-run=git test/",
+    "test": "deno test --allow-read --allow-write --allow-run=git,unzip test/",
     "build:sample": "deno run --allow-read --allow-write scripts/build-sample.ts"
   },
   "compilerOptions": {

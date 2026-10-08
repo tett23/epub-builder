@@ -46,6 +46,11 @@ function isPlainTable(value: unknown): value is TomlTable {
   return typeof value === 'object' && value !== null && !Array.isArray(value) && !(value instanceof TomlDateTime);
 }
 
+/** `__proto__` などの名前でもプロトタイプを変えずに、自身のプロパティとして置く */
+function setKey(table: TomlTable, key: string, value: TomlValue): void {
+  Object.defineProperty(table, key, { value, enumerable: true, writable: true, configurable: true });
+}
+
 class Parser {
   pos = 0;
   readonly tables = new WeakMap<TomlTable, TableMeta>();
@@ -183,7 +188,7 @@ class Parser {
     for (const key of keys) {
       if (!Object.hasOwn(table, key)) {
         const next = this.newTable({});
-        table[key] = next;
+        setKey(table, key, next);
         table = next;
         continue;
       }
@@ -206,7 +211,7 @@ class Parser {
     const last = keys[keys.length - 1];
     if (!Object.hasOwn(parent, last)) {
       const table = this.newTable({ header: true });
-      parent[last] = table;
+      setKey(parent, last, table);
       return table;
     }
     const value = parent[last];
@@ -224,7 +229,7 @@ class Parser {
     if (!Object.hasOwn(parent, last)) {
       const array: TomlValue[] = [table];
       this.arraysOfTables.add(array);
-      parent[last] = array;
+      setKey(parent, last, array);
       return table;
     }
     const value = parent[last];
@@ -247,7 +252,7 @@ class Parser {
     for (const key of keys.slice(0, -1)) {
       if (!Object.hasOwn(target, key)) {
         const next = this.newTable({ dotted: true });
-        target[key] = next;
+        setKey(target, key, next);
         target = next;
         continue;
       }
@@ -259,7 +264,7 @@ class Parser {
     }
     const last = keys[keys.length - 1];
     if (Object.hasOwn(target, last)) this.error(`キー ${keys.join('.')} を二度定義している`, start);
-    target[last] = value;
+    setKey(target, last, value);
   }
 
   parseKey(): string[] {

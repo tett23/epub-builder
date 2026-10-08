@@ -40,7 +40,10 @@ function fail(message: string, node: Nodes): never {
 }
 
 interface Context {
+  /** この要素の名前空間 */
   namespace: string;
+  /** 祖先で宣言した既定の名前空間 */
+  defaultNamespace: string;
   /** 祖先で宣言した接頭辞 */
   declared: Set<string>;
 }
@@ -97,7 +100,7 @@ class Writer {
     const declared = new Set(context.declared);
 
     const attrs: string[] = [];
-    if (namespace !== context.namespace) attrs.push(`xmlns="${namespace}"`);
+    if (namespace !== context.defaultNamespace) attrs.push(`xmlns="${namespace}"`);
     const names = new Set<string>();
     for (const [key, raw] of Object.entries(node.properties)) {
       const info = find(schema, key);
@@ -134,7 +137,9 @@ class Writer {
     const open = attrs.length > 0 ? `<${name} ${attrs.join(' ')}` : `<${name}`;
     // SVG の foreignObject の中身は XHTML に戻る
     const childNamespace = namespace === NS.svg && name === 'foreignObject' ? NS.xhtml : namespace;
-    const inner = node.children.map((child) => this.write(child, { namespace: childNamespace, declared })).join('');
+    const inner = node.children
+      .map((child) => this.write(child, { namespace: childNamespace, defaultNamespace: namespace, declared }))
+      .join('');
     if (inner === '') {
       if (namespace !== NS.xhtml || VOID_ELEMENTS.has(name)) return `${open}/>`;
       return `${open}></${name}>`;
@@ -146,5 +151,5 @@ class Writer {
 
 /** hast を、XHTML の `body` の中身として書き出す */
 export function writeXhtml(tree: Nodes, version: EpubVersion): string {
-  return new Writer(version).write(tree, { namespace: NS.xhtml, declared: new Set() });
+  return new Writer(version).write(tree, { namespace: NS.xhtml, defaultNamespace: NS.xhtml, declared: new Set() });
 }

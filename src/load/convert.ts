@@ -72,7 +72,7 @@ function checkRawHtml(tree: MdastRoot): void {
 }
 
 /** 脚注を、版に合った形の独自のノードに置き換える */
-function transformFootnotes(tree: MdastRoot, version: EpubVersion): string[] {
+function transformFootnotes(tree: MdastRoot, src: string, version: EpubVersion): string[] {
   const definitions = new Map<string, FootnoteDefinition>();
   visit(tree, (node, parent) => {
     if (node.type !== 'footnoteDefinition') return;
@@ -85,10 +85,14 @@ function transformFootnotes(tree: MdastRoot, version: EpubVersion): string[] {
       if (node.type === 'footnoteReference') failAt('脚注の本文の中で脚注を参照することはできない', node);
     });
   }
-  // 定義のない参照は micromark では文字のまま残る
+  // 定義のない参照は micromark では文字のまま残る。
+  // エスケープした `\[^x]` を誤りにしないよう、文字のノードの元の書き方で調べる
   visit(tree, (node) => {
     if (node.type !== 'text') return;
-    const match = /\[\^([^\]\s]+)\]/.exec(node.value);
+    const start = node.position?.start.offset;
+    const end = node.position?.end.offset;
+    const raw = start !== undefined && end !== undefined ? src.slice(start, end) : node.value;
+    const match = /(?<!\\)\[\^([^\]\s\\]+)\]/.exec(raw);
     if (match) failAt(`定義のない脚注の参照: [^${match[1]}]`, node);
   });
 
@@ -216,7 +220,7 @@ function checkGeneratedIds(tree: HastRoot, generated: string[]): void {
 function markdownToTree(src: string, version: EpubVersion): HastRoot {
   const mdast = markdownParser.parse(src) as MdastRoot;
   checkRawHtml(mdast);
-  const ids = transformFootnotes(mdast, version);
+  const ids = transformFootnotes(mdast, src, version);
   transformRuby(mdast, version);
   const hast = markdownToHast.runSync(mdast) as HastRoot;
   checkGeneratedIds(hast, ids);

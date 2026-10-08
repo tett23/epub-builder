@@ -7,4 +7,11 @@
  */
 
 export { loadBook, type LoadOptions } from './src/load/load-book.ts';
-export { parseToml, TomlDateTime, TomlError } from './src/load/toml.ts';
+export {
+  parseToml,
+  TomlDateTime,
+  type TomlDateTimeKind,
+  TomlError,
+  type TomlTable,
+  type TomlValue,
+} from './src/load/toml.ts';
