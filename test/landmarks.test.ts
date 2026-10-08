@@ -1,4 +1,4 @@
-// EPUB 3.0 のナビゲーション文書の landmarks（ADR 0011）
+// EPUB 3.0 のナビゲーション文書の landmarks（ADR 0012）
 import { expect } from '@std/expect';
 import { type Book, buildEpub } from '../mod.ts';
 import { unzipText } from './helpers/unzip.ts';
@@ -68,8 +68,57 @@ Deno.test('表示名は言語で決める', async () => {
   expect((await landmarks(book('jav'))).map(([, , label]) => label)[0]).toBe('Cover');
 });
 
-Deno.test('EPUB 2.0.1 には landmarks も guide も書かない', async () => {
+Deno.test('EPUB 2.0.1 には landmarks を書かない', async () => {
   const files = await unzipText(await buildEpub(base({ cover: { body: '<p/>' } }), { version: '2.0.1' }));
   expect(files.has('OEBPS/nav.xhtml')).toBe(false);
+});
+
+async function guide(book: Book): Promise<[string, string, string][]> {
+  const opf = (await unzipText(await buildEpub(book, { version: '2.0.1' }))).get('OEBPS/content.opf')!;
+  return [...opf.matchAll(/<reference type="([^"]+)" title="([^"]+)" href="([^"]+)"\/>/g)].map((m) => [
+    m[1],
+    m[3],
+    m[2],
+  ]);
+}
+
+Deno.test('EPUB 2.0.1 の guide に、表紙、本文、奥付の順で、行き先がある項目だけを書く', async () => {
+  const book = base({
+    cover: { body: '<p>c</p>', epubType: 'frontmatter cover' },
+    chapters: [
+      { title: '前書き', body: '<p/>', epubType: 'frontmatter preface' },
+      { title: '一', body: '<p/>', epubType: 'bodymatter chapter' },
+      { title: '付録', body: '<p/>', epubType: 'backmatter appendix' },
+      { title: '奥付', body: '<p/>', epubType: 'backmatter colophon' },
+    ],
+  });
+  expect(await guide(book)).toEqual([
+    ['cover', 'text/0001.xhtml', '表紙'],
+    ['text', 'text/0003.xhtml', '本文'],
+    ['colophon', 'text/0005.xhtml', '奥付'],
+  ]);
+  const opf = (await unzipText(await buildEpub(book, { version: '2.0.1' }))).get('OEBPS/content.opf')!;
+  expect(opf).toMatch(/<\/spine>\n<guide>/);
+  expect(opf).not.toContain('type="toc"');
+  // epubType は guide にだけ使い、本文には書かない
+  const doc = (await unzipText(await buildEpub(book, { version: '2.0.1' }))).get('OEBPS/text/0003.xhtml')!;
+  expect(doc).not.toContain('epub:type');
+});
+
+Deno.test('guide の text は、bodymatter がなければ最初の章を指す', async () => {
+  expect(await guide(base())).toEqual([['text', 'text/0001.xhtml', '本文']]);
+});
+
+Deno.test('guide の title は言語で決める', async () => {
+  const book = base({
+    metadata: { identifier: 'id', title: 't', language: 'en-US', modified: new Date(0) },
+    cover: { body: '<p/>' },
+    chapters: [{ title: 'a', body: '<p/>' }, { title: 'c', body: '<p/>', epubType: 'colophon' }],
+  });
+  expect((await guide(book)).map(([, , title]) => title)).toEqual(['Cover', 'Start of Content', 'Colophon']);
+});
+
+Deno.test('EPUB 3.0 には guide を書かない', async () => {
+  const files = await unzipText(await buildEpub(base({ cover: { body: '<p/>' } }), { version: '3.0' }));
   expect(files.get('OEBPS/content.opf')).not.toContain('<guide');
 });

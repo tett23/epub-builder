@@ -34,7 +34,7 @@ export interface Image {
 /** 本文の文書。`body` は XHTML の `body` の中身 */
 export interface Document {
   body: string;
-  /** EPUB 3.0 の body の epub:type（空白で区切った語の並び）。EPUB 2.0.1 では書かない（ADR 0011） */
+  /** EPUB 3.0 の body の epub:type（空白で区切った語の並び）。EPUB 2.0.1 では書かない（ADR 0012） */
   epubType?: string;
   /** 適用するスタイルシートのパス。`Book.stylesheets` のいずれか */
   stylesheets?: string[];
@@ -47,7 +47,7 @@ export interface Document {
 export interface Chapter {
   title: string;
   body?: string;
-  /** EPUB 3.0 の body の epub:type（空白で区切った語の並び）。EPUB 2.0.1 では書かない（ADR 0011） */
+  /** EPUB 3.0 の body の epub:type（空白で区切った語の並び）。EPUB 2.0.1 では書かない（ADR 0012） */
   epubType?: string;
   stylesheets?: string[];
   /** 本文の中の節。目次では、章の項目の下に `children` より前に置く（ADR 0009） */

@@ -1,4 +1,4 @@
-// EPUB 3.0 の部・章・節の意味づけ（ADR 0011）
+// EPUB 3.0 の部・章・節の意味づけ（ADR 0012）
 import { expect } from '@std/expect';
 import type { Element, Root } from 'hast';
 import { type Book, buildEpub, EpubInputError } from '../mod.ts';
@@ -86,7 +86,7 @@ Deno.test('buildEpub は epubType の誤りを例外にする', async () => {
   expect(files.get('OEBPS/text/0002.xhtml')).toContain('<body epub:type="a&quot;&lt;&amp;">');
 });
 
-Deno.test('loadBook は文書の役割を epubType にする', async () => {
+Deno.test('loadBook はどちらの版でも文書の役割を epubType にする', async () => {
   const dir = await Deno.makeTempDir({ prefix: 'epub-builder-test-' });
   try {
     const files: Record<string, string> = {
@@ -114,9 +114,10 @@ Deno.test('loadBook は文書の役割を epubType にする', async () => {
       ['部', 'bodymatter part', [['深い扉', 'bodymatter division', [['節の文書', 'bodymatter chapter']]]]],
       ['奥付', 'backmatter colophon'],
     ]);
+    // EPUB 2.0.1 でも guide のために役割を付ける（ADR 0012）
     const v2 = await loadBook(dir, { version: '2.0.1' });
-    expect(v2.cover!.epubType).toBe(undefined);
-    expect(JSON.stringify(v2.chapters)).not.toContain('epubType');
+    expect(v2.cover!.epubType).toBe('frontmatter cover');
+    expect(roles(v2.chapters)).toEqual(roles(v3.chapters));
   } finally {
     await Deno.remove(dir, { recursive: true });
   }

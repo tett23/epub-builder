@@ -388,7 +388,7 @@ export function extractSections(tree: HastRoot, sectionHeadings?: Set<Element>):
 }
 
 /**
- * 本文の直下の、節にした見出しごとのまとまりを section 要素で囲む（ADR 0011）。
+ * 本文の直下の、節にした見出しごとのまとまりを section 要素で囲む（ADR 0012）。
  * 脚注の欄の前で、開いている section をすべて閉じる
  */
 export function wrapSections(tree: HastRoot, sectionHeadings: Set<Element>): void {
@@ -635,8 +635,8 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
   stylesheets.sort((a, b) => compareCodePoints(a.path, b.path));
   const stylesheetPaths = stylesheets.map((s) => s.path);
 
-  // EPUB 3.0 では、文書の役割を body の epub:type で示す（ADR 0011）
-  const role = (epubType: string) => (options.version === '3.0' ? { epubType } : {});
+  // 文書の役割。EPUB 3.0 では body の epub:type に、EPUB 2.0.1 では guide に使う（ADR 0012）
+  const role = (epubType: string) => ({ epubType });
   const withSections = (chapter: Chapter, sections: Section[]): Chapter =>
     sections.length > 0 ? { ...chapter, sections } : chapter;
   const toChapter = (node: BodyNode, depth: number): Chapter => {

@@ -306,7 +306,7 @@ ${manifest.join('\n')}
 <spine toc="ncx"${ppd}>
 ${spine.join('\n')}
 </spine>
-</package>
+${version === '2.0.1' ? guide(book, documents) : ''}</package>
 `;
 }
 
@@ -353,18 +353,48 @@ function hasTerm(epubType: string | undefined, term: string): boolean {
   return (epubType ?? '').split(/\s+/).includes(term);
 }
 
-/** landmarks の項目（ADR 0011） */
-function landmarks(book: Book, documents: ContentDocument[]): { type: string; href: string; label: string }[] {
-  const ja = /^ja(-|$)/i.test(book.metadata.language);
+interface Navigation {
+  cover?: ContentDocument;
+  bodymatter?: ContentDocument;
+  backmatter?: ContentDocument;
+  colophon?: ContentDocument;
+  ja: boolean;
+}
+
+/** landmarks と guide が指す文書を、文書の役割から決める（ADR 0012） */
+function navigation(book: Book, documents: ContentDocument[]): Navigation {
   const chapterDocs = documents.slice(book.cover ? 1 : 0);
-  const bodymatter = chapterDocs.find((d) => hasTerm(d.epubType, 'bodymatter')) ?? chapterDocs[0];
-  const backmatter = chapterDocs.find((d) => hasTerm(d.epubType, 'backmatter'));
+  return {
+    cover: book.cover ? documents[0] : undefined,
+    bodymatter: chapterDocs.find((d) => hasTerm(d.epubType, 'bodymatter')) ?? chapterDocs[0],
+    backmatter: chapterDocs.find((d) => hasTerm(d.epubType, 'backmatter')),
+    colophon: chapterDocs.find((d) => hasTerm(d.epubType, 'colophon')),
+    ja: /^ja(-|$)/i.test(book.metadata.language),
+  };
+}
+
+/** landmarks の項目（EPUB 3.0） */
+function landmarks(book: Book, documents: ContentDocument[]): { type: string; href: string; label: string }[] {
+  const { cover, bodymatter, backmatter, ja } = navigation(book, documents);
   const items: { type: string; href: string; label: string }[] = [];
-  if (book.cover) items.push({ type: 'cover', href: documents[0].path, label: ja ? '表紙' : 'Cover' });
+  if (cover) items.push({ type: 'cover', href: cover.path, label: ja ? '表紙' : 'Cover' });
   // toc は書かない。ナビゲーション文書は spine にないため、指すと EPUBCheck で誤り（RSC-011）になる
   if (bodymatter) items.push({ type: 'bodymatter', href: bodymatter.path, label: ja ? '本文' : 'Start of Content' });
   if (backmatter) items.push({ type: 'backmatter', href: backmatter.path, label: ja ? '後付け' : 'Back Matter' });
   return items;
+}
+
+/** guide の項目（EPUB 2.0.1）。toc は目次の XHTML の文書がないため書かない */
+function guide(book: Book, documents: ContentDocument[]): string {
+  const { cover, bodymatter, colophon, ja } = navigation(book, documents);
+  const items: string[] = [];
+  const add = (type: string, doc: ContentDocument | undefined, title: string) => {
+    if (doc) items.push(`<reference type="${type}" title="${escapeAttribute(title)}" href="${doc.path}"/>`);
+  };
+  add('cover', cover, ja ? '表紙' : 'Cover');
+  add('text', bodymatter, ja ? '本文' : 'Start of Content');
+  add('colophon', colophon, ja ? '奥付' : 'Colophon');
+  return items.length > 0 ? `<guide>\n${items.join('\n')}\n</guide>\n` : '';
 }
 
 function navDocument(book: Book, toc: TocEntry[], documents: ContentDocument[]): string {

@@ -6,7 +6,7 @@
 - ADR 0003：対応する仕様と、版ごとの出力の構成
 - ADR 0004：公開 API と zip の書き出し
 - ADR 0009：ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節（ADR 0005 から 0008 を置き換えた）
-- ADR 0011：EPUB 3.0 での部・章・節の意味づけ（`epub:type` と `section` 要素）と landmarks（ADR 0010 を置き換えた）
+- ADR 0012：部・章・節の意味づけ（`epub:type` と `section` 要素）、EPUB 3.0 の landmarks、EPUB 2.0.1 の guide（ADR 0010、0011 を置き換えた）
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 
@@ -24,10 +24,11 @@
 10. ルビ
 11. 脚注
 12. スタイルシートと画像、参照の書き換え
-13. 部・章・節の意味づけと landmarks（EPUB 3.0）
+13. 部・章・節の意味づけ、landmarks、guide
 14. 誤りと警告の扱い
-15. 扱わないこと
-16. 試験
+15. id と class
+16. 扱わないこと
+17. 試験
 
 ## 1. 概要
 
@@ -188,17 +189,18 @@ zip の書き方は次のとおり。
 
 ### 版ごとの違い
 
-|                            | EPUB 2.0.1                                   | EPUB 3.0                                                  |
-| -------------------------- | -------------------------------------------- | --------------------------------------------------------- |
-| パッケージ文書の `version` | `2.0`                                        | `3.0`                                                     |
-| 更新日時                   | `<dc:date opf:event="modification">`（日付） | `<meta property="dcterms:modified">`（秒まで、UTC）       |
-| 著者                       | `<dc:creator opf:role="aut">`                | `<dc:creator>`                                            |
-| 表紙の画像                 | `<meta name="cover" content="…">`            | `properties="cover-image"`                                |
-| 頁送りの向き               | 書かない                                     | spine の `page-progression-direction`                     |
-| 目次                       | NCX                                          | ナビゲーション文書と NCX                                  |
-| 内容文書                   | XHTML 1.1 の DOCTYPE                         | `<!DOCTYPE html>`、`xmlns:epub` を宣言                    |
-| 内容文書の `properties`    | なし                                         | インラインの SVG を含めば `svg`、MathML を含めば `mathml` |
-| `body` の `epub:type`      | 書かない                                     | `epubType` を書く                                         |
+|                            | EPUB 2.0.1                                   | EPUB 3.0                                                        |
+| -------------------------- | -------------------------------------------- | --------------------------------------------------------------- |
+| パッケージ文書の `version` | `2.0`                                        | `3.0`                                                           |
+| 更新日時                   | `<dc:date opf:event="modification">`（日付） | `<meta property="dcterms:modified">`（秒まで、UTC）             |
+| 著者                       | `<dc:creator opf:role="aut">`                | `<dc:creator>`                                                  |
+| 表紙の画像                 | `<meta name="cover" content="…">`            | `properties="cover-image"`                                      |
+| landmarks、guide           | `guide`（cover、text、colophon）             | ナビゲーション文書の landmarks（cover、bodymatter、backmatter） |
+| 頁送りの向き               | 書かない                                     | spine の `page-progression-direction`                           |
+| 目次                       | NCX                                          | ナビゲーション文書と NCX                                        |
+| 内容文書                   | XHTML 1.1 の DOCTYPE                         | `<!DOCTYPE html>`、`xmlns:epub` を宣言                          |
+| 内容文書の `properties`    | なし                                         | インラインの SVG を含めば `svg`、MathML を含めば `mathml`       |
+| `body` の `epub:type`      | 書かない                                     | `epubType` を書く                                               |
 
 - 内容文書の `html` 要素には `xml:lang`（EPUB 3.0 では `lang` も）に書誌情報の言語を書く。
 - 内容文書の `title` は、章の題名（表紙は本の題名）とする。
@@ -517,15 +519,15 @@ GFM の脚注の記法で書く。
   - 指す先のファイルがない参照、ディレクトリを指す参照
 - 上に挙げた要素と属性以外の参照（`srcset`、`style` 属性の `url()`、SVG の `a` の `xlink:href` など）は書き換えない。
 
-## 13. 部・章・節の意味づけと landmarks（EPUB 3.0）
+## 13. 部・章・節の意味づけ、landmarks、guide
 
-EPUB 3.0 では、構造の意味を `epub:type` と `section` 要素で本文に書く。
-EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、何もしない。
+EPUB 3.0 では、構造の意味を `epub:type` と `section` 要素で本文に書き、ナビゲーション文書に landmarks を書く。
+EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本文は変えず、パッケージ文書に guide を書く。
 
 ### 文書の役割
 
-`Book` の章と表紙の `epubType` を、内容文書の `body` 要素の `epub:type` に書く（EPUB 3.0 だけ）。
-`loadBook` は、`version: "3.0"` のとき、次の値を付ける。
+`Book` の章と表紙の `epubType` を、EPUB 3.0 では内容文書の `body` 要素の `epub:type` に書く。EPUB 2.0.1 では本文に書かず、guide を作るためにだけ使う。
+`loadBook` は、渡した版に関わらず、次の値を付ける。
 
 | 文書                                             | `epub:type`           |
 | ------------------------------------------------ | --------------------- |
@@ -569,7 +571,7 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、何
 
 ### landmarks
 
-`buildEpub` は、EPUB 3.0 のナビゲーション文書に、目次の後に `<nav epub:type="landmarks" hidden="">` を書く。EPUB 2.0.1 では書かない（`guide` も作らない）。
+`buildEpub` は、EPUB 3.0 のナビゲーション文書に、目次の後に `<nav epub:type="landmarks" hidden="">` を書く。EPUB 2.0.1 では書かない。
 
 | 項目         | 行き先                                                                  | 表示名（`ja`） | 表示名（ほか）   |
 | ------------ | ----------------------------------------------------------------------- | -------------- | ---------------- |
@@ -581,6 +583,31 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、何
 - 表示名は、書誌情報の言語が `ja` か `ja-` で始まるときに日本語、それ以外は英語とする。
 - 目次（`toc`）の項目は書かない。ナビゲーション文書は spine に入れないため、landmarks から指すと EPUBCheck で誤り（RSC-011）になる。
 - `loadBook` で読んだ本では、表紙、本文の最初の文書、奥付が入る。
+
+### guide
+
+`buildEpub` は、EPUB 2.0.1 のパッケージ文書に、`spine` の後に `<guide>` を書く。EPUB 3.0 では書かない。
+
+| `type`     | 行き先                                        | `title`（`ja`） | `title`（ほか）  |
+| ---------- | --------------------------------------------- | --------------- | ---------------- |
+| `cover`    | 表紙の文書                                    | 表紙            | Cover            |
+| `text`     | landmarks の `bodymatter` と同じ文書          | 本文            | Start of Content |
+| `colophon` | `epubType` に `colophon` を含む最初の章の文書 | 奥付            | Colophon         |
+
+- 行き先がある項目だけを、この順で書く。項目が一つもなければ `guide` を書かない。
+- `title` は、書誌情報の言語が `ja` か `ja-` で始まるときに日本語、それ以外は英語とする。
+- 目次（`toc`）の項目は書かない。guide は XHTML の文書を指すものだが、EPUB 2.0.1 では目次を NCX だけで持つため。
+- `loadBook` で読んだ本では、表紙、本文の最初の文書、奥付が入る。
+
+例：
+
+```xml
+<guide>
+<reference type="cover" title="表紙" href="text/0001.xhtml"/>
+<reference type="text" title="本文" href="text/0002.xhtml"/>
+<reference type="colophon" title="奥付" href="text/0008.xhtml"/>
+</guide>
+```
 
 ## 14. 誤りと警告の扱い
 
@@ -598,13 +625,81 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、何
 - 警告を誤りとして扱いたい場合は、`onWarning` の中で例外を投げる。
 - 作った EPUB が EPUBCheck で誤りも警告もないことは、`mathml-in-epub-2` と `ruby-in-epub-2` の警告が出ない入力に対してだけ保証する。
 
-## 15. 扱わないこと
+## 15. id と class
+
+### ライブラリが付ける id
+
+| 場所                      | id                                    | 付け方                                                |
+| ------------------------- | ------------------------------------- | ----------------------------------------------------- |
+| パッケージ文書            | `bookid`                              | `dc:identifier` に付け、`unique-identifier` から指す  |
+| パッケージ文書の manifest | `nav`、`ncx`                          | ナビゲーション文書（EPUB 3.0）と NCX                  |
+| パッケージ文書の manifest | `doc-0001`、`doc-0002` …              | 内容文書。番号は文書の名前（`text/0001.xhtml`）と同じ |
+| パッケージ文書の manifest | `css-1`、`css-2` …                    | スタイルシート。`Book.stylesheets` の順               |
+| パッケージ文書の manifest | `img-1`、`img-2` …                    | 画像。`Book.images` の順                              |
+| NCX                       | `np-1`、`np-2` …                      | `navPoint`。目次に現れる順                            |
+| ナビゲーション文書        | `toc`                                 | 目次の `nav`                                          |
+| 本文（Markdown の脚注）   | `fnref-<番号>`、`fnref-<番号>-<回数>` | 脚注の参照。二度目以降の参照に回数を付ける            |
+| 本文（Markdown の脚注）   | `fn-<番号>`                           | 注の本文                                              |
+| 本文（節の見出し）        | `sec-1`、`sec-2` …                    | `id` のない節の見出し。文書ごとに文書の順で付ける     |
+
+- 本文の id は、文書（内容文書）ごとに一意であればよい。番号は文書ごとに 1 から振る。
+- 脚注の id が、本文に書いた id と重なれば例外とする。
+- 節の id は、本文に書いた id と重なる番号を飛ばす（`sec-1` があれば `sec-2` から付ける）。
+- 題名に使った見出しと、表紙の見出しには id を付けない。
+
+### 本文に書いた id
+
+- 書いたとおりに残し、書き換えない。
+- 見出しに書いた id は、そのまま節の行き先に使う。
+- 同じ文書の中で id が重なっていても、脚注の id との重なりのほかは調べない（EPUBCheck で誤りになる）。
+- ほかの文書へのリンクの断片識別子（`02-second.md#scene-2` の `scene-2`）が、指す文書にあるかは調べない。
+
+### ライブラリが付ける class
+
+| class            | 要素                                     | 付ける場合                                        |
+| ---------------- | ---------------------------------------- | ------------------------------------------------- |
+| `noteref`        | `a`                                      | 脚注の参照（`sup` の中）                          |
+| `footnotes`      | `div`                                    | 文書の末尾の、注の本文をまとめた欄                |
+| `footnote`       | `aside`（EPUB 3.0）、`div`（EPUB 2.0.1） | 一つの注の本文                                    |
+| `ruby`           | `span`                                   | EPUB 2.0.1 の Markdown のルビの全体               |
+| `rb`、`rt`、`rp` | `span`                                   | EPUB 2.0.1 の Markdown のルビの親文字、読み、括弧 |
+
+- `section` 要素と `body` 要素には class を付けない。役割は `epub:type` で示す（EPUB 3.0）。
+- スタイルシートでは、たとえば次のように使える。
+
+```css
+.footnotes {
+  margin-top: 2em;
+  font-size: 0.9em;
+}
+.noteref {
+  font-size: 0.7em;
+}
+.ruby .rp {
+  display: none;
+} /* EPUB 2.0.1 の括弧を隠す */
+.ruby .rt {
+  font-size: 0.5em;
+}
+```
+
+### ライブラリが意味を読み取る class
+
+次の class は、本文に書いた HTML や XHTML の要素に付けても、ライブラリが付けたものと同じに扱う。ほかの目的に使わない。
+
+| class       | 扱い                                                                                                                                            |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `footnotes` | この class の要素の中の見出しは、題名にも節にもしない。EPUB 3.0 では、本文の直下にこの要素があると、その前で開いている `section` をすべて閉じる |
+| `noteref`   | この class の要素の文字を、題名と節の題名から除く                                                                                               |
+| `rt`、`rp`  | この class の要素の文字を、題名と節の題名から除く（`rt`、`rp` 要素と同じ）                                                                      |
+
+## 16. 扱わないこと
 
 - 固定レイアウト、EPUB 3.1 以降に固有の機能、音声、動画、メディアオーバーレイ、スクリプト、フォントの難読化
 - 特定のリーダーや配信サービスに固有の拡張
 - EPUB を読むこと、書き換えること
 - ストリームでの書き出し、ZIP64
-- EPUB 2 の `guide`、landmarks の `cover`、`bodymatter`、`backmatter` のほかの項目（`toc`、`titlepage` など）、landmarks の表示名の設定
+- landmarks の `cover`、`bodymatter`、`backmatter`、guide の `cover`、`text`、`colophon` のほかの項目（`toc`、`titlepage` など）、landmarks と guide の表示名の設定
 - EPUB 2.0.1 で `div` などを使って部・章・節の構造を表すこと、`book.toml` やファイルの名前で文書の役割を指定すること
 - 直接書いた `section` 要素や `epub:type` を書き換えたり取り除いたりすること
 - 目次のページを読み順に入れること
@@ -616,7 +711,7 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、何
 - 空白以外の、EPUBCheck が誤りや警告にするファイル名の文字（`"`、`*`、`:`、`<`、`>`、`?`、`\`、`|` など）の置き換えや検査
 - `buildEpub` での警告
 
-## 16. 試験
+## 17. 試験
 
 - `deno task test` で単体テストを走らせる。
 - `test/fixtures/` のフィクスチャは、すべて合成したデータで、著作物を含まない。

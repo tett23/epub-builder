@@ -49,6 +49,11 @@ application/epub+zip
 <itemref idref="doc-0007"/>
 <itemref idref="doc-0008"/>
 </spine>
+<guide>
+<reference type="cover" title="表紙" href="text/0001.xhtml"/>
+<reference type="text" title="本文" href="text/0002.xhtml"/>
+<reference type="colophon" title="奥付" href="text/0008.xhtml"/>
+</guide>
 </package>
 
 == OEBPS/toc.ncx
@@ -540,6 +545,11 @@ application/epub+zip
 <itemref idref="doc-0006"/>
 <itemref idref="doc-0007"/>
 </spine>
+<guide>
+<reference type="cover" title="表紙" href="text/0001.xhtml"/>
+<reference type="text" title="本文" href="text/0002.xhtml"/>
+<reference type="colophon" title="奥付" href="text/0007.xhtml"/>
+</guide>
 </package>
 
 == OEBPS/toc.ncx
@@ -1232,6 +1242,11 @@ application/epub+zip
 <itemref idref="doc-0021"/>
 <itemref idref="doc-0022"/>
 </spine>
+<guide>
+<reference type="cover" title="表紙" href="text/0001.xhtml"/>
+<reference type="text" title="本文" href="text/0002.xhtml"/>
+<reference type="colophon" title="奥付" href="text/0022.xhtml"/>
+</guide>
 </package>
 
 == OEBPS/toc.ncx
@@ -2806,6 +2821,10 @@ application/epub+zip
 <itemref idref="doc-0150"/>
 <itemref idref="doc-0151"/>
 </spine>
+<guide>
+<reference type="text" title="本文" href="text/0001.xhtml"/>
+<reference type="colophon" title="奥付" href="text/0151.xhtml"/>
+</guide>
 </package>
 
 == OEBPS/toc.ncx
@@ -5048,6 +5067,11 @@ application/epub+zip
 <itemref idref="doc-0007"/>
 <itemref idref="doc-0008"/>
 </spine>
+<guide>
+<reference type="cover" title="Cover" href="text/0001.xhtml"/>
+<reference type="text" title="Start of Content" href="text/0002.xhtml"/>
+<reference type="colophon" title="Colophon" href="text/0008.xhtml"/>
+</guide>
 </package>
 
 == OEBPS/toc.ncx
@@ -5680,6 +5704,9 @@ application/epub+zip
 <spine toc="ncx">
 <itemref idref="doc-0001"/>
 </spine>
+<guide>
+<reference type="text" title="本文" href="text/0001.xhtml"/>
+</guide>
 </package>
 
 == OEBPS/toc.ncx
@@ -5830,6 +5857,9 @@ application/epub+zip
 <itemref idref="doc-0002"/>
 <itemref idref="doc-0003"/>
 </spine>
+<guide>
+<reference type="text" title="本文" href="text/0001.xhtml"/>
+</guide>
 </package>
 
 == OEBPS/toc.ncx
@@ -6103,6 +6133,11 @@ application/epub+zip
 <itemref idref="doc-0008"/>
 <itemref idref="doc-0009"/>
 </spine>
+<guide>
+<reference type="cover" title="表紙" href="text/0001.xhtml"/>
+<reference type="text" title="本文" href="text/0002.xhtml"/>
+<reference type="colophon" title="奥付" href="text/0009.xhtml"/>
+</guide>
 </package>
 
 == OEBPS/toc.ncx
