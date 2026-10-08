@@ -34,24 +34,28 @@ export interface Image {
 /** 本文の文書。`body` は XHTML の `body` の中身 */
 export interface Document {
   body: string;
+  /** EPUB 3.0 の body の epub:type（空白で区切った語の並び）。EPUB 2.0.1 では書かない（ADR 0010） */
+  epubType?: string;
   /** 適用するスタイルシートのパス。`Book.stylesheets` のいずれか */
   stylesheets?: string[];
 }
 
 /**
  * 本文の章。目次の一つの項目になる。
- * `body` を省くと文書を持たない項目になり、行き先は最初の子の文書になる（ADR 0006）。
+ * `body` を省くと文書を持たない項目になり、行き先は最初の子の文書になる（ADR 0009）。
  */
 export interface Chapter {
   title: string;
   body?: string;
+  /** EPUB 3.0 の body の epub:type（空白で区切った語の並び）。EPUB 2.0.1 では書かない（ADR 0010） */
+  epubType?: string;
   stylesheets?: string[];
-  /** 本文の中の節。目次では、章の項目の下に `children` より前に置く（ADR 0008） */
+  /** 本文の中の節。目次では、章の項目の下に `children` より前に置く（ADR 0009） */
   sections?: Section[];
   children?: Chapter[];
 }
 
-/** 章の本文の中の節。目次の項目になり、`<章の文書>#<id>` を指す（ADR 0008） */
+/** 章の本文の中の節。目次の項目になり、`<章の文書>#<id>` を指す（ADR 0009） */
 export interface Section {
   title: string;
   /** 章の本文の中の、節の見出しの id */

@@ -1,4 +1,4 @@
-// 文書の中の見出しを節として目次に出す（ADR 0008）
+// 文書の中の見出しを節として目次に出す（ADR 0009）
 import { expect } from '@std/expect';
 import { type Book, buildEpub, EpubInputError, type Section } from '../mod.ts';
 import { loadBook } from '../load.ts';

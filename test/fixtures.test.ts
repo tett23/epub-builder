@@ -144,7 +144,7 @@ Deno.test('sections-book：文書の中の見出しを節として目次に出�
     // 部の扉の節は、子の章より前
     expect(labels.indexOf('第一部の概要')).toBeLessThan(labels.indexOf('第一章'));
     // 本文の id を避けて番号を付ける
-    const ids = files.get('OEBPS/text/0005.xhtml')!;
+    const ids = files.get('OEBPS/text/0006.xhtml')!;
     expect(ids).toContain('<h3 id="sec-2">id のない見出し</h3>');
     expect(ids).toContain('<h3 id="sec-5">次の id のない見出し</h3>');
     // playOrder は 1 から目次の順に増える

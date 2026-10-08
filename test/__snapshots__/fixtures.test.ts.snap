@@ -358,7 +358,7 @@ application/epub+zip
 <title>試験用の本</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="frontmatter cover">
 <div class="cover"><img src="../assets/images/cover.svg" alt="表紙"/></div>
 
 </body>
@@ -372,7 +372,7 @@ application/epub+zip
 <title>序章</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1><ruby>序章<rp>（</rp><rt>じょしょう</rt><rp>）</rp></ruby><sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></h1>
 <p>これは試験用の段落です。<em>強調</em>と<strong>強い強調</strong>を含みます。</p>
 <p>次の章は<a href="0004.xhtml#scene-2">第一話</a>にあります。</p>
@@ -391,7 +391,7 @@ application/epub+zip
 <title>第一部</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="bodymatter part">
 <h1>第一部</h1>
 <p>部の扉です。</p>
 </body>
@@ -405,7 +405,7 @@ application/epub+zip
 <title>第一話</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第一話</h1>
 <p>一つ目の場面です。<br/>生の HTML を含みます。 </p>
 <p id="scene-2">二つ目の場面です。</p>
@@ -420,7 +420,7 @@ application/epub+zip
 <title>第二話</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h2>第二話</h2>
 <p>XHTML で書いた本文です。<br/>空要素は閉じています。</p>
 <p><img src="../assets/images/figure.png" alt="図"/></p>
@@ -436,7 +436,7 @@ application/epub+zip
 <title>第三話</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h2>第三話</h2>
 <p>HTML Living Standard で書いた本文です。<br/>閉じ忘れた段落
 </p><p class="note">引用符のない属性…
@@ -453,7 +453,7 @@ application/epub+zip
 <title>epilogue</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <p>おわりに見出しのない文書です。題名はファイルの名前から決まります。</p>
 </body>
 </html>
@@ -466,7 +466,7 @@ application/epub+zip
 <title>奥付</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="backmatter colophon">
 <h1>奥付</h1>
 <p>試験用の本 / 試験 太郎 / epub-builder</p>
 </body>
@@ -862,7 +862,7 @@ application/epub+zip
 <title>境界 &amp; &lt;試験&gt;</title>
 <link rel="stylesheet" type="text/css" href="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E8%A3%85%E9%A3%BE.css"/>
 </head>
-<body>
+<body epub:type="frontmatter cover">
 <div class="cover"><img src="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E5%86%99%E7%9C%9F.jpg" alt="表紙"/></div>
 
 </body>
@@ -876,7 +876,7 @@ application/epub+zip
 <title>深い入れ子の節</title>
 <link rel="stylesheet" type="text/css" href="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E8%A3%85%E9%A3%BE.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>深い入れ子の節</h1>
 <ul>
 <li>箇条書きの中の<ruby>漢字<rp>（</rp><rt>かんじ</rt><rp>）</rp></ruby><sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup>
@@ -902,7 +902,7 @@ application/epub+zip
 <title>表と図</title>
 <link rel="stylesheet" type="text/css" href="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E8%A3%85%E9%A3%BE.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h2>表と図</h2>
 <table>
 <caption>表</caption>
@@ -924,7 +924,7 @@ application/epub+zip
 <title>後書き</title>
 <link rel="stylesheet" type="text/css" href="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E8%A3%85%E9%A3%BE.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <p>見出しのない文書。<a href="0002.xhtml">深い節へ</a>。</p>
 </body>
 </html>
@@ -937,7 +937,7 @@ application/epub+zip
 <title>インラインの SVG</title>
 <link rel="stylesheet" type="text/css" href="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E8%A3%85%E9%A3%BE.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h2>インラインの SVG</h2>
 <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
   <rect width="100" height="100" fill="#eee"/>
@@ -957,7 +957,7 @@ application/epub+zip
 <title>終わり《おわり》</title>
 <link rel="stylesheet" type="text/css" href="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E8%A3%85%E9%A3%BE.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>終わり《おわり》</h1>
 <p><a href="0005.xhtml">資料へ戻る</a> / <a href="https://example.com/">外部</a> / <a href="#top">文書の中</a></p>
 <p id="top">生の HTML の段落<br/>と … の文字参照。</p>
@@ -972,7 +972,7 @@ application/epub+zip
 <title>奥付</title>
 <link rel="stylesheet" type="text/css" href="../assets/%E7%94%BB%E5%83%8F%E9%9B%86/%E8%A3%85%E9%A3%BE.css"/>
 </head>
-<body>
+<body epub:type="backmatter colophon">
 <h1>奥付</h1>
 <p>境界 &amp; &lt;試験&gt;<br/>合成データ</p>
 
@@ -1083,7 +1083,7 @@ application/epub+zip
 <head>
 <title>数式</title>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h2>数式</h2>
 <p>インラインの MathML：<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><mo>=</mo><mn>1</mn></math></p>
 
@@ -1097,7 +1097,7 @@ application/epub+zip
 <head>
 <title>epub:type</title>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <section epub:type="chapter">
 <h1>epub:type</h1>
 <p>XHTML の断片で、宣言せずに <span epub:type="keyword">epub:type</span> を書く。</p>
@@ -1113,7 +1113,7 @@ application/epub+zip
 <head>
 <title>HTML の epub:type</title>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <aside epub:type="sidebar"><h2>HTML の epub:type</h2><p>引用符のない属性</p></aside>
 
 </body>
@@ -1126,7 +1126,7 @@ application/epub+zip
 <head>
 <title>脚注のポップアップ</title>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>脚注のポップアップ</h1>
 <p>本文<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup>。</p>
 <div epub:type="tip">Markdown の中の生の HTML の epub:type</div>
@@ -2004,7 +2004,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="frontmatter cover">
 <div class="cover"><img src="../assets/images/cover.svg" alt="表紙"/></div>
 
 </body>
@@ -2019,7 +2019,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>プロローグ</h1>
 <p>冬の日、技師は川辺で手紙を書いた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が光っていた。朝、書記は屋根裏で灯りを点した。雨上がり、鳥は丘の上で扉を開けた。真夜中、商人は屋根裏で歩いた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が光っていた。</p>
 <p>真夜中、猫は屋根裏で立ち止まった。<ruby>燐寸<rp>（</rp><rt>まっち</rt><rp>）</rp></ruby>が残っていた。真夜中、少女は石畳の路地で耳を澄ませた。雨上がり、書記は森の奥で手紙を書いた。<ruby>羅針盤<rp>（</rp><rt>らしんばん</rt><rp>）</rp></ruby>が残っていた。</p>
@@ -2035,7 +2035,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter part">
 <h1>第一部　港</h1>
 <p>雨上がり、老人は港町で扉を開けた。</p>
 </body>
@@ -2050,7 +2050,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第1章　<ruby>港町<rp>（</rp><rt>みなとまち</rt><rp>）</rp></ruby></h1>
 <p>夕暮れ、少年は丘の上で見上げた。冬の日、技師は丘の上で歩いた。真夜中、老人は時計塔で扉を開けた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が光っていた。</p>
 <p>夕暮れ、老人は時計塔で笑った。<ruby>あの日<rp>（</rp><rt>あのひ</rt><rp>）</rp></ruby>を思い出した。雨上がり、技師は森の奥で手紙を書いた。</p>
@@ -2071,7 +2071,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第2章　<ruby>港町<rp>（</rp><rt>みなとまち</rt><rp>）</rp></ruby></h1>
 <p>雨上がり、灯台守は古い駅で耳を澄ませた。<ruby>羅針盤<rp>（</rp><rt>らしんばん</rt><rp>）</rp></ruby>が揺れていた。真夜中、灯台守は石畳の路地で手紙を書いた。<ruby>黄昏<rp>（</rp><rt>たそがれ</rt><rp>）</rp></ruby>が光っていた。朝、書記は図書館で扉を開けた。雨上がり、猫は屋根裏で笑った。<ruby>硝子<rp>（</rp><rt>がらす</rt><rp>）</rp></ruby>が光っていた。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>夕暮れ、少女は川辺で灯りを点した。<ruby>海鳴<rp>（</rp><rt>うみなり</rt><rp>）</rp></ruby>が遠くに見えた。<ruby>ことば<rp>（</rp><rt>言葉</rt><rp>）</rp></ruby>を思い出した。雨上がり、鳥は港町で手紙を書いた。<ruby>海鳴<rp>（</rp><rt>うみなり</rt><rp>）</rp></ruby>が揺れていた。<sup><a class="noteref" id="fnref-2" href="#fn-2" epub:type="noteref">2</a></sup></p>
@@ -2093,7 +2093,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第3章　<ruby>時計塔<rp>（</rp><rt>とけいとう</rt><rp>）</rp></ruby></h1>
 <p>祭りの夜、猫は港町で耳を澄ませた。朝、猫は森の奥で耳を澄ませた。雨上がり、猫は時計塔で見上げた。冬の日、少女は丘の上で手紙を書いた。<ruby>蝋燭<rp>（</rp><rt>ろうそく</rt><rp>）</rp></ruby>が遠くに見えた。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>朝、旅人は石畳の路地で耳を澄ませた。祭りの夜、灯台守は石畳の路地で手紙を書いた。</p>
@@ -2115,7 +2115,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第4章　<ruby>屋根裏<rp>（</rp><rt>やねうら</rt><rp>）</rp></ruby></h1>
 <p>真夜中、猫は時計塔で立ち止まった。<ruby>あの日<rp>（</rp><rt>あのひ</rt><rp>）</rp></ruby>を探した。真夜中、老人は古い駅で歩いた。</p>
 <p>雨上がり、少女は川辺で手紙を書いた。<ruby>海鳴<rp>（</rp><rt>うみなり</rt><rp>）</rp></ruby>が揺れていた。冬の日、少女は丘の上で耳を澄ませた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が光っていた。真夜中、技師は森の奥で扉を開けた。冬の日、旅人は港町で耳を澄ませた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が揺れていた。</p>
@@ -2136,7 +2136,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter part">
 <h1>第二部　塔</h1>
 <p>冬の日、商人は時計塔で笑った。</p>
 </body>
@@ -2151,7 +2151,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第1章　<ruby>港町<rp>（</rp><rt>みなとまち</rt><rp>）</rp></ruby></h1>
 <p>冬の日、旅人は図書館で扉を開けた。夕暮れ、老人は石畳の路地で手紙を書いた。<ruby>月影<rp>（</rp><rt>つきかげ</rt><rp>）</rp></ruby>が残っていた。冬の日、灯台守は石畳の路地で手紙を書いた。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>朝、猫は石畳の路地で笑った。<ruby>あの日<rp>（</rp><rt>あのひ</rt><rp>）</rp></ruby>を呼んだ。夕暮れ、少女は図書館で歩いた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が揺れていた。<ruby>ひかり<rp>（</rp><rt>ヒカリ</rt><rp>）</rp></ruby>を呼んだ。</p>
@@ -2173,7 +2173,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第2章　<ruby>港町<rp>（</rp><rt>みなとまち</rt><rp>）</rp></ruby></h1>
 <p>祭りの夜、旅人は屋根裏で耳を澄ませた。<ruby>月影<rp>（</rp><rt>つきかげ</rt><rp>）</rp></ruby>が光っていた。真夜中、少女は古い駅で耳を澄ませた。<ruby>ことば<rp>（</rp><rt>言葉</rt><rp>）</rp></ruby>を探した。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>雨上がり、旅人は図書館で灯りを点した。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が残っていた。<ruby>あの日<rp>（</rp><rt>あのひ</rt><rp>）</rp></ruby>を呼んだ。祭りの夜、少女は森の奥で手紙を書いた。<ruby>灯籠<rp>（</rp><rt>とうろう</rt><rp>）</rp></ruby>が光っていた。朝、少女は時計塔で扉を開けた。雨上がり、灯台守は屋根裏で耳を澄ませた。<sup><a class="noteref" id="fnref-2" href="#fn-2" epub:type="noteref">2</a></sup></p>
@@ -2195,7 +2195,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第3章　<ruby>石畳<rp>（</rp><rt>いしだたみ</rt><rp>）</rp></ruby></h1>
 <p>夕暮れ、鳥は森の奥で見上げた。冬の日、旅人は港町で扉を開けた。<ruby>燐寸<rp>（</rp><rt>まっち</rt><rp>）</rp></ruby>が光っていた。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>冬の日、書記は市場で歩いた。<ruby>時雨<rp>（</rp><rt>しぐれ</rt><rp>）</rp></ruby>が揺れていた。朝、少年は時計塔で立ち止まった。<ruby>羅針盤<rp>（</rp><rt>らしんばん</rt><rp>）</rp></ruby>が光っていた。夕暮れ、灯台守は丘の上で笑った。祭りの夜、老人は港町で歩いた。<sup><a class="noteref" id="fnref-2" href="#fn-2" epub:type="noteref">2</a></sup></p>
@@ -2217,7 +2217,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第4章　<ruby>屋根裏<rp>（</rp><rt>やねうら</rt><rp>）</rp></ruby></h1>
 <p>朝、技師は図書館で手紙を書いた。真夜中、商人は屋根裏で笑った。朝、鳥は港町で灯りを点した。</p>
 <p>祭りの夜、商人は森の奥で灯りを点した。祭りの夜、老人は港町で立ち止まった。<ruby>硝子<rp>（</rp><rt>がらす</rt><rp>）</rp></ruby>が光っていた。雨上がり、技師は丘の上で見上げた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が揺れていた。朝、商人は屋根裏で灯りを点した。<ruby>蝋燭<rp>（</rp><rt>ろうそく</rt><rp>）</rp></ruby>が遠くに見えた。</p>
@@ -2238,7 +2238,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第5章　<ruby>港町<rp>（</rp><rt>みなとまち</rt><rp>）</rp></ruby></h1>
 <p>祭りの夜、灯台守は港町で歩いた。<ruby>蝋燭<rp>（</rp><rt>ろうそく</rt><rp>）</rp></ruby>が光っていた。夕暮れ、商人は丘の上で耳を澄ませた。<ruby>蝋燭<rp>（</rp><rt>ろうそく</rt><rp>）</rp></ruby>が光っていた。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>雨上がり、鳥は川辺で笑った。<ruby>蝋燭<rp>（</rp><rt>ろうそく</rt><rp>）</rp></ruby>が残っていた。夕暮れ、猫は市場で灯りを点した。冬の日、老人は石畳の路地で耳を澄ませた。<ruby>月影<rp>（</rp><rt>つきかげ</rt><rp>）</rp></ruby>が揺れていた。<sup><a class="noteref" id="fnref-2" href="#fn-2" epub:type="noteref">2</a></sup></p>
@@ -2260,7 +2260,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter part">
 <h1>第三部　帰路</h1>
 <p>夕暮れ、猫は森の奥で扉を開けた。</p>
 </body>
@@ -2275,7 +2275,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第1章　<ruby>石畳<rp>（</rp><rt>いしだたみ</rt><rp>）</rp></ruby></h1>
 <p>朝、少年は屋根裏で扉を開けた。<ruby>ことば<rp>（</rp><rt>言葉</rt><rp>）</rp></ruby>を探した。雨上がり、少年は港町で耳を澄ませた。朝、少年は石畳の路地で灯りを点した。<ruby>ひかり<rp>（</rp><rt>ヒカリ</rt><rp>）</rp></ruby>を思い出した。</p>
 <p>祭りの夜、灯台守は川辺で手紙を書いた。真夜中、老人は丘の上で見上げた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が揺れていた。真夜中、猫は森の奥で見上げた。夕暮れ、灯台守は屋根裏で立ち止まった。<ruby>海鳴<rp>（</rp><rt>うみなり</rt><rp>）</rp></ruby>が揺れていた。<ruby>あの日<rp>（</rp><rt>あのひ</rt><rp>）</rp></ruby>を呼んだ。</p>
@@ -2296,7 +2296,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第2章　<ruby>時計塔<rp>（</rp><rt>とけいとう</rt><rp>）</rp></ruby></h1>
 <p>朝、商人は川辺で笑った。真夜中、技師は森の奥で笑った。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>真夜中、旅人は図書館で扉を開けた。朝、商人は港町で手紙を書いた。<ruby>時雨<rp>（</rp><rt>しぐれ</rt><rp>）</rp></ruby>が光っていた。朝、旅人は港町で立ち止まった。<sup><a class="noteref" id="fnref-2" href="#fn-2" epub:type="noteref">2</a></sup></p>
@@ -2318,7 +2318,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第3章　<ruby>港町<rp>（</rp><rt>みなとまち</rt><rp>）</rp></ruby></h1>
 <p>祭りの夜、旅人は港町で灯りを点した。<ruby>黄昏<rp>（</rp><rt>たそがれ</rt><rp>）</rp></ruby>が揺れていた。夕暮れ、猫は図書館で立ち止まった。<ruby>硝子<rp>（</rp><rt>がらす</rt><rp>）</rp></ruby>が残っていた。<ruby>あの日<rp>（</rp><rt>あのひ</rt><rp>）</rp></ruby>を呼んだ。</p>
 <p>真夜中、灯台守は川辺で見上げた。<ruby>灯籠<rp>（</rp><rt>とうろう</rt><rp>）</rp></ruby>が遠くに見えた。夕暮れ、技師は森の奥で見上げた。真夜中、灯台守は時計塔で灯りを点した。<ruby>黄昏<rp>（</rp><rt>たそがれ</rt><rp>）</rp></ruby>が揺れていた。</p>
@@ -2339,7 +2339,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第4章　<ruby>時計塔<rp>（</rp><rt>とけいとう</rt><rp>）</rp></ruby></h1>
 <p>冬の日、書記は石畳の路地で灯りを点した。<ruby>黄昏<rp>（</rp><rt>たそがれ</rt><rp>）</rp></ruby>が遠くに見えた。冬の日、鳥は屋根裏で耳を澄ませた。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>夕暮れ、鳥は石畳の路地で笑った。夕暮れ、少年は丘の上で手紙を書いた。</p>
@@ -2361,7 +2361,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第5章　<ruby>港町<rp>（</rp><rt>みなとまち</rt><rp>）</rp></ruby></h1>
 <p>雨上がり、商人は港町で立ち止まった。<ruby>月影<rp>（</rp><rt>つきかげ</rt><rp>）</rp></ruby>が遠くに見えた。夕暮れ、商人は森の奥で扉を開けた。夕暮れ、少年は図書館で見上げた。冬の日、旅人は時計塔で耳を澄ませた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が光っていた。<ruby>ことば<rp>（</rp><rt>言葉</rt><rp>）</rp></ruby>を思い出した。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>朝、商人は川辺で歩いた。夕暮れ、灯台守は石畳の路地で扉を開けた。<sup><a class="noteref" id="fnref-2" href="#fn-2" epub:type="noteref">2</a></sup></p>
@@ -2383,7 +2383,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第6章　<ruby>屋根裏<rp>（</rp><rt>やねうら</rt><rp>）</rp></ruby></h1>
 <p>冬の日、商人は屋根裏で笑った。祭りの夜、商人は森の奥で扉を開けた。<ruby>陽炎<rp>（</rp><rt>かげろう</rt><rp>）</rp></ruby>が残っていた。朝、技師は川辺で見上げた。<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></p>
 <p>朝、鳥は市場で見上げた。<ruby>月影<rp>（</rp><rt>つきかげ</rt><rp>）</rp></ruby>が揺れていた。朝、鳥は図書館で笑った。冬の日、老人は丘の上で扉を開けた。<ruby>硝子<rp>（</rp><rt>がらす</rt><rp>）</rp></ruby>が残っていた。<sup><a class="noteref" id="fnref-2" href="#fn-2" epub:type="noteref">2</a></sup></p>
@@ -2405,7 +2405,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>エピローグ</h1>
 <p>朝、鳥は図書館で耳を澄ませた。冬の日、旅人は石畳の路地で見上げた。夕暮れ、旅人は古い駅で耳を澄ませた。</p>
 <p>最後に、羅針盤を――もう一度だけ見た。</p>
@@ -2422,7 +2422,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
 </head>
-<body>
+<body epub:type="backmatter colophon">
 <h1>奥付</h1>
 <p>灯台と<ruby>羅針盤<rp>（</rp><rt>らしんばん</rt><rp>）</rp></ruby>の記録</p>
 <ul>
@@ -4808,162 +4808,162 @@ application/epub+zip
 <head>
 <title>巻1の1</title>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>巻1の1</h1>
 <p>祭りの夜、鳥は港町で歩いた。</p>
 </body>
 </html>
 
-== OEBPS/text/0002.xhtml (307 bytes)
-== OEBPS/text/0003.xhtml (301 bytes)
-== OEBPS/text/0004.xhtml (304 bytes)
-== OEBPS/text/0005.xhtml (289 bytes)
-== OEBPS/text/0006.xhtml (301 bytes)
-== OEBPS/text/0007.xhtml (307 bytes)
-== OEBPS/text/0008.xhtml (304 bytes)
-== OEBPS/text/0009.xhtml (310 bytes)
-== OEBPS/text/0010.xhtml (309 bytes)
-== OEBPS/text/0011.xhtml (303 bytes)
-== OEBPS/text/0012.xhtml (303 bytes)
-== OEBPS/text/0013.xhtml (306 bytes)
-== OEBPS/text/0014.xhtml (309 bytes)
-== OEBPS/text/0015.xhtml (315 bytes)
-== OEBPS/text/0016.xhtml (304 bytes)
-== OEBPS/text/0017.xhtml (298 bytes)
-== OEBPS/text/0018.xhtml (310 bytes)
-== OEBPS/text/0019.xhtml (307 bytes)
-== OEBPS/text/0020.xhtml (313 bytes)
-== OEBPS/text/0021.xhtml (304 bytes)
-== OEBPS/text/0022.xhtml (298 bytes)
-== OEBPS/text/0023.xhtml (307 bytes)
-== OEBPS/text/0024.xhtml (298 bytes)
-== OEBPS/text/0025.xhtml (309 bytes)
-== OEBPS/text/0026.xhtml (303 bytes)
-== OEBPS/text/0027.xhtml (300 bytes)
-== OEBPS/text/0028.xhtml (291 bytes)
-== OEBPS/text/0029.xhtml (300 bytes)
-== OEBPS/text/0030.xhtml (309 bytes)
-== OEBPS/text/0031.xhtml (304 bytes)
-== OEBPS/text/0032.xhtml (304 bytes)
-== OEBPS/text/0033.xhtml (304 bytes)
-== OEBPS/text/0034.xhtml (301 bytes)
-== OEBPS/text/0035.xhtml (295 bytes)
-== OEBPS/text/0036.xhtml (304 bytes)
-== OEBPS/text/0037.xhtml (292 bytes)
-== OEBPS/text/0038.xhtml (301 bytes)
-== OEBPS/text/0039.xhtml (307 bytes)
-== OEBPS/text/0040.xhtml (309 bytes)
-== OEBPS/text/0041.xhtml (312 bytes)
-== OEBPS/text/0042.xhtml (306 bytes)
-== OEBPS/text/0043.xhtml (300 bytes)
-== OEBPS/text/0044.xhtml (303 bytes)
-== OEBPS/text/0045.xhtml (300 bytes)
-== OEBPS/text/0046.xhtml (301 bytes)
-== OEBPS/text/0047.xhtml (301 bytes)
-== OEBPS/text/0048.xhtml (304 bytes)
-== OEBPS/text/0049.xhtml (307 bytes)
-== OEBPS/text/0050.xhtml (298 bytes)
-== OEBPS/text/0051.xhtml (295 bytes)
-== OEBPS/text/0052.xhtml (301 bytes)
-== OEBPS/text/0053.xhtml (307 bytes)
-== OEBPS/text/0054.xhtml (304 bytes)
-== OEBPS/text/0055.xhtml (315 bytes)
-== OEBPS/text/0056.xhtml (303 bytes)
-== OEBPS/text/0057.xhtml (309 bytes)
-== OEBPS/text/0058.xhtml (303 bytes)
-== OEBPS/text/0059.xhtml (303 bytes)
-== OEBPS/text/0060.xhtml (312 bytes)
-== OEBPS/text/0061.xhtml (301 bytes)
-== OEBPS/text/0062.xhtml (304 bytes)
-== OEBPS/text/0063.xhtml (298 bytes)
-== OEBPS/text/0064.xhtml (310 bytes)
-== OEBPS/text/0065.xhtml (295 bytes)
-== OEBPS/text/0066.xhtml (316 bytes)
-== OEBPS/text/0067.xhtml (307 bytes)
-== OEBPS/text/0068.xhtml (298 bytes)
-== OEBPS/text/0069.xhtml (301 bytes)
-== OEBPS/text/0070.xhtml (303 bytes)
-== OEBPS/text/0071.xhtml (306 bytes)
-== OEBPS/text/0072.xhtml (300 bytes)
-== OEBPS/text/0073.xhtml (309 bytes)
-== OEBPS/text/0074.xhtml (291 bytes)
-== OEBPS/text/0075.xhtml (300 bytes)
-== OEBPS/text/0076.xhtml (301 bytes)
-== OEBPS/text/0077.xhtml (301 bytes)
-== OEBPS/text/0078.xhtml (307 bytes)
-== OEBPS/text/0079.xhtml (307 bytes)
-== OEBPS/text/0080.xhtml (304 bytes)
-== OEBPS/text/0081.xhtml (304 bytes)
-== OEBPS/text/0082.xhtml (307 bytes)
-== OEBPS/text/0083.xhtml (307 bytes)
-== OEBPS/text/0084.xhtml (310 bytes)
-== OEBPS/text/0085.xhtml (306 bytes)
-== OEBPS/text/0086.xhtml (309 bytes)
-== OEBPS/text/0087.xhtml (309 bytes)
-== OEBPS/text/0088.xhtml (309 bytes)
-== OEBPS/text/0089.xhtml (303 bytes)
-== OEBPS/text/0090.xhtml (306 bytes)
-== OEBPS/text/0091.xhtml (298 bytes)
-== OEBPS/text/0092.xhtml (292 bytes)
-== OEBPS/text/0093.xhtml (298 bytes)
-== OEBPS/text/0094.xhtml (307 bytes)
-== OEBPS/text/0095.xhtml (307 bytes)
-== OEBPS/text/0096.xhtml (304 bytes)
-== OEBPS/text/0097.xhtml (301 bytes)
-== OEBPS/text/0098.xhtml (307 bytes)
-== OEBPS/text/0099.xhtml (301 bytes)
-== OEBPS/text/0100.xhtml (300 bytes)
-== OEBPS/text/0101.xhtml (309 bytes)
-== OEBPS/text/0102.xhtml (309 bytes)
-== OEBPS/text/0103.xhtml (300 bytes)
-== OEBPS/text/0104.xhtml (291 bytes)
-== OEBPS/text/0105.xhtml (306 bytes)
-== OEBPS/text/0106.xhtml (307 bytes)
-== OEBPS/text/0107.xhtml (295 bytes)
-== OEBPS/text/0108.xhtml (301 bytes)
-== OEBPS/text/0109.xhtml (310 bytes)
-== OEBPS/text/0110.xhtml (310 bytes)
-== OEBPS/text/0111.xhtml (310 bytes)
-== OEBPS/text/0112.xhtml (307 bytes)
-== OEBPS/text/0113.xhtml (301 bytes)
-== OEBPS/text/0114.xhtml (304 bytes)
-== OEBPS/text/0115.xhtml (309 bytes)
-== OEBPS/text/0116.xhtml (300 bytes)
-== OEBPS/text/0117.xhtml (303 bytes)
-== OEBPS/text/0118.xhtml (300 bytes)
-== OEBPS/text/0119.xhtml (303 bytes)
-== OEBPS/text/0120.xhtml (312 bytes)
-== OEBPS/text/0121.xhtml (292 bytes)
-== OEBPS/text/0122.xhtml (316 bytes)
-== OEBPS/text/0123.xhtml (286 bytes)
-== OEBPS/text/0124.xhtml (310 bytes)
-== OEBPS/text/0125.xhtml (304 bytes)
-== OEBPS/text/0126.xhtml (301 bytes)
-== OEBPS/text/0127.xhtml (301 bytes)
-== OEBPS/text/0128.xhtml (310 bytes)
-== OEBPS/text/0129.xhtml (301 bytes)
-== OEBPS/text/0130.xhtml (312 bytes)
-== OEBPS/text/0131.xhtml (309 bytes)
-== OEBPS/text/0132.xhtml (306 bytes)
-== OEBPS/text/0133.xhtml (300 bytes)
-== OEBPS/text/0134.xhtml (306 bytes)
-== OEBPS/text/0135.xhtml (312 bytes)
-== OEBPS/text/0136.xhtml (309 bytes)
-== OEBPS/text/0137.xhtml (309 bytes)
-== OEBPS/text/0138.xhtml (306 bytes)
-== OEBPS/text/0139.xhtml (312 bytes)
-== OEBPS/text/0140.xhtml (291 bytes)
-== OEBPS/text/0141.xhtml (300 bytes)
-== OEBPS/text/0142.xhtml (300 bytes)
-== OEBPS/text/0143.xhtml (312 bytes)
-== OEBPS/text/0144.xhtml (300 bytes)
-== OEBPS/text/0145.xhtml (317 bytes)
-== OEBPS/text/0146.xhtml (305 bytes)
-== OEBPS/text/0147.xhtml (299 bytes)
-== OEBPS/text/0148.xhtml (299 bytes)
-== OEBPS/text/0149.xhtml (311 bytes)
-== OEBPS/text/0150.xhtml (311 bytes)
-== OEBPS/text/0151.xhtml (267 bytes)'
+== OEBPS/text/0002.xhtml (338 bytes)
+== OEBPS/text/0003.xhtml (332 bytes)
+== OEBPS/text/0004.xhtml (335 bytes)
+== OEBPS/text/0005.xhtml (320 bytes)
+== OEBPS/text/0006.xhtml (332 bytes)
+== OEBPS/text/0007.xhtml (338 bytes)
+== OEBPS/text/0008.xhtml (335 bytes)
+== OEBPS/text/0009.xhtml (341 bytes)
+== OEBPS/text/0010.xhtml (340 bytes)
+== OEBPS/text/0011.xhtml (334 bytes)
+== OEBPS/text/0012.xhtml (334 bytes)
+== OEBPS/text/0013.xhtml (337 bytes)
+== OEBPS/text/0014.xhtml (340 bytes)
+== OEBPS/text/0015.xhtml (346 bytes)
+== OEBPS/text/0016.xhtml (335 bytes)
+== OEBPS/text/0017.xhtml (329 bytes)
+== OEBPS/text/0018.xhtml (341 bytes)
+== OEBPS/text/0019.xhtml (338 bytes)
+== OEBPS/text/0020.xhtml (344 bytes)
+== OEBPS/text/0021.xhtml (335 bytes)
+== OEBPS/text/0022.xhtml (329 bytes)
+== OEBPS/text/0023.xhtml (338 bytes)
+== OEBPS/text/0024.xhtml (329 bytes)
+== OEBPS/text/0025.xhtml (340 bytes)
+== OEBPS/text/0026.xhtml (334 bytes)
+== OEBPS/text/0027.xhtml (331 bytes)
+== OEBPS/text/0028.xhtml (322 bytes)
+== OEBPS/text/0029.xhtml (331 bytes)
+== OEBPS/text/0030.xhtml (340 bytes)
+== OEBPS/text/0031.xhtml (335 bytes)
+== OEBPS/text/0032.xhtml (335 bytes)
+== OEBPS/text/0033.xhtml (335 bytes)
+== OEBPS/text/0034.xhtml (332 bytes)
+== OEBPS/text/0035.xhtml (326 bytes)
+== OEBPS/text/0036.xhtml (335 bytes)
+== OEBPS/text/0037.xhtml (323 bytes)
+== OEBPS/text/0038.xhtml (332 bytes)
+== OEBPS/text/0039.xhtml (338 bytes)
+== OEBPS/text/0040.xhtml (340 bytes)
+== OEBPS/text/0041.xhtml (343 bytes)
+== OEBPS/text/0042.xhtml (337 bytes)
+== OEBPS/text/0043.xhtml (331 bytes)
+== OEBPS/text/0044.xhtml (334 bytes)
+== OEBPS/text/0045.xhtml (331 bytes)
+== OEBPS/text/0046.xhtml (332 bytes)
+== OEBPS/text/0047.xhtml (332 bytes)
+== OEBPS/text/0048.xhtml (335 bytes)
+== OEBPS/text/0049.xhtml (338 bytes)
+== OEBPS/text/0050.xhtml (329 bytes)
+== OEBPS/text/0051.xhtml (326 bytes)
+== OEBPS/text/0052.xhtml (332 bytes)
+== OEBPS/text/0053.xhtml (338 bytes)
+== OEBPS/text/0054.xhtml (335 bytes)
+== OEBPS/text/0055.xhtml (346 bytes)
+== OEBPS/text/0056.xhtml (334 bytes)
+== OEBPS/text/0057.xhtml (340 bytes)
+== OEBPS/text/0058.xhtml (334 bytes)
+== OEBPS/text/0059.xhtml (334 bytes)
+== OEBPS/text/0060.xhtml (343 bytes)
+== OEBPS/text/0061.xhtml (332 bytes)
+== OEBPS/text/0062.xhtml (335 bytes)
+== OEBPS/text/0063.xhtml (329 bytes)
+== OEBPS/text/0064.xhtml (341 bytes)
+== OEBPS/text/0065.xhtml (326 bytes)
+== OEBPS/text/0066.xhtml (347 bytes)
+== OEBPS/text/0067.xhtml (338 bytes)
+== OEBPS/text/0068.xhtml (329 bytes)
+== OEBPS/text/0069.xhtml (332 bytes)
+== OEBPS/text/0070.xhtml (334 bytes)
+== OEBPS/text/0071.xhtml (337 bytes)
+== OEBPS/text/0072.xhtml (331 bytes)
+== OEBPS/text/0073.xhtml (340 bytes)
+== OEBPS/text/0074.xhtml (322 bytes)
+== OEBPS/text/0075.xhtml (331 bytes)
+== OEBPS/text/0076.xhtml (332 bytes)
+== OEBPS/text/0077.xhtml (332 bytes)
+== OEBPS/text/0078.xhtml (338 bytes)
+== OEBPS/text/0079.xhtml (338 bytes)
+== OEBPS/text/0080.xhtml (335 bytes)
+== OEBPS/text/0081.xhtml (335 bytes)
+== OEBPS/text/0082.xhtml (338 bytes)
+== OEBPS/text/0083.xhtml (338 bytes)
+== OEBPS/text/0084.xhtml (341 bytes)
+== OEBPS/text/0085.xhtml (337 bytes)
+== OEBPS/text/0086.xhtml (340 bytes)
+== OEBPS/text/0087.xhtml (340 bytes)
+== OEBPS/text/0088.xhtml (340 bytes)
+== OEBPS/text/0089.xhtml (334 bytes)
+== OEBPS/text/0090.xhtml (337 bytes)
+== OEBPS/text/0091.xhtml (329 bytes)
+== OEBPS/text/0092.xhtml (323 bytes)
+== OEBPS/text/0093.xhtml (329 bytes)
+== OEBPS/text/0094.xhtml (338 bytes)
+== OEBPS/text/0095.xhtml (338 bytes)
+== OEBPS/text/0096.xhtml (335 bytes)
+== OEBPS/text/0097.xhtml (332 bytes)
+== OEBPS/text/0098.xhtml (338 bytes)
+== OEBPS/text/0099.xhtml (332 bytes)
+== OEBPS/text/0100.xhtml (331 bytes)
+== OEBPS/text/0101.xhtml (340 bytes)
+== OEBPS/text/0102.xhtml (340 bytes)
+== OEBPS/text/0103.xhtml (331 bytes)
+== OEBPS/text/0104.xhtml (322 bytes)
+== OEBPS/text/0105.xhtml (337 bytes)
+== OEBPS/text/0106.xhtml (338 bytes)
+== OEBPS/text/0107.xhtml (326 bytes)
+== OEBPS/text/0108.xhtml (332 bytes)
+== OEBPS/text/0109.xhtml (341 bytes)
+== OEBPS/text/0110.xhtml (341 bytes)
+== OEBPS/text/0111.xhtml (341 bytes)
+== OEBPS/text/0112.xhtml (338 bytes)
+== OEBPS/text/0113.xhtml (332 bytes)
+== OEBPS/text/0114.xhtml (335 bytes)
+== OEBPS/text/0115.xhtml (340 bytes)
+== OEBPS/text/0116.xhtml (331 bytes)
+== OEBPS/text/0117.xhtml (334 bytes)
+== OEBPS/text/0118.xhtml (331 bytes)
+== OEBPS/text/0119.xhtml (334 bytes)
+== OEBPS/text/0120.xhtml (343 bytes)
+== OEBPS/text/0121.xhtml (323 bytes)
+== OEBPS/text/0122.xhtml (347 bytes)
+== OEBPS/text/0123.xhtml (317 bytes)
+== OEBPS/text/0124.xhtml (341 bytes)
+== OEBPS/text/0125.xhtml (335 bytes)
+== OEBPS/text/0126.xhtml (332 bytes)
+== OEBPS/text/0127.xhtml (332 bytes)
+== OEBPS/text/0128.xhtml (341 bytes)
+== OEBPS/text/0129.xhtml (332 bytes)
+== OEBPS/text/0130.xhtml (343 bytes)
+== OEBPS/text/0131.xhtml (340 bytes)
+== OEBPS/text/0132.xhtml (337 bytes)
+== OEBPS/text/0133.xhtml (331 bytes)
+== OEBPS/text/0134.xhtml (337 bytes)
+== OEBPS/text/0135.xhtml (343 bytes)
+== OEBPS/text/0136.xhtml (340 bytes)
+== OEBPS/text/0137.xhtml (340 bytes)
+== OEBPS/text/0138.xhtml (337 bytes)
+== OEBPS/text/0139.xhtml (343 bytes)
+== OEBPS/text/0140.xhtml (322 bytes)
+== OEBPS/text/0141.xhtml (331 bytes)
+== OEBPS/text/0142.xhtml (331 bytes)
+== OEBPS/text/0143.xhtml (343 bytes)
+== OEBPS/text/0144.xhtml (331 bytes)
+== OEBPS/text/0145.xhtml (348 bytes)
+== OEBPS/text/0146.xhtml (336 bytes)
+== OEBPS/text/0147.xhtml (330 bytes)
+== OEBPS/text/0148.xhtml (330 bytes)
+== OEBPS/text/0149.xhtml (342 bytes)
+== OEBPS/text/0150.xhtml (342 bytes)
+== OEBPS/text/0151.xhtml (299 bytes)'
 `;
 
 snapshot[`出力のスナップショット > tech-book 2.0.1 1`] = `
@@ -5447,7 +5447,7 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
 </head>
-<body>
+<body epub:type="frontmatter cover">
 <p><img src="../assets/diagrams/cover.png" alt="Cover"/></p>
 </body>
 </html>
@@ -5461,15 +5461,15 @@ application/epub+zip
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>Introduction</h1>
-<h2 id="sec-1">Scope {#not-an-id-in-commonmark}</h2>
+<section><h2 id="sec-1">Scope {#not-an-id-in-commonmark}</h2>
 <p id="scope">This book is <em>synthetic</em>.</p>
 <p>It exercises reference links like <a href="https://example.com/spec" title="Specification">the spec</a>,
 autolinks like <a href="https://example.com/epub">https://example.com/epub</a>, and links to <a href="0004.xhtml#tree">basics</a>.</p>
 <p>Inline <code>code &lt;with&gt; &amp; entities</code>, <em>emphasis</em>, <strong>strong</strong>, and a hard break<br/>
 on the next line.</p>
-<p><img src="../assets/diagrams/flow.svg" alt="A flow diagram"/></p>
+<p><img src="../assets/diagrams/flow.svg" alt="A flow diagram"/></p></section>
 </body>
 </html>
 
@@ -5482,7 +5482,7 @@ on the next line.</p>
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
 </head>
-<body>
+<body epub:type="bodymatter part">
 <h1>Part I: Basics</h1>
 </body>
 </html>
@@ -5496,18 +5496,18 @@ on the next line.</p>
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>Directory layout</h1>
 <pre id="tree">project/
   book.toml
   body/
   meta/
   assets/</pre>
-<h2 id="sec-1">The book file</h2>
+<section><h2 id="sec-1">The book file</h2>
 <pre><code class="language-toml">title = "x &lt; y &amp;&amp; z"
 </code></pre>
-<h2 id="sec-2">Steps</h2>
-<h3 id="sec-3">Writing</h3>
+</section><section><h2 id="sec-2">Steps</h2>
+<section><h3 id="sec-3">Writing</h3>
 <ol>
 <li>Write <code>book.toml</code>.</li>
 <li>Add documents to <code>body/</code>.
@@ -5518,10 +5518,10 @@ on the next line.</p>
 </li>
 <li>Build.</li>
 </ol>
-<h4 id="sec-4">Note {#ignored}</h4>
+<section><h4 id="sec-4">Note {#ignored}</h4>
 <blockquote>
 <p><strong>Note:</strong> a blockquote with a <a href="0002.xhtml">link back</a>.</p>
-</blockquote>
+</blockquote></section></section></section>
 </body>
 </html>
 
@@ -5534,7 +5534,7 @@ on the next line.</p>
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>Ordering</h1>
 <table>
   <thead><tr><th>Name</th><th>Position</th></tr></thead>
@@ -5557,16 +5557,16 @@ on the next line.</p>
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1 id="ns">Namespaces</h1>
 <p xml:lang="ja">日本語の段落。<span lang="en" xml:lang="en">English inside.</span></p>
 <svg xmlns="http://www.w3.org/2000/svg" width="120" height="60" viewBox="0 0 120 60">
   <image xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../assets/diagrams/cover.png" width="60" height="60"/>
   <a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#ns"><text x="70" y="35">top</text></a>
 </svg>
-<h2 id="back">Navigation</h2>
+<section><h2 id="back">Navigation</h2>
 <p>Back to <a href="0005.xhtml">ordering</a>.</p>
-
+</section>
 </body>
 </html>
 
@@ -5579,7 +5579,7 @@ on the next line.</p>
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>Footnotes in English</h1>
 <p>A claim<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup> and another<sup><a class="noteref" id="fnref-2" href="#fn-2" epub:type="noteref">2</a></sup>, then the first again<sup><a class="noteref" id="fnref-1-2" href="#fn-1" epub:type="noteref">1</a></sup>.</p>
 <div class="footnotes"><aside class="footnote" id="fn-1" epub:type="footnote"><p><a href="#fnref-1">1</a> A footnote with <code>code</code> and a <a href="https://example.com/">link</a>.</p></aside><aside class="footnote" id="fn-2" epub:type="footnote"><p><a href="#fnref-2">2</a> A footnote with two paragraphs.</p><p>The second paragraph.</p></aside></div>
@@ -5595,7 +5595,7 @@ on the next line.</p>
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
 </head>
-<body>
+<body epub:type="backmatter colophon">
 <h1>Colophon</h1>
 <p>Built from synthetic text for testing. See <a href="0002.xhtml#scope">the introduction</a>.</p>
 </body>
@@ -5748,7 +5748,7 @@ application/epub+zip
 <head>
 <title>本文</title>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <p>本文だけの文書。</p>
 </body>
 </html>
@@ -5959,7 +5959,7 @@ application/epub+zip
 <head>
 <title>同じ内容</title>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>同じ内容</h1>
 <p>段落の一つ目。<em>強調</em>と<strong>強い強調</strong>。</p>
 <ul>
@@ -5977,7 +5977,7 @@ application/epub+zip
 <head>
 <title>同じ内容</title>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>同じ内容</h1>
 <p>段落の一つ目。<em>強調</em>と<strong>強い強調</strong>。</p>
 <ul>
@@ -5996,7 +5996,7 @@ application/epub+zip
 <head>
 <title>同じ内容</title>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>同じ内容</h1>
 <p>段落の一つ目。<em>強調</em>と<strong>強い強調</strong>。
 </p><ul>
@@ -6040,6 +6040,7 @@ application/epub+zip
 <item id="doc-0006" href="text/0006.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0007" href="text/0007.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0008" href="text/0008.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0009" href="text/0009.xhtml" media-type="application/xhtml+xml"/>
 <item id="css-1" href="assets/style.css" media-type="text/css"/>
 </manifest>
 <spine toc="ncx">
@@ -6051,6 +6052,7 @@ application/epub+zip
 <itemref idref="doc-0006"/>
 <itemref idref="doc-0007"/>
 <itemref idref="doc-0008"/>
+<itemref idref="doc-0009"/>
 </spine>
 </package>
 
@@ -6114,68 +6116,68 @@ application/epub+zip
     </navPoint>
   </navPoint>
   <navPoint id="np-13" playOrder="13">
-    <navLabel><text>章</text></navLabel>
+    <navLabel><text>第二章</text></navLabel>
     <content src="text/0005.xhtml"/>
-    <navPoint id="np-14" playOrder="13">
+    <navPoint id="np-14" playOrder="14">
       <navLabel><text>id を持つ見出し</text></navLabel>
-      <content src="text/0005.xhtml"/>
-      <navPoint id="np-15" playOrder="14">
-        <navLabel><text>自分で id を付けた見出し</text></navLabel>
-        <content src="text/0005.xhtml#user-id"/>
-      </navPoint>
-      <navPoint id="np-16" playOrder="15">
-        <navLabel><text>id のない見出し</text></navLabel>
-        <content src="text/0005.xhtml#sec-2"/>
-        <navPoint id="np-17" playOrder="16">
-          <navLabel><text>さらに下</text></navLabel>
-          <content src="text/0005.xhtml#sec-4"/>
-        </navPoint>
-      </navPoint>
-      <navPoint id="np-18" playOrder="17">
-        <navLabel><text>sec-3 を自分で付けた見出し</text></navLabel>
-        <content src="text/0005.xhtml#sec-3"/>
-      </navPoint>
-      <navPoint id="np-19" playOrder="18">
-        <navLabel><text>次の id のない見出し</text></navLabel>
-        <content src="text/0005.xhtml#sec-5"/>
-      </navPoint>
-    </navPoint>
-    <navPoint id="np-20" playOrder="19">
-      <navLabel><text>HTML の見出し</text></navLabel>
       <content src="text/0006.xhtml"/>
-      <navPoint id="np-21" playOrder="20">
-        <navLabel><text>閉じ忘れた見出し</text></navLabel>
-        <content src="text/0006.xhtml#sec-1"/>
-        <navPoint id="np-22" playOrder="21">
-          <navLabel><text>div の中の見出し</text></navLabel>
-          <content src="text/0006.xhtml#sec-2"/>
+      <navPoint id="np-15" playOrder="15">
+        <navLabel><text>自分で id を付けた見出し</text></navLabel>
+        <content src="text/0006.xhtml#user-id"/>
+      </navPoint>
+      <navPoint id="np-16" playOrder="16">
+        <navLabel><text>id のない見出し</text></navLabel>
+        <content src="text/0006.xhtml#sec-2"/>
+        <navPoint id="np-17" playOrder="17">
+          <navLabel><text>さらに下</text></navLabel>
+          <content src="text/0006.xhtml#sec-4"/>
         </navPoint>
       </navPoint>
-      <navPoint id="np-23" playOrder="22">
-        <navLabel><text>空白の まとめ</text></navLabel>
+      <navPoint id="np-18" playOrder="18">
+        <navLabel><text>sec-3 を自分で付けた見出し</text></navLabel>
         <content src="text/0006.xhtml#sec-3"/>
       </navPoint>
+      <navPoint id="np-19" playOrder="19">
+        <navLabel><text>次の id のない見出し</text></navLabel>
+        <content src="text/0006.xhtml#sec-5"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-20" playOrder="20">
+      <navLabel><text>HTML の見出し</text></navLabel>
+      <content src="text/0007.xhtml"/>
+      <navPoint id="np-21" playOrder="21">
+        <navLabel><text>閉じ忘れた見出し</text></navLabel>
+        <content src="text/0007.xhtml#sec-1"/>
+        <navPoint id="np-22" playOrder="22">
+          <navLabel><text>div の中の見出し</text></navLabel>
+          <content src="text/0007.xhtml#sec-2"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="np-23" playOrder="23">
+        <navLabel><text>空白の まとめ</text></navLabel>
+        <content src="text/0007.xhtml#sec-3"/>
+      </navPoint>
     </navPoint>
   </navPoint>
 </navPoint>
-<navPoint id="np-24" playOrder="23">
+<navPoint id="np-24" playOrder="24">
   <navLabel><text>付録 A</text></navLabel>
-  <content src="text/0007.xhtml"/>
-  <navPoint id="np-25" playOrder="24">
-    <navLabel><text>付録 B</text></navLabel>
-    <content src="text/0007.xhtml#sec-1"/>
-  </navPoint>
-</navPoint>
-<navPoint id="np-26" playOrder="25">
-  <navLabel><text>奥付</text></navLabel>
   <content src="text/0008.xhtml"/>
-  <navPoint id="np-27" playOrder="26">
-    <navLabel><text>著者</text></navLabel>
+  <navPoint id="np-25" playOrder="25">
+    <navLabel><text>付録 B</text></navLabel>
     <content src="text/0008.xhtml#sec-1"/>
   </navPoint>
-  <navPoint id="np-28" playOrder="27">
+</navPoint>
+<navPoint id="np-26" playOrder="26">
+  <navLabel><text>奥付</text></navLabel>
+  <content src="text/0009.xhtml"/>
+  <navPoint id="np-27" playOrder="27">
+    <navLabel><text>著者</text></navLabel>
+    <content src="text/0009.xhtml#sec-1"/>
+  </navPoint>
+  <navPoint id="np-28" playOrder="28">
     <navLabel><text>発行</text></navLabel>
-    <content src="text/0008.xhtml#sec-2"/>
+    <content src="text/0009.xhtml#sec-2"/>
   </navPoint>
 </navPoint>
 </navMap>
@@ -6257,6 +6259,20 @@ application/epub+zip
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
 <head>
+<title>第二章</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body>
+<h1>第二章</h1>
+<p>入れ子のディレクトリの扉。EPUB 3.0 では division になる。</p>
+</body>
+</html>
+
+== OEBPS/text/0006.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
 <title>id を持つ見出し</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
@@ -6272,7 +6288,7 @@ application/epub+zip
 </body>
 </html>
 
-== OEBPS/text/0006.xhtml
+== OEBPS/text/0007.xhtml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
@@ -6289,7 +6305,7 @@ application/epub+zip
 </body>
 </html>
 
-== OEBPS/text/0007.xhtml
+== OEBPS/text/0008.xhtml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
@@ -6305,7 +6321,7 @@ application/epub+zip
 </body>
 </html>
 
-== OEBPS/text/0008.xhtml
+== OEBPS/text/0009.xhtml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
@@ -6358,6 +6374,7 @@ application/epub+zip
 <item id="doc-0006" href="text/0006.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0007" href="text/0007.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0008" href="text/0008.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0009" href="text/0009.xhtml" media-type="application/xhtml+xml"/>
 <item id="css-1" href="assets/style.css" media-type="text/css"/>
 </manifest>
 <spine toc="ncx">
@@ -6369,6 +6386,7 @@ application/epub+zip
 <itemref idref="doc-0006"/>
 <itemref idref="doc-0007"/>
 <itemref idref="doc-0008"/>
+<itemref idref="doc-0009"/>
 </spine>
 </package>
 
@@ -6432,68 +6450,68 @@ application/epub+zip
     </navPoint>
   </navPoint>
   <navPoint id="np-13" playOrder="13">
-    <navLabel><text>章</text></navLabel>
+    <navLabel><text>第二章</text></navLabel>
     <content src="text/0005.xhtml"/>
-    <navPoint id="np-14" playOrder="13">
+    <navPoint id="np-14" playOrder="14">
       <navLabel><text>id を持つ見出し</text></navLabel>
-      <content src="text/0005.xhtml"/>
-      <navPoint id="np-15" playOrder="14">
-        <navLabel><text>自分で id を付けた見出し</text></navLabel>
-        <content src="text/0005.xhtml#user-id"/>
-      </navPoint>
-      <navPoint id="np-16" playOrder="15">
-        <navLabel><text>id のない見出し</text></navLabel>
-        <content src="text/0005.xhtml#sec-2"/>
-        <navPoint id="np-17" playOrder="16">
-          <navLabel><text>さらに下</text></navLabel>
-          <content src="text/0005.xhtml#sec-4"/>
-        </navPoint>
-      </navPoint>
-      <navPoint id="np-18" playOrder="17">
-        <navLabel><text>sec-3 を自分で付けた見出し</text></navLabel>
-        <content src="text/0005.xhtml#sec-3"/>
-      </navPoint>
-      <navPoint id="np-19" playOrder="18">
-        <navLabel><text>次の id のない見出し</text></navLabel>
-        <content src="text/0005.xhtml#sec-5"/>
-      </navPoint>
-    </navPoint>
-    <navPoint id="np-20" playOrder="19">
-      <navLabel><text>HTML の見出し</text></navLabel>
       <content src="text/0006.xhtml"/>
-      <navPoint id="np-21" playOrder="20">
-        <navLabel><text>閉じ忘れた見出し</text></navLabel>
-        <content src="text/0006.xhtml#sec-1"/>
-        <navPoint id="np-22" playOrder="21">
-          <navLabel><text>div の中の見出し</text></navLabel>
-          <content src="text/0006.xhtml#sec-2"/>
+      <navPoint id="np-15" playOrder="15">
+        <navLabel><text>自分で id を付けた見出し</text></navLabel>
+        <content src="text/0006.xhtml#user-id"/>
+      </navPoint>
+      <navPoint id="np-16" playOrder="16">
+        <navLabel><text>id のない見出し</text></navLabel>
+        <content src="text/0006.xhtml#sec-2"/>
+        <navPoint id="np-17" playOrder="17">
+          <navLabel><text>さらに下</text></navLabel>
+          <content src="text/0006.xhtml#sec-4"/>
         </navPoint>
       </navPoint>
-      <navPoint id="np-23" playOrder="22">
-        <navLabel><text>空白の まとめ</text></navLabel>
+      <navPoint id="np-18" playOrder="18">
+        <navLabel><text>sec-3 を自分で付けた見出し</text></navLabel>
         <content src="text/0006.xhtml#sec-3"/>
       </navPoint>
+      <navPoint id="np-19" playOrder="19">
+        <navLabel><text>次の id のない見出し</text></navLabel>
+        <content src="text/0006.xhtml#sec-5"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-20" playOrder="20">
+      <navLabel><text>HTML の見出し</text></navLabel>
+      <content src="text/0007.xhtml"/>
+      <navPoint id="np-21" playOrder="21">
+        <navLabel><text>閉じ忘れた見出し</text></navLabel>
+        <content src="text/0007.xhtml#sec-1"/>
+        <navPoint id="np-22" playOrder="22">
+          <navLabel><text>div の中の見出し</text></navLabel>
+          <content src="text/0007.xhtml#sec-2"/>
+        </navPoint>
+      </navPoint>
+      <navPoint id="np-23" playOrder="23">
+        <navLabel><text>空白の まとめ</text></navLabel>
+        <content src="text/0007.xhtml#sec-3"/>
+      </navPoint>
     </navPoint>
   </navPoint>
 </navPoint>
-<navPoint id="np-24" playOrder="23">
+<navPoint id="np-24" playOrder="24">
   <navLabel><text>付録 A</text></navLabel>
-  <content src="text/0007.xhtml"/>
-  <navPoint id="np-25" playOrder="24">
-    <navLabel><text>付録 B</text></navLabel>
-    <content src="text/0007.xhtml#sec-1"/>
-  </navPoint>
-</navPoint>
-<navPoint id="np-26" playOrder="25">
-  <navLabel><text>奥付</text></navLabel>
   <content src="text/0008.xhtml"/>
-  <navPoint id="np-27" playOrder="26">
-    <navLabel><text>著者</text></navLabel>
+  <navPoint id="np-25" playOrder="25">
+    <navLabel><text>付録 B</text></navLabel>
     <content src="text/0008.xhtml#sec-1"/>
   </navPoint>
-  <navPoint id="np-28" playOrder="27">
+</navPoint>
+<navPoint id="np-26" playOrder="26">
+  <navLabel><text>奥付</text></navLabel>
+  <content src="text/0009.xhtml"/>
+  <navPoint id="np-27" playOrder="27">
+    <navLabel><text>著者</text></navLabel>
+    <content src="text/0009.xhtml#sec-1"/>
+  </navPoint>
+  <navPoint id="np-28" playOrder="28">
     <navLabel><text>発行</text></navLabel>
-    <content src="text/0008.xhtml#sec-2"/>
+    <content src="text/0009.xhtml#sec-2"/>
   </navPoint>
 </navPoint>
 </navMap>
@@ -6537,43 +6555,43 @@ application/epub+zip
 <li><a href="text/0004.xhtml#sec-7">題名より後の h1</a></li>
 </ol>
 </li>
-<li><a href="text/0005.xhtml">章</a>
+<li><a href="text/0005.xhtml">第二章</a>
 <ol>
-<li><a href="text/0005.xhtml">id を持つ見出し</a>
+<li><a href="text/0006.xhtml">id を持つ見出し</a>
 <ol>
-<li><a href="text/0005.xhtml#user-id">自分で id を付けた見出し</a></li>
-<li><a href="text/0005.xhtml#sec-2">id のない見出し</a>
+<li><a href="text/0006.xhtml#user-id">自分で id を付けた見出し</a></li>
+<li><a href="text/0006.xhtml#sec-2">id のない見出し</a>
 <ol>
-<li><a href="text/0005.xhtml#sec-4">さらに下</a></li>
+<li><a href="text/0006.xhtml#sec-4">さらに下</a></li>
 </ol>
 </li>
-<li><a href="text/0005.xhtml#sec-3">sec-3 を自分で付けた見出し</a></li>
-<li><a href="text/0005.xhtml#sec-5">次の id のない見出し</a></li>
+<li><a href="text/0006.xhtml#sec-3">sec-3 を自分で付けた見出し</a></li>
+<li><a href="text/0006.xhtml#sec-5">次の id のない見出し</a></li>
 </ol>
 </li>
-<li><a href="text/0006.xhtml">HTML の見出し</a>
+<li><a href="text/0007.xhtml">HTML の見出し</a>
 <ol>
-<li><a href="text/0006.xhtml#sec-1">閉じ忘れた見出し</a>
+<li><a href="text/0007.xhtml#sec-1">閉じ忘れた見出し</a>
 <ol>
-<li><a href="text/0006.xhtml#sec-2">div の中の見出し</a></li>
+<li><a href="text/0007.xhtml#sec-2">div の中の見出し</a></li>
 </ol>
 </li>
-<li><a href="text/0006.xhtml#sec-3">空白の まとめ</a></li>
+<li><a href="text/0007.xhtml#sec-3">空白の まとめ</a></li>
 </ol>
 </li>
 </ol>
 </li>
 </ol>
 </li>
-<li><a href="text/0007.xhtml">付録 A</a>
+<li><a href="text/0008.xhtml">付録 A</a>
 <ol>
-<li><a href="text/0007.xhtml#sec-1">付録 B</a></li>
+<li><a href="text/0008.xhtml#sec-1">付録 B</a></li>
 </ol>
 </li>
-<li><a href="text/0008.xhtml">奥付</a>
+<li><a href="text/0009.xhtml">奥付</a>
 <ol>
-<li><a href="text/0008.xhtml#sec-1">著者</a></li>
-<li><a href="text/0008.xhtml#sec-2">発行</a></li>
+<li><a href="text/0009.xhtml#sec-1">著者</a></li>
+<li><a href="text/0009.xhtml#sec-2">発行</a></li>
 </ol>
 </li>
 </ol>
@@ -6589,7 +6607,7 @@ application/epub+zip
 <title>節の入れ子</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="frontmatter cover">
 <h1>表紙の見出しは目次に入らない</h1>
 <h2>表紙の小見出しも入らない</h2>
 </body>
@@ -6603,7 +6621,7 @@ application/epub+zip
 <title>はじめに</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>はじめに</h1>
 <p>見出しが一つだけの文書。目次には題名だけが出る。</p>
 </body>
@@ -6617,11 +6635,11 @@ application/epub+zip
 <title>第一部</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="bodymatter part">
 <h1>第一部</h1>
-<h2 id="sec-1">第一部の概要</h2>
+<section><h2 id="sec-1">第一部の概要</h2>
 <p>部の扉の節は、子の章より前に並ぶ。</p>
-<h3 id="sec-2">概要の細目</h3>
+<section><h3 id="sec-2">概要の細目</h3></section></section>
 </body>
 </html>
 
@@ -6633,22 +6651,22 @@ application/epub+zip
 <title>第一章</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="bodymatter chapter">
 <h1>第一章</h1>
-<h2 id="sec-1">第一節</h2>
+<section><h2 id="sec-1">第一節</h2>
 <p>本文。</p>
-<h3 id="sec-2">第一項</h3>
-<h4 id="sec-3">第一目</h4>
+<section><h3 id="sec-2">第一項</h3>
+<section><h4 id="sec-3">第一目</h4>
 <p>本文。</p>
-<h3 id="sec-4">第二項</h3>
-<h2 id="sec-5">第二節　<ruby>漢字<rp>（</rp><rt>かんじ</rt><rp>）</rp></ruby>の見出し<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></h2>
-<h5 id="sec-6">レベルの飛んだ見出し</h5>
+</section></section><section><h3 id="sec-4">第二項</h3>
+</section></section><section><h2 id="sec-5">第二節　<ruby>漢字<rp>（</rp><rt>かんじ</rt><rp>）</rp></ruby>の見出し<sup><a class="noteref" id="fnref-1" href="#fn-1" epub:type="noteref">1</a></sup></h2>
+<section><h5 id="sec-6">レベルの飛んだ見出し</h5>
 <p>本文。</p>
-<h1 id="sec-7">題名より後の h1</h1>
+</section></section><section><h1 id="sec-7">題名より後の h1</h1>
 <p>h1 は、題名と同じレベルでも、文書の項目の直下の節になる。</p>
 <h2></h2>
 <p>空の見出しは節にならない。</p>
-<div class="footnotes"><aside class="footnote" id="fn-1" epub:type="footnote"><p><a href="#fnref-1">1</a> 脚注の参照は節の題名から除く。</p></aside></div>
+</section><div class="footnotes"><aside class="footnote" id="fn-1" epub:type="footnote"><p><a href="#fnref-1">1</a> 脚注の参照は節の題名から除く。</p></aside></div>
 </body>
 </html>
 
@@ -6657,18 +6675,12 @@ application/epub+zip
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
 <head>
-<title>id を持つ見出し</title>
+<title>第二章</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
-<h2>id を持つ見出し</h2>
-<p id="sec-1">本文に sec-1 があるため、付ける id は sec-2 から始まる。</p>
-<h3 id="user-id">自分で id を付けた見出し</h3>
-<h3 id="sec-2">id のない見出し</h3>
-<h4 id="sec-4">さらに下</h4>
-<h3 id="sec-3">sec-3 を自分で付けた見出し</h3>
-<h3 id="sec-5">次の id のない見出し</h3>
-
+<body epub:type="bodymatter division">
+<h1>第二章</h1>
+<p>入れ子のディレクトリの扉。EPUB 3.0 では division になる。</p>
 </body>
 </html>
 
@@ -6677,15 +6689,18 @@ application/epub+zip
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
 <head>
-<title>HTML の見出し</title>
+<title>id を持つ見出し</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
-<h1>HTML の見出し
-</h1><h2 id="sec-1">閉じ忘れた見出し</h2>
-<div><h3 id="sec-2">div の中の見出し</h3><p>入れ子の要素の中でも節になる。</p></div>
-<h2 id="sec-3">  空白の   まとめ  </h2>
-
+<body epub:type="bodymatter chapter">
+<h2>id を持つ見出し</h2>
+<p id="sec-1">本文に sec-1 があるため、付ける id は sec-2 から始まる。</p>
+<section><h3 id="user-id">自分で id を付けた見出し</h3>
+</section><section><h3 id="sec-2">id のない見出し</h3>
+<section><h4 id="sec-4">さらに下</h4>
+</section></section><section><h3 id="sec-3">sec-3 を自分で付けた見出し</h3>
+</section><section><h3 id="sec-5">次の id のない見出し</h3>
+</section>
 </body>
 </html>
 
@@ -6694,14 +6709,15 @@ application/epub+zip
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
 <head>
-<title>付録 A</title>
+<title>HTML の見出し</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
-<p>最初の段落は見出しより前にある。題名は最初の見出し「付録 A」になり、二つ目の見出しからが節になる。</p>
-<h2>付録 A</h2>
-<h2 id="sec-1">付録 B</h2>
-<p><a href="0004.xhtml#sec-1">第一章の第一節へ</a></p>
+<body epub:type="bodymatter chapter">
+<h1>HTML の見出し
+</h1><section><h2 id="sec-1">閉じ忘れた見出し</h2>
+<div><h3 id="sec-2">div の中の見出し</h3><p>入れ子の要素の中でも節になる。</p></div>
+</section><section><h2 id="sec-3">  空白の   まとめ  </h2>
+</section>
 </body>
 </html>
 
@@ -6710,15 +6726,31 @@ application/epub+zip
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
 <head>
+<title>付録 A</title>
+<link rel="stylesheet" type="text/css" href="../assets/style.css"/>
+</head>
+<body epub:type="bodymatter chapter">
+<p>最初の段落は見出しより前にある。題名は最初の見出し「付録 A」になり、二つ目の見出しからが節になる。</p>
+<h2>付録 A</h2>
+<section><h2 id="sec-1">付録 B</h2>
+<p><a href="0004.xhtml#sec-1">第一章の第一節へ</a></p></section>
+</body>
+</html>
+
+== OEBPS/text/0009.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
 <title>奥付</title>
 <link rel="stylesheet" type="text/css" href="../assets/style.css"/>
 </head>
-<body>
+<body epub:type="backmatter colophon">
 <h1>奥付</h1>
-<h2 id="sec-1">著者</h2>
+<section><h2 id="sec-1">著者</h2>
 <p>合成データ。</p>
-<h2 id="sec-2">発行</h2>
-<p>合成データ。</p>
+</section><section><h2 id="sec-2">発行</h2>
+<p>合成データ。</p></section>
 </body>
 </html>
 

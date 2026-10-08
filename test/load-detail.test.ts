@@ -91,7 +91,9 @@ Deno.test('index の細かな場合', async (t) => {
   });
   await t.step('index だけのディレクトリ', async () => {
     const book = await load({ 'body/a/index.md': '# I' });
-    expect(book.chapters).toEqual([{ title: 'I', body: '<h1>I</h1>', stylesheets: [], children: [] }]);
+    expect(book.chapters).toEqual([
+      { title: 'I', body: '<h1>I</h1>', epubType: 'bodymatter part', stylesheets: [], children: [] },
+    ]);
   });
   await t.step('body/ の直下の index は普通の文書', async () => {
     const book = await load({ 'body/index.md': 'i', 'body/a.md': 'a' });

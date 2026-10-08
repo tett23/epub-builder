@@ -1,4 +1,4 @@
-// ディレクトリから本を読む（ADR 0006）
+// ディレクトリから本を読む（ADR 0009）
 
 import type { Element, ElementContent, Nodes as HastNodes, Root as HastRoot } from 'hast';
 import { contentDocumentName } from '../epub.ts';
@@ -19,7 +19,7 @@ import { type SourceFormat, sourceToTree } from './convert.ts';
 import { parseToml, TomlDateTime, TomlError, type TomlTable } from './toml.ts';
 import { ConversionError, writeXhtml } from './xhtml-writer.ts';
 
-/** loadBook の警告（ADR 0007） */
+/** loadBook の警告（ADR 0009） */
 export interface LoadWarning {
   /**
    * - `renamed-file`：assets/ のファイル名の空白を `_` に置き換えた
@@ -44,7 +44,7 @@ function defaultOnWarning(warning: LoadWarning): void {
   console.warn(`警告: ${warning.path}${at}: ${warning.message}`);
 }
 
-/** EPUB の中のファイル名に空白類を使わないよう、`_` に置き換える（ADR 0007） */
+/** EPUB の中のファイル名に空白類を使わないよう、`_` に置き換える（ADR 0009） */
 export function replaceSpaces(path: string): string {
   return path.replace(/\s/gu, '_');
 }
@@ -336,7 +336,7 @@ function headingText(heading: Element): string | undefined {
     if (node.type === 'text') return node.value;
     if (node.type !== 'element') return '';
     if (node.tagName === 'rt' || node.tagName === 'rp') return '';
-    // EPUB 2.0.1 の括弧書きのルビ（ADR 0006）と、脚注の参照
+    // EPUB 2.0.1 の括弧書きのルビ（ADR 0009）と、脚注の参照
     if (['rt', 'rp', 'noteref'].some((c) => hasClass(node, c))) return '';
     return node.children.map(text).join('');
   };
@@ -352,10 +352,10 @@ export function headingTitle(tree: HastRoot): string | undefined {
 }
 
 /**
- * 文書の題名に使った最初の見出しを除くすべての見出しを、レベルで入れ子にした節にする（ADR 0008）。
+ * 文書の題名に使った最初の見出しを除くすべての見出しを、レベルで入れ子にした節にする（ADR 0009）。
  * id のない見出しには `sec-<番号>` を付ける
  */
-export function extractSections(tree: HastRoot): Section[] {
+export function extractSections(tree: HastRoot, sectionHeadings?: Set<Element>): Section[] {
   const ids = new Set<string>();
   const collectIds = (node: HastNodes) => {
     if (node.type === 'element' && typeof node.properties.id === 'string') ids.add(node.properties.id);
@@ -376,6 +376,7 @@ export function extractSections(tree: HastRoot): Section[] {
       heading.properties.id = id;
     }
     const level = Number(heading.tagName.slice(1));
+    sectionHeadings?.add(heading);
     const section: Section = { title, id };
     while (stack.length > 0 && stack[stack.length - 1].level >= level) stack.pop();
     const parent = stack[stack.length - 1];
@@ -384,6 +385,37 @@ export function extractSections(tree: HastRoot): Section[] {
     stack.push({ level, section });
   }
   return root;
+}
+
+/**
+ * 本文の直下の、節にした見出しごとのまとまりを section 要素で囲む（ADR 0010）。
+ * 脚注の欄の前で、開いている section をすべて閉じる
+ */
+export function wrapSections(tree: HastRoot, sectionHeadings: Set<Element>): void {
+  const children: HastRoot['children'] = [];
+  const stack: { level: number; element: Element }[] = [];
+  const append = (node: HastRoot['children'][number]) => {
+    const parent = stack[stack.length - 1];
+    if (parent) parent.element.children.push(node as ElementContent);
+    else children.push(node);
+  };
+  for (const node of tree.children) {
+    if (node.type === 'element' && hasClass(node, 'footnotes')) {
+      stack.length = 0;
+      children.push(node);
+      continue;
+    }
+    if (node.type === 'element' && sectionHeadings.has(node)) {
+      const level = Number(node.tagName.slice(1));
+      while (stack.length > 0 && stack[stack.length - 1].level >= level) stack.pop();
+      const section: Element = { type: 'element', tagName: 'section', properties: {}, children: [node] };
+      append(section);
+      stack.push({ level, element: section });
+      continue;
+    }
+    append(node);
+  }
+  tree.children = children;
 }
 
 /** パスを正規化する。`..` で外に出るなら undefined */
@@ -467,7 +499,7 @@ interface ConvertedDocument {
   sections: Section[];
 }
 
-/** EPUB 2.0.1 で使えない要素を警告する（ADR 0007） */
+/** EPUB 2.0.1 で使えない要素を警告する（ADR 0009） */
 function warnEpub2Markup(tree: HastRoot, path: string, onWarning: (warning: LoadWarning) => void): void {
   const walk = (node: HastNodes) => {
     if (node.type === 'element' && (node.tagName === 'math' || node.tagName === 'ruby')) {
@@ -513,8 +545,10 @@ async function convert(
     const tree = sourceToTree(src, doc.format, version);
     rewriteReferences(tree, doc.path, targets);
     if (version === '2.0.1') warnEpub2Markup(tree, doc.path, onWarning);
-    // 表紙は目次に入れないため、見出しを節にしない（ADR 0008）
-    const sections = withSections ? extractSections(tree) : [];
+    // 表紙は目次に入れないため、見出しを節にしない（ADR 0009）
+    const sectionHeadings = new Set<Element>();
+    const sections = withSections ? extractSections(tree, sectionHeadings) : [];
+    if (version === '3.0') wrapSections(tree, sectionHeadings);
     return { title: headingTitle(tree) ?? doc.fallbackTitle, body: writeXhtml(tree, version), sections };
   } catch (e) {
     if (e instanceof ConversionError) {
@@ -526,7 +560,7 @@ async function convert(
 }
 
 /**
- * ディレクトリから本を読む（ADR 0006）。
+ * ディレクトリから本を読む（ADR 0009）。
  * `options.version` は、ルビと脚注の書き出し方を決めるため、`buildEpub` に渡すものと同じにする。
  */
 export async function loadBook(dir: string, options: LoadOptions): Promise<Book> {
@@ -601,26 +635,40 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
   stylesheets.sort((a, b) => compareCodePoints(a.path, b.path));
   const stylesheetPaths = stylesheets.map((s) => s.path);
 
+  // EPUB 3.0 では、文書の役割を body の epub:type で示す（ADR 0010）
+  const role = (epubType: string) => (options.version === '3.0' ? { epubType } : {});
   const withSections = (chapter: Chapter, sections: Section[]): Chapter =>
     sections.length > 0 ? { ...chapter, sections } : chapter;
-  const toChapter = (node: BodyNode): Chapter => {
+  const toChapter = (node: BodyNode, depth: number): Chapter => {
     if (node.kind === 'document') {
       const doc = converted.get(node.doc)!;
-      return withSections({ title: doc.title, body: doc.body, stylesheets: stylesheetPaths }, doc.sections);
+      return withSections(
+        { title: doc.title, body: doc.body, ...role('bodymatter chapter'), stylesheets: stylesheetPaths },
+        doc.sections,
+      );
     }
     const index = node.index ? converted.get(node.index) : undefined;
     return withSections({
       title: index?.title ?? stripSerial(node.name),
       body: index?.body,
+      ...(index ? role(depth === 0 ? 'bodymatter part' : 'bodymatter division') : {}),
       stylesheets: stylesheetPaths,
-      children: node.children.map(toChapter),
+      children: node.children.map((child) => toChapter(child, depth + 1)),
     }, index?.sections ?? []);
   };
-  const chapters = body.map(toChapter);
+  const chapters = body.map((node) => toChapter(node, 0));
   if (meta.colophon) {
     const doc = converted.get(meta.colophon)!;
-    chapters.push(withSections({ title: doc.title, body: doc.body, stylesheets: stylesheetPaths }, doc.sections));
+    chapters.push(
+      withSections(
+        { title: doc.title, body: doc.body, ...role('backmatter colophon'), stylesheets: stylesheetPaths },
+        doc.sections,
+      ),
+    );
   }
+  const cover = meta.cover
+    ? { body: converted.get(meta.cover)!.body, ...role('frontmatter cover'), stylesheets: stylesheetPaths }
+    : undefined;
 
   return {
     metadata,
@@ -628,7 +676,7 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
     stylesheets,
     images,
     coverImage: coverImagePath,
-    cover: meta.cover ? { body: converted.get(meta.cover)!.body, stylesheets: stylesheetPaths } : undefined,
+    cover,
     chapters,
   };
 }

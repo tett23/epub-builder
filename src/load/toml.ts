@@ -1,4 +1,4 @@
-// TOML 1.0.0 の解析器（ADR 0006）。外部の依存を持たない。
+// TOML 1.0.0 の解析器（ADR 0009）。外部の依存を持たない。
 
 export type TomlDateTimeKind = 'offset-date-time' | 'local-date-time' | 'local-date' | 'local-time';
 

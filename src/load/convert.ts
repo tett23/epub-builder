@@ -1,4 +1,4 @@
-// 本文の三つの形式を hast に読む（ADR 0006）
+// 本文の三つの形式を hast に読む（ADR 0009）
 
 import type { ElementContent, Nodes as HastNodes, Root as HastRoot } from 'hast';
 import type {
@@ -154,7 +154,7 @@ function transformFootnotes(tree: MdastRoot, src: string, version: EpubVersion):
 
 /**
  * 文字列のノードの中のルビの記法を置き換える。
- * EPUB 3.0 では ruby 要素、EPUB 2.0.1 では括弧書きの span とする（OPS 2.0.1 は ruby 要素を持たないため。ADR 0006）
+ * EPUB 3.0 では ruby 要素、EPUB 2.0.1 では括弧書きの span とする（OPS 2.0.1 は ruby 要素を持たないため。ADR 0009）
  */
 function transformRuby(tree: MdastRoot, version: EpubVersion): void {
   visit(tree, (node, parent) => {

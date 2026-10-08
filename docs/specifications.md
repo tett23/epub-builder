@@ -5,9 +5,8 @@
 
 - ADR 0003：対応する仕様と、版ごとの出力の構成
 - ADR 0004：公開 API と zip の書き出し
-- ADR 0006：ディレクトリから本を読む方法、本文の変換、ルビと脚注（ADR 0005 を置き換えた）
-- ADR 0007：`assets/` のファイル名の空白の置き換えと、EPUB 2.0.1 で使えない要素の警告（ADR 0006 の一部を改めた）
-- ADR 0008：文書の中の見出しを節として目次に出す（ADR 0006 の一部を改めた）
+- ADR 0009：ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節（ADR 0005 から 0008 を置き換えた）
+- ADR 0010：EPUB 3.0 での部・章・節の意味づけ（`epub:type` と `section` 要素）
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 
@@ -25,9 +24,10 @@
 10. ルビ
 11. 脚注
 12. スタイルシートと画像、参照の書き換え
-13. 誤りと警告の扱い
-14. 扱わないこと
-15. 試験
+13. 部・章・節の意味づけ（EPUB 3.0）
+14. 誤りと警告の扱い
+15. 扱わないこと
+16. 試験
 
 ## 1. 概要
 
@@ -114,13 +114,14 @@ interface Book {
   stylesheets?: { path: string; content: string }[];
   images?: { path: string; mediaType: ImageMediaType; data: Uint8Array }[];
   coverImage?: string; // images のいずれかのパス
-  cover?: { body: string; stylesheets?: string[] }; // 表紙の文書
+  cover?: { body: string; epubType?: string; stylesheets?: string[] }; // 表紙の文書
   chapters: Chapter[]; // 一つ以上
 }
 
 interface Chapter {
   title: string;
   body?: string; // XHTML の body の中身。省くと文書を持たない項目になる
+  epubType?: string; // EPUB 3.0 の body の epub:type（空白で区切った語）
   stylesheets?: string[]; // stylesheets のいずれかのパス
   sections?: Section[]; // 本文の中の節。目次で children より前に置く
   children?: Chapter[];
@@ -154,6 +155,7 @@ interface Section {
 - 画像のメディアタイプが上の 4 種であること。
 - `coverImage`、章と表紙の `stylesheets` が、存在するパスを指すこと。
 - 章が一つ以上あり、題名が空白だけでないこと。
+- `epubType` が空白だけでなく、XML で使えない文字を含まないこと。語が語彙にあるかは調べない。
 - 節を持つ章が本文を持つこと。節の題名が空白だけでないこと。節の `id` が空でなく、空白類と `#` を含まず、本文の中に `id="<id>"` があること。
 
 ## 4. EPUB の出力
@@ -196,6 +198,7 @@ zip の書き方は次のとおり。
 | 目次                       | NCX                                          | ナビゲーション文書と NCX                                  |
 | 内容文書                   | XHTML 1.1 の DOCTYPE                         | `<!DOCTYPE html>`、`xmlns:epub` を宣言                    |
 | 内容文書の `properties`    | なし                                         | インラインの SVG を含めば `svg`、MathML を含めば `mathml` |
+| `body` の `epub:type`      | 書かない                                     | `epubType` を書く                                         |
 
 - 内容文書の `html` 要素には `xml:lang`（EPUB 3.0 では `lang` も）に書誌情報の言語を書く。
 - 内容文書の `title` は、章の題名（表紙は本の題名）とする。
@@ -513,7 +516,57 @@ GFM の脚注の記法で書く。
   - 指す先のファイルがない参照、ディレクトリを指す参照
 - 上に挙げた要素と属性以外の参照（`srcset`、`style` 属性の `url()`、SVG の `a` の `xlink:href` など）は書き換えない。
 
-## 13. 誤りと警告の扱い
+## 13. 部・章・節の意味づけ（EPUB 3.0）
+
+EPUB 3.0 では、構造の意味を `epub:type` と `section` 要素で本文に書く。
+EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、何もしない。
+
+### 文書の役割
+
+`Book` の章と表紙の `epubType` を、内容文書の `body` 要素の `epub:type` に書く（EPUB 3.0 だけ）。
+`loadBook` は、`version: "3.0"` のとき、次の値を付ける。
+
+| 文書                                             | `epub:type`           |
+| ------------------------------------------------ | --------------------- |
+| 表紙（`meta/cover`）                             | `frontmatter cover`   |
+| `body/` の直下のディレクトリの `index`（部の扉） | `bodymatter part`     |
+| それより深いディレクトリの `index`               | `bodymatter division` |
+| `body/` のほかの文書                             | `bodymatter chapter`  |
+| 奥付（`meta/colophon`）                          | `backmatter colophon` |
+
+- `index` のないディレクトリの項目は文書を持たないため、役割も持たない。
+- 役割の語を、題名（「プロローグ」など）から推し量ることはしない。
+
+### 節の section 要素
+
+`loadBook` は、`version: "3.0"` のとき、本文の直下にある節の見出し（8 節で節にしたもの）ごとに、その見出しから始まるまとまりを `section` 要素で囲む。
+
+- まとまりは、その見出しから、同じかより小さいレベルの数の、次の節の見出しの前までとする。入れ子はレベルで決める。
+- 文書の題名に使った見出しと、それより前の内容は囲まない。
+- 脚注の欄（`<div class="footnotes">`）の前で、開いている `section` をすべて閉じる。
+- 節の `id` は見出しに置き、`section` には付けない。`section` に `epub:type` は付けない。
+- ほかの要素の中の見出し（直接書いた `section`、`div`、`blockquote` の中など）は囲まない。目次の節にはなる。
+- 空の見出しなど、節にしない見出しは `section` を始めない。
+
+例：
+
+```html
+<body epub:type="bodymatter chapter">
+  <h1>第一章</h1>
+  <p>導入。</p>
+  <section>
+    <h2 id="sec-1">第一節</h2>
+    <p>本文。</p>
+    <section>
+      <h3 id="sec-2">第一項</h3>
+      <p>本文。</p>
+    </section>
+  </section>
+  <div class="footnotes">…</div>
+</body>
+```
+
+## 14. 誤りと警告の扱い
 
 - 誤りや曖昧さは黙って解決せず、`EpubInputError` を投げる。
 - `loadBook` の誤りは、ファイルのパスと、分かる場合は `行:列` を先頭に付ける。
@@ -529,23 +582,25 @@ GFM の脚注の記法で書く。
 - 警告を誤りとして扱いたい場合は、`onWarning` の中で例外を投げる。
 - 作った EPUB が EPUBCheck で誤りも警告もないことは、`mathml-in-epub-2` と `ruby-in-epub-2` の警告が出ない入力に対してだけ保証する。
 
-## 14. 扱わないこと
+## 15. 扱わないこと
 
 - 固定レイアウト、EPUB 3.1 以降に固有の機能、音声、動画、メディアオーバーレイ、スクリプト、フォントの難読化
 - 特定のリーダーや配信サービスに固有の拡張
 - EPUB を読むこと、書き換えること
 - ストリームでの書き出し、ZIP64
 - EPUB 3 の `landmarks`、EPUB 2 の `guide`
+- EPUB 2.0.1 で `div` などを使って部・章・節の構造を表すこと、`book.toml` やファイルの名前で文書の役割を指定すること
+- 直接書いた `section` 要素や `epub:type` を書き換えたり取り除いたりすること
 - 目次のページを読み順に入れること
 - 目次を設定で明示すること、見出しの位置で文書を分割すること、節にする見出しのレベルを選ぶこと、見出しの番号付け
 - GFM の表などの拡張記法、モノルビ、熟語ルビ、両側ルビ、後注
 - 文書ごとにスタイルシートを選ぶこと
 - フォント、音声、動画を `assets/` に置くこと
-- 変換した XHTML が、版ごとの仕様（使える要素や属性）に合うかの検査。MathML と `ruby` 要素の警告（13 節）を除く
+- 変換した XHTML が、版ごとの仕様（使える要素や属性）に合うかの検査。MathML と `ruby` 要素の警告（14 節）を除く
 - 空白以外の、EPUBCheck が誤りや警告にするファイル名の文字（`"`、`*`、`:`、`<`、`>`、`?`、`\`、`|` など）の置き換えや検査
 - `buildEpub` での警告
 
-## 15. 試験
+## 16. 試験
 
 - `deno task test` で単体テストを走らせる。
 - `test/fixtures/` のフィクスチャは、すべて合成したデータで、著作物を含まない。
@@ -557,7 +612,7 @@ GFM の脚注の記法で書く。
   - `tech-book`：横書き、ltr、英語の技術書。コード、表、参照形式のリンク、章をまたぐリンク
   - `minimal-book`：必須のものだけ
   - `mixed-format-book`：同じ内容を三つの形式で書いたもの
-  - `sections-book`：文書の中の見出しの節（深い入れ子、レベルの飛び、`id` の衝突、空の見出し、`index` と奥付の節）
+  - `sections-book`：文書の中の見出しの節（深い入れ子、レベルの飛び、`id` の衝突、空の見出し、`index` と奥付の節）と、EPUB 3.0 の `section` と `epub:type`（部の扉、入れ子の扉）
 - フィクスチャと作る版の一覧は `test/fixtures.ts` にある。テストは、一覧とディレクトリが合うことを確かめる。
 - `test/__snapshots__/` に、各フィクスチャから作った EPUB の中身を記録している。出力を変えたときは `deno test --allow-read --allow-write --allow-run=git,unzip test/fixtures.test.ts -- --update` で更新し、差分を確かめる。
 - `edge-book` には空白類を含む名前の画像を置き、置き換えた EPUB が EPUBCheck を通ることを確かめる。
