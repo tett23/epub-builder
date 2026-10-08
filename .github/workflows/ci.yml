@@ -25,3 +25,30 @@ jobs:
       - run: deno lint
       - run: deno task check
       - run: deno task test
+
+  epubcheck:
+    name: EPUBCheck
+    runs-on: ubuntu-24.04
+    env:
+      EPUBCHECK_VERSION: 5.4.0
+    steps:
+      - uses: actions/checkout@v7
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Download EPUBCheck
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/epubcheck.zip" \
+            "https://github.com/w3c/epubcheck/releases/download/v${EPUBCHECK_VERSION}/epubcheck-${EPUBCHECK_VERSION}.zip"
+          unzip -q "$RUNNER_TEMP/epubcheck.zip" -d "$RUNNER_TEMP"
+      - run: deno task build:sample
+      # ADR 0003：誤りも警告もないこと
+      - name: Validate EPUB 2.0.1 and 3.0
+        run: |
+          for epub in build/sample-book-2.0.1.epub build/sample-book-3.0.epub; do
+            java -jar "$RUNNER_TEMP/epubcheck-${EPUBCHECK_VERSION}/epubcheck.jar" --failonwarnings "$epub"
+          done

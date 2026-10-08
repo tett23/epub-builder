@@ -3,12 +3,26 @@
 EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ。Deno で動く。
 
 書誌情報、本文（XHTML）、スタイルシート、画像を渡すと、EPUB のファイル（zip）のバイト列を返す。
-実行時の依存は持たない。
+中核のモジュール（`mod.ts`）は実行時の依存を持たない。
 
-まだ実装していない。設計上の決定とその理由は [docs/adr/](docs/adr/) に記録している。
+決まった形に並べたディレクトリ（`book.toml`、`body/`、`meta/`、`assets/`）から本を読むこともできる（`load.ts`）。
+本文は Markdown、XHTML、HTML で書け、Markdown ではルビと脚注を使える。
+
+```ts
+import { buildEpub } from './mod.ts';
+import { loadBook } from './load.ts';
+
+const book = await loadBook('path/to/project', { version: '3.0' });
+await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
+```
+
+ディレクトリの例は [test/fixtures/sample-book/](test/fixtures/sample-book/) にある。
+
+設計上の決定とその理由は [docs/adr/](docs/adr/) に記録している。
 
 - 対応する仕様と出力の構成：[ADR 0003](docs/adr/0003-epub-2-0-1-and-3-0-output.md)
 - 公開 API と zip の作り方：[ADR 0004](docs/adr/0004-public-api-and-zip-writer.md)
+- ディレクトリの構成、本文の変換、ルビと脚注：[ADR 0006](docs/adr/0006-project-directory-layout-without-ruby-in-epub-2.md)
 
 ## 開発
 

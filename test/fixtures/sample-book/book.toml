@@ -1,0 +1,10 @@
+# 合成したテスト用の書誌情報
+identifier = "urn:uuid:3f2b6c1e-8a4d-4e0b-9c7a-1d2e3f4a5b6c"
+title = "試験用の本"
+language = "ja"
+authors = ["試験 太郎", "Test Author"]
+publisher = "epub-builder"
+description = "ディレクトリから EPUB を作る処理を確かめるための合成データ"
+modified = 2026-10-09T00:00:00Z
+page_progression_direction = "rtl"
+cover_image = "assets/images/cover.svg"

@@ -1,0 +1,9 @@
+html {
+  writing-mode: vertical-rl;
+}
+.cover {
+  background: url("images/cover.svg");
+}
+.note {
+  color: gray;
+}
