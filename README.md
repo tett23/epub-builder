@@ -22,6 +22,7 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 
 - 対応する仕様と出力の構成：[ADR 0003](docs/adr/0003-epub-2-0-1-and-3-0-output.md)
 - 公開 API と zip の作り方：[ADR 0004](docs/adr/0004-public-api-and-zip-writer.md)
+- 現在の仕様のまとめ：[docs/specifications.md](docs/specifications.md)
 - ディレクトリの構成、本文の変換、ルビと脚注：[ADR 0006](docs/adr/0006-project-directory-layout-without-ruby-in-epub-2.md)
 
 ## 開発
