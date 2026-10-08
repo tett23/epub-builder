@@ -5,7 +5,7 @@
 
 - ADR 0003：対応する仕様と、版ごとの出力の構成
 - ADR 0004：公開 API と zip の書き出し
-- ADR 0013：ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉（ADR 0005 から 0012 を置き換えた）
+- ADR 0014：ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け（ADR 0005 から 0013 を置き換えた）
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 
@@ -228,9 +228,10 @@ zip の書き方は次のとおり。
       01-first.md
       02-second.xhtml
       03-third.html
-  meta/              表紙、扉、奥付（任意）
+  meta/              表紙、扉、後付け、奥付（任意）
     cover.md
     titlepage.md
+    afterword.md
     colophon.xhtml
   assets/            スタイルシートと画像（任意）
     style.css
@@ -253,7 +254,21 @@ zip の書き方は次のとおり。
 
 ### `meta/`
 
-- 表紙 `cover`、扉 `titlepage`、奥付 `colophon` を、`.md`、`.xhtml`、`.html` のいずれかで置ける。どれも任意。
+- 表紙 `cover`、扉 `titlepage`、後付け、奥付 `colophon` を、`.md`、`.xhtml`、`.html` のいずれかで置ける。どれも任意。
+- 後付けの名前は次のとおり。読み順は本文の後、奥付の前で、表の順とする。
+
+| 名前              | 後付け     |
+| ----------------- | ---------- |
+| `afterword`       | あとがき   |
+| `acknowledgments` | 謝辞       |
+| `appendix`        | 付録       |
+| `bibliography`    | 参考文献   |
+| `glossary`        | 用語集     |
+| `index`           | 索引       |
+| `copyright-page`  | 著作権表示 |
+
+- `meta/` の `index` は索引であり、`body/` のディレクトリの `index`（部の扉）とは別の意味である。
+- 同じ種類の後付けは一つだけ置ける。表紙、扉、後付け、奥付以外の付き物（前書き、凡例、献辞など）は、本文として `body/` に置く。
 - 扉は、置いた文書をそのまま使う。書誌情報から扉を自動で作ることはしない。
 - ほかの名前のファイル、サブディレクトリ、拡張子を除いて同じ名前の組があれば例外とする。
 
@@ -317,7 +332,7 @@ cover_image = "assets/images/cover.jpg"
 - 数字を数として比べない。`10-` は `2-` より前に来るため、連番の桁はユーザーがそろえる。
 - サブディレクトリは、その位置で中身を展開する（深さ優先）。
 - サブディレクトリの中の `index`（`.md`、`.xhtml`、`.html`）は、名前の順に関わらず、そのディレクトリの最初の文書とする。`body/` の直下の `index` は普通の文書として扱う。
-- 本全体の読み順は、`meta/cover`、`meta/titlepage`、`body/` の文書、`meta/colophon` の順とする。
+- 本全体の読み順は、`meta/cover`、`meta/titlepage`、`body/` の文書、`meta/` の後付け（5 節の表の順）、`meta/colophon` の順とする。
 
 ## 8. 目次
 
@@ -334,14 +349,14 @@ cover_image = "assets/images/cover.jpg"
   2. 見出しがなければ、ファイルの名前から拡張子と先頭の連番を除いたもの。
 - `index` のないディレクトリの題名は、ディレクトリの名前から先頭の連番を除いたものとする。
 - 先頭の連番は、正規表現 `^[0-9]+[-_.]` に合う部分とする。除くと空になる場合（`01.md`）は除かない。
-- 表紙と扉は目次に入れない。奥付は目次の最後の項目とする。
+- 表紙と扉は目次に入れない。後付けは本文の項目の後に読み順に並べ、奥付は目次の最後の項目とする。後付けと奥付の題名も、文書の題名の規則で決める（見出しがなければ `afterword` などのファイルの名前）。
 
 ### 節（文書の中の見出し）
 
 - 各文書の項目の下に、その文書の中の見出しを節として続ける。対象は、文書の題名に使った最初の見出しを除く、すべての `h1` から `h6` である。
 - 入れ子はレベルで決める。ある見出しは、それより前にある、レベルの数がより小さい見出しのうち最も近いものの子とする。そのような見出しがなければ、文書の項目の直下に置く。レベルが飛んでもよい。
 - ディレクトリの `index` の節は、そのディレクトリの項目の下に、子の項目より前に置く。
-- 奥付の見出しも節にする。表紙と扉の見出しは節にしない（`id` も付けない）。
+- 後付けと奥付の見出しも節にする。表紙と扉の見出しは節にしない（`id` も付けない）。
 - 脚注の欄（`<div class="footnotes">`）の中の見出しは節にしない。
 - 節の題名は、文書の題名と同じ規則で決める。空になる見出しは節にしない。
 - 見出しに `id` があれば、それを行き先に使う。なければ、文書ごとに `sec-1`、`sec-2` … を文書の順に付け、本文の見出しに書き出す。本文に同じ `id` があれば、その番号を飛ばす。
@@ -492,7 +507,7 @@ GFM の脚注の記法で書く。
 
 ### スタイルシート
 
-- `assets/` の下のすべての `.css` を、すべての内容文書（表紙、扉、本文、奥付）に適用する。
+- `assets/` の下のすべての `.css` を、すべての内容文書（表紙、扉、本文、後付け、奥付）に適用する。
 - 順は、パスの符号位置の順とする。
 - スタイルシートの中身は解析も書き換えもしない。ディレクトリの構成を保つため、`url()` の相対パスはそのまま使える。
 
@@ -531,14 +546,15 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 `Book` の章、表紙、扉の `epubType` を、EPUB 3.0 では内容文書の `body` 要素の `epub:type` に書く。EPUB 2.0.1 では本文に書かず、guide を作るためにだけ使う。
 `loadBook` は、渡した版に関わらず、次の値を付ける。
 
-| 文書                                             | `epub:type`             |
-| ------------------------------------------------ | ----------------------- |
-| 表紙（`meta/cover`）                             | `frontmatter cover`     |
-| 扉（`meta/titlepage`）                           | `frontmatter titlepage` |
-| `body/` の直下のディレクトリの `index`（部の扉） | `bodymatter part`       |
-| それより深いディレクトリの `index`               | `bodymatter division`   |
-| `body/` のほかの文書                             | `bodymatter chapter`    |
-| 奥付（`meta/colophon`）                          | `backmatter colophon`   |
+| 文書                                             | `epub:type`                                        |
+| ------------------------------------------------ | -------------------------------------------------- |
+| 表紙（`meta/cover`）                             | `frontmatter cover`                                |
+| 扉（`meta/titlepage`）                           | `frontmatter titlepage`                            |
+| `body/` の直下のディレクトリの `index`（部の扉） | `bodymatter part`                                  |
+| それより深いディレクトリの `index`               | `bodymatter division`                              |
+| `body/` のほかの文書                             | `bodymatter chapter`                               |
+| 後付け（`meta/afterword` など）                  | `backmatter <名前>`（`backmatter afterword` など） |
+| 奥付（`meta/colophon`）                          | `backmatter colophon`                              |
 
 - `index` のないディレクトリの項目は文書を持たないため、役割も持たない。
 - 役割の語を、題名（「プロローグ」など）から推し量ることはしない。
@@ -576,33 +592,49 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 
 `buildEpub` は、EPUB 3.0 のナビゲーション文書に、目次の後に `<nav epub:type="landmarks" hidden="">` を書く。EPUB 2.0.1 では書かない。
 
-| 項目         | 行き先                                                                  | 表示名（`ja`） | 表示名（ほか）   |
-| ------------ | ----------------------------------------------------------------------- | -------------- | ---------------- |
-| `cover`      | 表紙の文書                                                              | 表紙           | Cover            |
-| `titlepage`  | 扉の文書                                                                | 扉             | Title Page       |
-| `bodymatter` | `epubType` に `bodymatter` を含む最初の章の文書。なければ最初の章の文書 | 本文           | Start of Content |
-| `backmatter` | `epubType` に `backmatter` を含む最初の章の文書                         | 後付け         | Back Matter      |
+| 項目              | 行き先                                                                  | 表示名（`ja`） | 表示名（ほか）   |
+| ----------------- | ----------------------------------------------------------------------- | -------------- | ---------------- |
+| `cover`           | 表紙の文書                                                              | 表紙           | Cover            |
+| `titlepage`       | 扉の文書                                                                | 扉             | Title Page       |
+| `bodymatter`      | `epubType` に `bodymatter` を含む最初の章の文書。なければ最初の章の文書 | 本文           | Start of Content |
+| `backmatter`      | `epubType` に `backmatter` を含む最初の章の文書                         | 後付け         | Back Matter      |
+| `afterword`       | `epubType` に `afterword` を含む最初の章の文書                          | あとがき       | Afterword        |
+| `acknowledgments` | 同じく `acknowledgments`                                                | 謝辞           | Acknowledgments  |
+| `appendix`        | 同じく `appendix`                                                       | 付録           | Appendix         |
+| `bibliography`    | 同じく `bibliography`                                                   | 参考文献       | Bibliography     |
+| `glossary`        | 同じく `glossary`                                                       | 用語集         | Glossary         |
+| `index`           | 同じく `index`                                                          | 索引           | Index            |
+| `copyright-page`  | 同じく `copyright-page`                                                 | 著作権表示     | Copyright        |
+| `colophon`        | 同じく `colophon`                                                       | 奥付           | Colophon         |
 
 - 行き先がある項目だけを、この順で書く。
 - 表示名は、書誌情報の言語が `ja` か `ja-` で始まるときに日本語、それ以外は英語とする。
 - 目次（`toc`）の項目は書かない。ナビゲーション文書は spine に入れないため、landmarks から指すと EPUBCheck で誤り（RSC-011）になる。
-- `loadBook` で読んだ本では、表紙、扉、本文の最初の文書、奥付が入る。
+- `loadBook` で読んだ本では、表紙、扉、本文の最初の文書、後付けのそれぞれ、奥付が入る。
 
 ### guide
 
 `buildEpub` は、EPUB 2.0.1 のパッケージ文書に、`spine` の後に `<guide>` を書く。EPUB 3.0 では書かない。
 
-| `type`       | 行き先                                        | `title`（`ja`） | `title`（ほか）  |
-| ------------ | --------------------------------------------- | --------------- | ---------------- |
-| `cover`      | 表紙の文書                                    | 表紙            | Cover            |
-| `title-page` | 扉の文書                                      | 扉              | Title Page       |
-| `text`       | landmarks の `bodymatter` と同じ文書          | 本文            | Start of Content |
-| `colophon`   | `epubType` に `colophon` を含む最初の章の文書 | 奥付            | Colophon         |
+| `type`             | 行き先                                         | `title`（`ja`） | `title`（ほか）  |
+| ------------------ | ---------------------------------------------- | --------------- | ---------------- |
+| `cover`            | 表紙の文書                                     | 表紙            | Cover            |
+| `title-page`       | 扉の文書                                       | 扉              | Title Page       |
+| `text`             | landmarks の `bodymatter` と同じ文書           | 本文            | Start of Content |
+| `other.afterword`  | `epubType` に `afterword` を含む最初の章の文書 | あとがき        | Afterword        |
+| `acknowledgements` | 同じく `acknowledgments`                       | 謝辞            | Acknowledgments  |
+| `other.appendix`   | 同じく `appendix`                              | 付録            | Appendix         |
+| `bibliography`     | 同じく `bibliography`                          | 参考文献        | Bibliography     |
+| `glossary`         | 同じく `glossary`                              | 用語集          | Glossary         |
+| `index`            | 同じく `index`                                 | 索引            | Index            |
+| `copyright-page`   | 同じく `copyright-page`                        | 著作権表示      | Copyright        |
+| `colophon`         | 同じく `colophon`                              | 奥付            | Colophon         |
 
 - 行き先がある項目だけを、この順で書く。項目が一つもなければ `guide` を書かない。
+- OPF 2.0.1 の guide の型にない後付け（あとがき、付録）は `other.` を付けた型にする。謝辞の型は OPF 2.0.1 の綴り（`acknowledgements`）とする。
 - `title` は、書誌情報の言語が `ja` か `ja-` で始まるときに日本語、それ以外は英語とする。
 - 目次（`toc`）の項目は書かない。guide は XHTML の文書を指すものだが、EPUB 2.0.1 では目次を NCX だけで持つため。
-- `loadBook` で読んだ本では、表紙、扉、本文の最初の文書、奥付が入る。
+- `loadBook` で読んだ本では、表紙、扉、本文の最初の文書、後付けのそれぞれ、奥付が入る。
 
 例：
 
@@ -705,7 +737,8 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 - 特定のリーダーや配信サービスに固有の拡張
 - EPUB を読むこと、書き換えること
 - ストリームでの書き出し、ZIP64
-- landmarks の `cover`、`titlepage`、`bodymatter`、`backmatter`、guide の `cover`、`title-page`、`text`、`colophon` のほかの項目（`toc`、`index` など）、landmarks と guide の表示名の設定
+- landmarks と guide に、表に挙げたほかの項目（`toc`、`preface` など）を書くこと、landmarks と guide の表示名の設定
+- 表に挙げたほかの付き物（前書き、凡例、献辞など）を `meta/` に置くこと、同じ種類の後付けを二つ以上置くこと
 - 書誌情報から扉を自動で作ること
 - EPUB 2.0.1 で `div` などを使って部・章・節の構造を表すこと、`book.toml` やファイルの名前で文書の役割を指定すること
 - 直接書いた `section` 要素や `epub:type` を書き換えたり取り除いたりすること
@@ -725,9 +758,9 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
   - `sample-book`：ADR の要素を一通り含む（表紙、扉、奥付を含む）
   - `edge-book`：深い入れ子、HTML の表と文字参照、インラインの SVG、JPEG、GIF、PNG、ASCII 以外の名前、実体参照が要る書誌情報
   - `epub3-book`：MathML と `epub:type`（EPUB 3.0 だけ）
-  - `novel-book`：縦書き、rtl、三部構成の長編。ルビと脚注を多く含む
+  - `novel-book`：縦書き、rtl、三部構成の長編。ルビと脚注を多く含む。扉とあとがきを含む
   - `large-book`：151 の文書
-  - `tech-book`：横書き、ltr、英語の技術書。コード、表、参照形式のリンク、章をまたぐリンク
+  - `tech-book`：横書き、ltr、英語の技術書。コード、表、参照形式のリンク、章をまたぐリンク。後付け（謝辞、付録、参考文献、用語集、索引、著作権表示）を含む
   - `minimal-book`：必須のものだけ
   - `mixed-format-book`：同じ内容を三つの形式で書いたもの
   - `sections-book`：文書の中の見出しの節（深い入れ子、レベルの飛び、`id` の衝突、空の見出し、`index` と奥付の節）と、EPUB 3.0 の `section` と `epub:type`（部の扉、入れ子の扉）

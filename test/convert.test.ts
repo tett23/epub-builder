@@ -31,7 +31,7 @@ Deno.test('ルビの記法を区切る', () => {
 
 Deno.test('ルビは版ごとの形で出る', () => {
   expect(convert('漢字《かんじ》', 'md', '3.0')).toBe('<p><ruby>漢字<rp>（</rp><rt>かんじ</rt><rp>）</rp></ruby></p>');
-  // OPS 2.0.1 は ruby 要素を持たないため、括弧書きにする（ADR 0013）
+  // OPS 2.0.1 は ruby 要素を持たないため、括弧書きにする（ADR 0014）
   const v2 = convert('漢字《かんじ》', 'md', '2.0.1');
   expect(v2).toBe(
     '<p><span class="ruby"><span class="rb">漢字</span><span class="rp">（</span><span class="rt">かんじ</span><span class="rp">）</span></span></p>',

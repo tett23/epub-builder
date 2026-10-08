@@ -377,6 +377,7 @@ application/epub+zip
 <li><a epub:type="titlepage" href="text/0002.xhtml">扉</a></li>
 <li><a epub:type="bodymatter" href="text/0003.xhtml">本文</a></li>
 <li><a epub:type="backmatter" href="text/0009.xhtml">後付け</a></li>
+<li><a epub:type="colophon" href="text/0009.xhtml">奥付</a></li>
 </ol>
 </nav>
 </body>
@@ -907,6 +908,7 @@ application/epub+zip
 <li><a epub:type="cover" href="text/0001.xhtml">表紙</a></li>
 <li><a epub:type="bodymatter" href="text/0002.xhtml">本文</a></li>
 <li><a epub:type="backmatter" href="text/0007.xhtml">後付け</a></li>
+<li><a epub:type="colophon" href="text/0007.xhtml">奥付</a></li>
 </ol>
 </nav>
 </body>
@@ -1249,6 +1251,7 @@ application/epub+zip
 <item id="doc-0021" href="text/0021.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0022" href="text/0022.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0023" href="text/0023.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0024" href="text/0024.xhtml" media-type="application/xhtml+xml"/>
 <item id="css-1" href="assets/style/parts.css" media-type="text/css"/>
 <item id="css-2" href="assets/style/vertical.css" media-type="text/css"/>
 <item id="img-1" href="assets/images/cover.svg" media-type="image/svg+xml"/>
@@ -1277,12 +1280,14 @@ application/epub+zip
 <itemref idref="doc-0021"/>
 <itemref idref="doc-0022"/>
 <itemref idref="doc-0023"/>
+<itemref idref="doc-0024"/>
 </spine>
 <guide>
 <reference type="cover" title="表紙" href="text/0001.xhtml"/>
 <reference type="title-page" title="扉" href="text/0002.xhtml"/>
 <reference type="text" title="本文" href="text/0003.xhtml"/>
-<reference type="colophon" title="奥付" href="text/0023.xhtml"/>
+<reference type="other.afterword" title="あとがき" href="text/0023.xhtml"/>
+<reference type="colophon" title="奥付" href="text/0024.xhtml"/>
 </guide>
 </package>
 
@@ -1379,8 +1384,12 @@ application/epub+zip
   <content src="text/0022.xhtml"/>
 </navPoint>
 <navPoint id="np-21" playOrder="21">
-  <navLabel><text>奥付</text></navLabel>
+  <navLabel><text>あとがき</text></navLabel>
   <content src="text/0023.xhtml"/>
+</navPoint>
+<navPoint id="np-22" playOrder="22">
+  <navLabel><text>奥付</text></navLabel>
+  <content src="text/0024.xhtml"/>
 </navPoint>
 </navMap>
 </ncx>
@@ -1827,6 +1836,21 @@ application/epub+zip
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
 <head>
+<title>あとがき</title>
+<link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
+</head>
+<body>
+<h1>あとがき</h1>
+<p>この物語は、試験のために語彙を組み合わせて作った合成の文章です。<span class="ruby"><span class="rb">灯台</span><span class="rp">（</span><span class="rt">とうだい</span><span class="rp">）</span></span>も<span class="ruby"><span class="rb">羅針盤</span><span class="rp">（</span><span class="rt">らしんばん</span><span class="rp">）</span></span>も、どこにも実在しません。</p>
+</body>
+</html>
+
+== OEBPS/text/0024.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
 <title>奥付</title>
 <link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
@@ -1914,6 +1938,7 @@ application/epub+zip
 <item id="doc-0021" href="text/0021.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0022" href="text/0022.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0023" href="text/0023.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0024" href="text/0024.xhtml" media-type="application/xhtml+xml"/>
 <item id="css-1" href="assets/style/parts.css" media-type="text/css"/>
 <item id="css-2" href="assets/style/vertical.css" media-type="text/css"/>
 <item id="img-1" href="assets/images/cover.svg" media-type="image/svg+xml" properties="cover-image"/>
@@ -1942,6 +1967,7 @@ application/epub+zip
 <itemref idref="doc-0021"/>
 <itemref idref="doc-0022"/>
 <itemref idref="doc-0023"/>
+<itemref idref="doc-0024"/>
 </spine>
 </package>
 
@@ -2038,8 +2064,12 @@ application/epub+zip
   <content src="text/0022.xhtml"/>
 </navPoint>
 <navPoint id="np-21" playOrder="21">
-  <navLabel><text>奥付</text></navLabel>
+  <navLabel><text>あとがき</text></navLabel>
   <content src="text/0023.xhtml"/>
+</navPoint>
+<navPoint id="np-22" playOrder="22">
+  <navLabel><text>奥付</text></navLabel>
+  <content src="text/0024.xhtml"/>
 </navPoint>
 </navMap>
 </ncx>
@@ -2083,7 +2113,8 @@ application/epub+zip
 </ol>
 </li>
 <li><a href="text/0022.xhtml">エピローグ</a></li>
-<li><a href="text/0023.xhtml">奥付</a></li>
+<li><a href="text/0023.xhtml">あとがき</a></li>
+<li><a href="text/0024.xhtml">奥付</a></li>
 </ol>
 </nav>
 <nav epub:type="landmarks" hidden="">
@@ -2092,6 +2123,8 @@ application/epub+zip
 <li><a epub:type="titlepage" href="text/0002.xhtml">扉</a></li>
 <li><a epub:type="bodymatter" href="text/0003.xhtml">本文</a></li>
 <li><a epub:type="backmatter" href="text/0023.xhtml">後付け</a></li>
+<li><a epub:type="afterword" href="text/0023.xhtml">あとがき</a></li>
+<li><a epub:type="colophon" href="text/0024.xhtml">奥付</a></li>
 </ol>
 </nav>
 </body>
@@ -2535,6 +2568,21 @@ application/epub+zip
 </html>
 
 == OEBPS/text/0023.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
+<head>
+<title>あとがき</title>
+<link rel="stylesheet" type="text/css" href="../assets/style/parts.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/style/vertical.css"/>
+</head>
+<body epub:type="backmatter afterword">
+<h1>あとがき</h1>
+<p>この物語は、試験のために語彙を組み合わせて作った合成の文章です。<ruby>灯台<rp>（</rp><rt>とうだい</rt><rp>）</rp></ruby>も<ruby>羅針盤<rp>（</rp><rt>らしんばん</rt><rp>）</rp></ruby>も、どこにも実在しません。</p>
+</body>
+</html>
+
+== OEBPS/text/0024.xhtml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja">
@@ -4929,6 +4977,7 @@ application/epub+zip
 <ol>
 <li><a epub:type="bodymatter" href="text/0001.xhtml">本文</a></li>
 <li><a epub:type="backmatter" href="text/0151.xhtml">後付け</a></li>
+<li><a epub:type="colophon" href="text/0151.xhtml">奥付</a></li>
 </ol>
 </nav>
 </body>
@@ -5100,7 +5149,7 @@ application/epub+zip
 `;
 
 snapshot[`出力のスナップショット > tech-book 2.0.1 1`] = `
-'== mimetype
+\`== mimetype
 application/epub+zip
 == META-INF/container.xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -5135,6 +5184,12 @@ application/epub+zip
 <item id="doc-0007" href="text/0007.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0008" href="text/0008.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0009" href="text/0009.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0010" href="text/0010.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0011" href="text/0011.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0012" href="text/0012.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0013" href="text/0013.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0014" href="text/0014.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0015" href="text/0015.xhtml" media-type="application/xhtml+xml"/>
 <item id="css-1" href="assets/css/base.css" media-type="text/css"/>
 <item id="css-2" href="assets/css/code.css" media-type="text/css"/>
 <item id="img-1" href="assets/diagrams/cover.png" media-type="image/png"/>
@@ -5150,12 +5205,24 @@ application/epub+zip
 <itemref idref="doc-0007"/>
 <itemref idref="doc-0008"/>
 <itemref idref="doc-0009"/>
+<itemref idref="doc-0010"/>
+<itemref idref="doc-0011"/>
+<itemref idref="doc-0012"/>
+<itemref idref="doc-0013"/>
+<itemref idref="doc-0014"/>
+<itemref idref="doc-0015"/>
 </spine>
 <guide>
 <reference type="cover" title="Cover" href="text/0001.xhtml"/>
 <reference type="title-page" title="Title Page" href="text/0002.xhtml"/>
 <reference type="text" title="Start of Content" href="text/0003.xhtml"/>
-<reference type="colophon" title="Colophon" href="text/0009.xhtml"/>
+<reference type="acknowledgements" title="Acknowledgments" href="text/0009.xhtml"/>
+<reference type="other.appendix" title="Appendix" href="text/0010.xhtml"/>
+<reference type="bibliography" title="Bibliography" href="text/0011.xhtml"/>
+<reference type="glossary" title="Glossary" href="text/0012.xhtml"/>
+<reference type="index" title="Index" href="text/0013.xhtml"/>
+<reference type="copyright-page" title="Copyright" href="text/0014.xhtml"/>
+<reference type="colophon" title="Colophon" href="text/0015.xhtml"/>
 </guide>
 </package>
 
@@ -5224,8 +5291,40 @@ application/epub+zip
   </navPoint>
 </navPoint>
 <navPoint id="np-14" playOrder="13">
-  <navLabel><text>Colophon</text></navLabel>
+  <navLabel><text>Acknowledgments</text></navLabel>
   <content src="text/0009.xhtml"/>
+</navPoint>
+<navPoint id="np-15" playOrder="14">
+  <navLabel><text>Appendix: Reserved names</text></navLabel>
+  <content src="text/0010.xhtml"/>
+  <navPoint id="np-16" playOrder="15">
+    <navLabel><text>meta/</text></navLabel>
+    <content src="text/0010.xhtml#sec-1"/>
+  </navPoint>
+  <navPoint id="np-17" playOrder="16">
+    <navLabel><text>body/</text></navLabel>
+    <content src="text/0010.xhtml#sec-2"/>
+  </navPoint>
+</navPoint>
+<navPoint id="np-18" playOrder="17">
+  <navLabel><text>Bibliography</text></navLabel>
+  <content src="text/0011.xhtml"/>
+</navPoint>
+<navPoint id="np-19" playOrder="18">
+  <navLabel><text>Glossary</text></navLabel>
+  <content src="text/0012.xhtml"/>
+</navPoint>
+<navPoint id="np-20" playOrder="19">
+  <navLabel><text>Index</text></navLabel>
+  <content src="text/0013.xhtml"/>
+</navPoint>
+<navPoint id="np-21" playOrder="20">
+  <navLabel><text>Copyright</text></navLabel>
+  <content src="text/0014.xhtml"/>
+</navPoint>
+<navPoint id="np-22" playOrder="21">
+  <navLabel><text>Colophon</text></navLabel>
+  <content src="text/0015.xhtml"/>
 </navPoint>
 </navMap>
 </ncx>
@@ -5401,6 +5500,111 @@ on the next line.</p>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
+<title>Acknowledgments</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body>
+<h1>Acknowledgments</h1>
+<p>Thanks to the synthetic reviewers who never existed.</p>
+</body>
+</html>
+
+== OEBPS/text/0010.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Appendix: Reserved names</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body>
+<h1>Appendix: Reserved names</h1>
+<h2 id="sec-1">meta/</h2>
+<p><code>cover</code>, <code>titlepage</code>, the back-matter names, and <code>colophon</code>.</p>
+<h2 id="sec-2">body/</h2>
+<p><code>index</code> in a subdirectory is the part's opening page.</p>
+</body>
+</html>
+
+== OEBPS/text/0011.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Bibliography</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body>
+<h1>Bibliography</h1>
+<ul>
+<li>Example, A. <cite>A Synthetic Reference</cite>. Fixture Press, 2026.
+</li><li>Sample, B. <cite>Another Imaginary Book</cite>. Fixture Press, 2025.
+</li></ul>
+
+</body>
+</html>
+
+== OEBPS/text/0012.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Glossary</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body>
+<h1>Glossary</h1>
+<dl>
+<dt>Spine</dt><dd>The reading order of content documents.</dd>
+<dt>Landmark</dt><dd>A jump target such as the cover or the start of content.</dd>
+</dl>
+
+</body>
+</html>
+
+== OEBPS/text/0013.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Index</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body>
+<h1>Index</h1>
+<ul>
+<li>Footnotes — <a href="0008.xhtml">chapter</a></li>
+<li>Namespaces — <a href="0007.xhtml#ns">chapter</a></li>
+<li>Ordering — <a href="0006.xhtml">chapter</a></li>
+</ul>
+</body>
+</html>
+
+== OEBPS/text/0014.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Copyright</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body>
+<h1>Copyright</h1>
+<p>Synthetic text for testing. Released under the MIT License with the epub-builder repository.</p>
+</body>
+</html>
+
+== OEBPS/text/0015.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
 <title>Colophon</title>
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
@@ -5421,11 +5625,11 @@ table { border-collapse: collapse; }
 td, th { border: 1px solid #999; padding: 0.2em 0.5em; }
 
 == OEBPS/assets/diagrams/cover.png (160 bytes)
-== OEBPS/assets/diagrams/flow.svg (405 bytes)'
+== OEBPS/assets/diagrams/flow.svg (405 bytes)\`
 `;
 
 snapshot[`出力のスナップショット > tech-book 3.0 1`] = `
-'== mimetype
+\`== mimetype
 application/epub+zip
 == META-INF/container.xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -5460,6 +5664,12 @@ application/epub+zip
 <item id="doc-0007" href="text/0007.xhtml" media-type="application/xhtml+xml" properties="svg"/>
 <item id="doc-0008" href="text/0008.xhtml" media-type="application/xhtml+xml"/>
 <item id="doc-0009" href="text/0009.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0010" href="text/0010.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0011" href="text/0011.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0012" href="text/0012.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0013" href="text/0013.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0014" href="text/0014.xhtml" media-type="application/xhtml+xml"/>
+<item id="doc-0015" href="text/0015.xhtml" media-type="application/xhtml+xml"/>
 <item id="css-1" href="assets/css/base.css" media-type="text/css"/>
 <item id="css-2" href="assets/css/code.css" media-type="text/css"/>
 <item id="img-1" href="assets/diagrams/cover.png" media-type="image/png" properties="cover-image"/>
@@ -5475,6 +5685,12 @@ application/epub+zip
 <itemref idref="doc-0007"/>
 <itemref idref="doc-0008"/>
 <itemref idref="doc-0009"/>
+<itemref idref="doc-0010"/>
+<itemref idref="doc-0011"/>
+<itemref idref="doc-0012"/>
+<itemref idref="doc-0013"/>
+<itemref idref="doc-0014"/>
+<itemref idref="doc-0015"/>
 </spine>
 </package>
 
@@ -5543,8 +5759,40 @@ application/epub+zip
   </navPoint>
 </navPoint>
 <navPoint id="np-14" playOrder="13">
-  <navLabel><text>Colophon</text></navLabel>
+  <navLabel><text>Acknowledgments</text></navLabel>
   <content src="text/0009.xhtml"/>
+</navPoint>
+<navPoint id="np-15" playOrder="14">
+  <navLabel><text>Appendix: Reserved names</text></navLabel>
+  <content src="text/0010.xhtml"/>
+  <navPoint id="np-16" playOrder="15">
+    <navLabel><text>meta/</text></navLabel>
+    <content src="text/0010.xhtml#sec-1"/>
+  </navPoint>
+  <navPoint id="np-17" playOrder="16">
+    <navLabel><text>body/</text></navLabel>
+    <content src="text/0010.xhtml#sec-2"/>
+  </navPoint>
+</navPoint>
+<navPoint id="np-18" playOrder="17">
+  <navLabel><text>Bibliography</text></navLabel>
+  <content src="text/0011.xhtml"/>
+</navPoint>
+<navPoint id="np-19" playOrder="18">
+  <navLabel><text>Glossary</text></navLabel>
+  <content src="text/0012.xhtml"/>
+</navPoint>
+<navPoint id="np-20" playOrder="19">
+  <navLabel><text>Index</text></navLabel>
+  <content src="text/0013.xhtml"/>
+</navPoint>
+<navPoint id="np-21" playOrder="20">
+  <navLabel><text>Copyright</text></navLabel>
+  <content src="text/0014.xhtml"/>
+</navPoint>
+<navPoint id="np-22" playOrder="21">
+  <navLabel><text>Colophon</text></navLabel>
+  <content src="text/0015.xhtml"/>
 </navPoint>
 </navMap>
 </ncx>
@@ -5593,7 +5841,18 @@ application/epub+zip
 <li><a href="text/0008.xhtml">Footnotes in English</a></li>
 </ol>
 </li>
-<li><a href="text/0009.xhtml">Colophon</a></li>
+<li><a href="text/0009.xhtml">Acknowledgments</a></li>
+<li><a href="text/0010.xhtml">Appendix: Reserved names</a>
+<ol>
+<li><a href="text/0010.xhtml#sec-1">meta/</a></li>
+<li><a href="text/0010.xhtml#sec-2">body/</a></li>
+</ol>
+</li>
+<li><a href="text/0011.xhtml">Bibliography</a></li>
+<li><a href="text/0012.xhtml">Glossary</a></li>
+<li><a href="text/0013.xhtml">Index</a></li>
+<li><a href="text/0014.xhtml">Copyright</a></li>
+<li><a href="text/0015.xhtml">Colophon</a></li>
 </ol>
 </nav>
 <nav epub:type="landmarks" hidden="">
@@ -5602,6 +5861,13 @@ application/epub+zip
 <li><a epub:type="titlepage" href="text/0002.xhtml">Title Page</a></li>
 <li><a epub:type="bodymatter" href="text/0003.xhtml">Start of Content</a></li>
 <li><a epub:type="backmatter" href="text/0009.xhtml">Back Matter</a></li>
+<li><a epub:type="acknowledgments" href="text/0009.xhtml">Acknowledgments</a></li>
+<li><a epub:type="appendix" href="text/0010.xhtml">Appendix</a></li>
+<li><a epub:type="bibliography" href="text/0011.xhtml">Bibliography</a></li>
+<li><a epub:type="glossary" href="text/0012.xhtml">Glossary</a></li>
+<li><a epub:type="index" href="text/0013.xhtml">Index</a></li>
+<li><a epub:type="copyright-page" href="text/0014.xhtml">Copyright</a></li>
+<li><a epub:type="colophon" href="text/0015.xhtml">Colophon</a></li>
 </ol>
 </nav>
 </body>
@@ -5778,6 +6044,111 @@ on the next line.</p>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
 <head>
+<title>Acknowledgments</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body epub:type="backmatter acknowledgments">
+<h1>Acknowledgments</h1>
+<p>Thanks to the synthetic reviewers who never existed.</p>
+</body>
+</html>
+
+== OEBPS/text/0010.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<head>
+<title>Appendix: Reserved names</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body epub:type="backmatter appendix">
+<h1>Appendix: Reserved names</h1>
+<section><h2 id="sec-1">meta/</h2>
+<p><code>cover</code>, <code>titlepage</code>, the back-matter names, and <code>colophon</code>.</p>
+</section><section><h2 id="sec-2">body/</h2>
+<p><code>index</code> in a subdirectory is the part's opening page.</p></section>
+</body>
+</html>
+
+== OEBPS/text/0011.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<head>
+<title>Bibliography</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body epub:type="backmatter bibliography">
+<h1>Bibliography</h1>
+<ul>
+<li>Example, A. <cite>A Synthetic Reference</cite>. Fixture Press, 2026.
+</li><li>Sample, B. <cite>Another Imaginary Book</cite>. Fixture Press, 2025.
+</li></ul>
+
+</body>
+</html>
+
+== OEBPS/text/0012.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<head>
+<title>Glossary</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body epub:type="backmatter glossary">
+<h1>Glossary</h1>
+<dl>
+<dt>Spine</dt><dd>The reading order of content documents.</dd>
+<dt>Landmark</dt><dd>A jump target such as the cover or the start of content.</dd>
+</dl>
+
+</body>
+</html>
+
+== OEBPS/text/0013.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<head>
+<title>Index</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body epub:type="backmatter index">
+<h1>Index</h1>
+<ul>
+<li>Footnotes — <a href="0008.xhtml">chapter</a></li>
+<li>Namespaces — <a href="0007.xhtml#ns">chapter</a></li>
+<li>Ordering — <a href="0006.xhtml">chapter</a></li>
+</ul>
+</body>
+</html>
+
+== OEBPS/text/0014.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<head>
+<title>Copyright</title>
+<link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
+</head>
+<body epub:type="backmatter copyright-page">
+<h1>Copyright</h1>
+<p>Synthetic text for testing. Released under the MIT License with the epub-builder repository.</p>
+</body>
+</html>
+
+== OEBPS/text/0015.xhtml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<head>
 <title>Colophon</title>
 <link rel="stylesheet" type="text/css" href="../assets/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="../assets/css/code.css"/>
@@ -5798,7 +6169,7 @@ table { border-collapse: collapse; }
 td, th { border: 1px solid #999; padding: 0.2em 0.5em; }
 
 == OEBPS/assets/diagrams/cover.png (160 bytes)
-== OEBPS/assets/diagrams/flow.svg (405 bytes)'
+== OEBPS/assets/diagrams/flow.svg (405 bytes)\`
 `;
 
 snapshot[`出力のスナップショット > minimal-book 2.0.1 1`] = `
@@ -6829,6 +7200,7 @@ application/epub+zip
 <li><a epub:type="titlepage" href="text/0002.xhtml">扉</a></li>
 <li><a epub:type="bodymatter" href="text/0003.xhtml">本文</a></li>
 <li><a epub:type="backmatter" href="text/0010.xhtml">後付け</a></li>
+<li><a epub:type="colophon" href="text/0010.xhtml">奥付</a></li>
 </ol>
 </nav>
 </body>

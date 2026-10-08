@@ -1,4 +1,4 @@
-// hast を XHTML の構文で書き出す、自前の書き出し器（ADR 0013）。
+// hast を XHTML の構文で書き出す、自前の書き出し器（ADR 0014）。
 // XHTML に直せないものは、位置を示す `ConversionError` とする。
 
 import type { Element, Nodes, Properties } from 'hast';

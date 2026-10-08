@@ -1,4 +1,4 @@
-// ファイル名の空白の置き換えと、EPUB 2.0.1 で使えない要素の警告（ADR 0013）
+// ファイル名の空白の置き換えと、EPUB 2.0.1 で使えない要素の警告（ADR 0014）
 import { expect } from '@std/expect';
 import { stub } from '@std/testing/mock';
 import { type Book, buildEpub, EpubInputError } from '../mod.ts';

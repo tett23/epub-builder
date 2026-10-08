@@ -1,4 +1,4 @@
-// EPUB 3.0 のナビゲーション文書の landmarks（ADR 0013）
+// EPUB 3.0 のナビゲーション文書の landmarks（ADR 0014）
 import { expect } from '@std/expect';
 import { type Book, buildEpub } from '../mod.ts';
 import { unzipText } from './helpers/unzip.ts';
@@ -29,6 +29,7 @@ Deno.test('表紙、本文、後付けの順に、行き先がある項目だけ
     ['cover', 'text/0001.xhtml', '表紙'],
     ['bodymatter', 'text/0003.xhtml', '本文'],
     ['backmatter', 'text/0005.xhtml', '後付け'],
+    ['colophon', 'text/0005.xhtml', '奥付'],
   ]);
 });
 
@@ -65,6 +66,7 @@ Deno.test('表示名は言語で決める', async () => {
     'Start of Content',
     'Back Matter',
   ]);
+  // 語を持たない backmatter は、種類ごとの項目を作らない
   expect((await landmarks(book('jav'))).map(([, , label]) => label)[0]).toBe('Cover');
 });
 
@@ -82,7 +84,7 @@ async function guide(book: Book): Promise<[string, string, string][]> {
   ]);
 }
 
-Deno.test('EPUB 2.0.1 の guide に、表紙、本文、奥付の順で、行き先がある項目だけを書く', async () => {
+Deno.test('EPUB 2.0.1 の guide に、表紙、本文、後付け、奥付の順で、行き先がある項目だけを書く', async () => {
   const book = base({
     cover: { body: '<p>c</p>', epubType: 'frontmatter cover' },
     chapters: [
@@ -95,6 +97,7 @@ Deno.test('EPUB 2.0.1 の guide に、表紙、本文、奥付の順で、行き
   expect(await guide(book)).toEqual([
     ['cover', 'text/0001.xhtml', '表紙'],
     ['text', 'text/0003.xhtml', '本文'],
+    ['other.appendix', 'text/0004.xhtml', '付録'],
     ['colophon', 'text/0005.xhtml', '奥付'],
   ]);
   const opf = (await unzipText(await buildEpub(book, { version: '2.0.1' }))).get('OEBPS/content.opf')!;
@@ -121,4 +124,52 @@ Deno.test('guide の title は言語で決める', async () => {
 Deno.test('EPUB 3.0 には guide を書かない', async () => {
   const files = await unzipText(await buildEpub(base({ cover: { body: '<p/>' } }), { version: '3.0' }));
   expect(files.get('OEBPS/content.opf')).not.toContain('<guide');
+});
+
+Deno.test('後付けの種類ごとに、landmarks と guide の項目を決まった順で書く', async () => {
+  const terms = [
+    'colophon',
+    'copyright-page',
+    'index',
+    'glossary',
+    'bibliography',
+    'appendix',
+    'acknowledgments',
+    'afterword',
+  ];
+  // 章の並びとは逆の順に置いても、項目は決まった順になる
+  const book = base({
+    chapters: [
+      { title: '一', body: '<p/>', epubType: 'bodymatter chapter' },
+      ...terms.map((t) => ({ title: t, body: '<p/>', epubType: `backmatter ${t}` })),
+    ],
+  });
+  expect((await landmarks(book)).map(([type, href, label]) => `${type} ${href} ${label}`)).toEqual([
+    'bodymatter text/0001.xhtml 本文',
+    'backmatter text/0002.xhtml 後付け',
+    'afterword text/0009.xhtml あとがき',
+    'acknowledgments text/0008.xhtml 謝辞',
+    'appendix text/0007.xhtml 付録',
+    'bibliography text/0006.xhtml 参考文献',
+    'glossary text/0005.xhtml 用語集',
+    'index text/0004.xhtml 索引',
+    'copyright-page text/0003.xhtml 著作権表示',
+    'colophon text/0002.xhtml 奥付',
+  ]);
+  expect((await guide(book)).map(([type, , title]) => `${type} ${title}`)).toEqual([
+    'text 本文',
+    'other.afterword あとがき',
+    'acknowledgements 謝辞',
+    'other.appendix 付録',
+    'bibliography 参考文献',
+    'glossary 用語集',
+    'index 索引',
+    'copyright-page 著作権表示',
+    'colophon 奥付',
+  ]);
+  const en = base({
+    metadata: { identifier: 'id', title: 't', language: 'en', modified: new Date(0) },
+    chapters: [{ title: 'a', body: '<p/>' }, { title: 'b', body: '<p/>', epubType: 'backmatter copyright-page' }],
+  });
+  expect((await landmarks(en)).map(([, , label]) => label)).toEqual(['Start of Content', 'Back Matter', 'Copyright']);
 });

@@ -18,11 +18,11 @@ Deno.test('novel-book：縦書きの長編', async (t) => {
   for (const version of ['2.0.1', '3.0'] as const) {
     await t.step(version, async () => {
       const files = await build('novel-book', version);
-      // 表紙、扉、プロローグ、三部（扉と 4、5、6 章）、エピローグ、奥付
-      expect(textDocs(files).length).toBe(1 + 1 + 1 + 3 + 4 + 5 + 6 + 1 + 1);
+      // 表紙、扉、プロローグ、三部（扉と 4、5、6 章）、エピローグ、あとがき、奥付
+      expect(textDocs(files).length).toBe(1 + 1 + 1 + 3 + 4 + 5 + 6 + 1 + 1 + 1);
       const ncx = files.get('OEBPS/toc.ncx')!;
       expect(ncx).toContain('<meta name="dtb:depth" content="2"/>');
-      expect(count(ncx, /<navPoint /g)).toBe(1 + 3 + 15 + 1 + 1);
+      expect(count(ncx, /<navPoint /g)).toBe(1 + 3 + 15 + 1 + 1 + 1);
       expect(ncx).toContain('<text>第一部　港</text>');
       expect(ncx).not.toContain('《');
       const all = textDocs(files).map(([, c]) => c).join('');

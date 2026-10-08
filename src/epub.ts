@@ -24,7 +24,7 @@ interface TocEntry {
   children: TocEntry[];
 }
 
-/** 内容文書のファイルの名前を、読み順の番号から作る（ADR 0013） */
+/** 内容文書のファイルの名前を、読み順の番号から作る（ADR 0014） */
 export function contentDocumentName(index: number, count: number): string {
   return `${String(index + 1).padStart(Math.max(4, String(count).length), '0')}.xhtml`;
 }
@@ -229,7 +229,7 @@ function collect(book: Book): { documents: ContentDocument[]; toc: TocEntry[] } 
     href: `${path}#${encodeURIComponent(section.id)}`,
     children: (section.children ?? []).map(sectionToToc(path)),
   });
-  // 節を子の章より前に置く（ADR 0013）
+  // 節を子の章より前に置く（ADR 0014）
   const toToc = (entry: PendingEntry): TocEntry => ({
     title: entry.title,
     href: documents[firstIndex(entry)].path,
@@ -363,52 +363,57 @@ function hasTerm(epubType: string | undefined, term: string): boolean {
   return (epubType ?? '').split(/\s+/).includes(term);
 }
 
-interface Navigation {
-  cover?: ContentDocument;
-  titlepage?: ContentDocument;
-  bodymatter?: ContentDocument;
-  backmatter?: ContentDocument;
-  colophon?: ContentDocument;
-  ja: boolean;
+/** 後付けの語と、landmarks と guide での表示名と guide の型（ADR 0014）。この順で書く */
+const BACK_MATTER: { term: string; ja: string; en: string; guideType: string }[] = [
+  { term: 'afterword', ja: 'あとがき', en: 'Afterword', guideType: 'other.afterword' },
+  { term: 'acknowledgments', ja: '謝辞', en: 'Acknowledgments', guideType: 'acknowledgements' },
+  { term: 'appendix', ja: '付録', en: 'Appendix', guideType: 'other.appendix' },
+  { term: 'bibliography', ja: '参考文献', en: 'Bibliography', guideType: 'bibliography' },
+  { term: 'glossary', ja: '用語集', en: 'Glossary', guideType: 'glossary' },
+  { term: 'index', ja: '索引', en: 'Index', guideType: 'index' },
+  { term: 'copyright-page', ja: '著作権表示', en: 'Copyright', guideType: 'copyright-page' },
+  { term: 'colophon', ja: '奥付', en: 'Colophon', guideType: 'colophon' },
+];
+
+interface NavigationItem {
+  /** landmarks の epub:type */
+  type: string;
+  /** guide の type。guide に書かない項目は undefined */
+  guideType?: string;
+  doc: ContentDocument;
+  label: string;
 }
 
-/** landmarks と guide が指す文書を、文書の役割から決める（ADR 0013） */
-function navigation(book: Book, documents: ContentDocument[]): Navigation {
+/** landmarks と guide が指す文書を、文書の役割から決める（ADR 0014） */
+function navigation(book: Book, documents: ContentDocument[]): NavigationItem[] {
+  const ja = /^ja(-|$)/i.test(book.metadata.language);
   const front = (book.cover ? 1 : 0) + (book.titlepage ? 1 : 0);
   const chapterDocs = documents.slice(front);
-  return {
-    cover: book.cover ? documents[0] : undefined,
-    titlepage: book.titlepage ? documents[front - 1] : undefined,
-    bodymatter: chapterDocs.find((d) => hasTerm(d.epubType, 'bodymatter')) ?? chapterDocs[0],
-    backmatter: chapterDocs.find((d) => hasTerm(d.epubType, 'backmatter')),
-    colophon: chapterDocs.find((d) => hasTerm(d.epubType, 'colophon')),
-    ja: /^ja(-|$)/i.test(book.metadata.language),
+  const find = (term: string) => chapterDocs.find((d) => hasTerm(d.epubType, term));
+  const items: NavigationItem[] = [];
+  const add = (type: string, guideType: string | undefined, doc: ContentDocument | undefined, label: string) => {
+    if (doc) items.push({ type, guideType, doc, label });
   };
+  add('cover', 'cover', book.cover ? documents[0] : undefined, ja ? '表紙' : 'Cover');
+  add('titlepage', 'title-page', book.titlepage ? documents[front - 1] : undefined, ja ? '扉' : 'Title Page');
+  add('bodymatter', 'text', find('bodymatter') ?? chapterDocs[0], ja ? '本文' : 'Start of Content');
+  add('backmatter', undefined, find('backmatter'), ja ? '後付け' : 'Back Matter');
+  for (const back of BACK_MATTER) add(back.term, back.guideType, find(back.term), ja ? back.ja : back.en);
+  return items;
 }
 
-/** landmarks の項目（EPUB 3.0） */
+/** landmarks の項目（EPUB 3.0）。toc は書かない。ナビゲーション文書は spine にないため、指すと EPUBCheck で誤り（RSC-011）になる */
 function landmarks(book: Book, documents: ContentDocument[]): { type: string; href: string; label: string }[] {
-  const { cover, titlepage, bodymatter, backmatter, ja } = navigation(book, documents);
-  const items: { type: string; href: string; label: string }[] = [];
-  if (cover) items.push({ type: 'cover', href: cover.path, label: ja ? '表紙' : 'Cover' });
-  if (titlepage) items.push({ type: 'titlepage', href: titlepage.path, label: ja ? '扉' : 'Title Page' });
-  // toc は書かない。ナビゲーション文書は spine にないため、指すと EPUBCheck で誤り（RSC-011）になる
-  if (bodymatter) items.push({ type: 'bodymatter', href: bodymatter.path, label: ja ? '本文' : 'Start of Content' });
-  if (backmatter) items.push({ type: 'backmatter', href: backmatter.path, label: ja ? '後付け' : 'Back Matter' });
-  return items;
+  return navigation(book, documents).map((item) => ({ type: item.type, href: item.doc.path, label: item.label }));
 }
 
 /** guide の項目（EPUB 2.0.1）。toc は目次の XHTML の文書がないため書かない */
 function guide(book: Book, documents: ContentDocument[]): string {
-  const { cover, titlepage, bodymatter, colophon, ja } = navigation(book, documents);
-  const items: string[] = [];
-  const add = (type: string, doc: ContentDocument | undefined, title: string) => {
-    if (doc) items.push(`<reference type="${type}" title="${escapeAttribute(title)}" href="${doc.path}"/>`);
-  };
-  add('cover', cover, ja ? '表紙' : 'Cover');
-  add('title-page', titlepage, ja ? '扉' : 'Title Page');
-  add('text', bodymatter, ja ? '本文' : 'Start of Content');
-  add('colophon', colophon, ja ? '奥付' : 'Colophon');
+  const items = navigation(book, documents)
+    .filter((item) => item.guideType !== undefined)
+    .map((item) =>
+      `<reference type="${item.guideType}" title="${escapeAttribute(item.label)}" href="${item.doc.path}"/>`
+    );
   return items.length > 0 ? `<guide>\n${items.join('\n')}\n</guide>\n` : '';
 }
 

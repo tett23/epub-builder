@@ -1,4 +1,4 @@
-// 扉（titlepage）（ADR 0013）
+// 扉（titlepage）（ADR 0014）
 import { expect } from '@std/expect';
 import { type Book, buildEpub, EpubInputError } from '../mod.ts';
 import { loadBook } from '../load.ts';
