@@ -47,8 +47,8 @@ jobs:
           unzip -q "$RUNNER_TEMP/epubcheck.zip" -d "$RUNNER_TEMP"
       - run: deno task build:sample
       # ADR 0003：誤りも警告もないこと
-      - name: Validate EPUB 2.0.1 and 3.0
+      - name: Validate the fixtures
         run: |
-          for epub in build/sample-book-2.0.1.epub build/sample-book-3.0.epub; do
+          for epub in build/*.epub; do
             java -jar "$RUNNER_TEMP/epubcheck-${EPUBCHECK_VERSION}/epubcheck.jar" --failonwarnings "$epub"
           done

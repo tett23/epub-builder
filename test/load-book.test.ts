@@ -2,6 +2,7 @@ import { expect } from '@std/expect';
 import { type Book, buildEpub, type Chapter, EpubInputError } from '../mod.ts';
 import { loadBook } from '../load.ts';
 import { compareCodePoints, stripSerial } from '../src/load/load-book.ts';
+import { FIXTURES } from './fixtures.ts';
 import { unzipText } from './helpers/unzip.ts';
 
 const BOOK_TOML = `identifier = "urn:uuid:00000000-0000-4000-8000-000000000001"
@@ -203,11 +204,22 @@ Deno.test('ルビと脚注は loadBook に渡した版の形で出る', async ()
   expect((await load(tree, '3.0')).chapters[0].body).toContain('epub:type="footnote"');
 });
 
-Deno.test('フィクスチャから、版ごとに EPUB を作れる', async () => {
-  for (const version of ['2.0.1', '3.0'] as const) {
-    const book = await loadBook('test/fixtures/sample-book', { version });
-    const files = await unzipText(await buildEpub(book, { version }));
-    expect(files.get('mimetype')).toBe('application/epub+zip');
-    expect([...files.keys()].filter((name) => name.startsWith('OEBPS/text/')).length).toBe(8);
+Deno.test('すべてのフィクスチャから、決めた版の EPUB を作れる', async () => {
+  for (const [name, versions] of Object.entries(FIXTURES)) {
+    for (const version of versions) {
+      const book = await loadBook(`test/fixtures/${name}`, { version });
+      const files = await unzipText(await buildEpub(book, { version }));
+      expect(files.get('mimetype'), `${name} ${version}`).toBe('application/epub+zip');
+    }
   }
+});
+
+Deno.test('EPUB 3.0 にしかない機能を使うフィクスチャは、EPUB 2.0.1 では例外になる', async () => {
+  await expect(loadBook('test/fixtures/epub3-book', { version: '2.0.1' })).rejects.toThrow(EpubInputError);
+});
+
+Deno.test('test/fixtures/ のディレクトリはすべて一覧に載っている', async () => {
+  const dirs: string[] = [];
+  for await (const entry of Deno.readDir('test/fixtures')) if (entry.isDirectory) dirs.push(entry.name);
+  expect(dirs.sort()).toEqual(Object.keys(FIXTURES).sort());
 });

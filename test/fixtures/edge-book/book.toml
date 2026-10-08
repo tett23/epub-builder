@@ -1,0 +1,8 @@
+# 境界の場合を詰めた合成データ。書誌情報に実体参照が要る文字を含める
+identifier = "urn:uuid:7d1c2b3a-4e5f-4a6b-8c7d-9e0f1a2b3c4d"
+title = "境界 & <試験>"
+language = "ja"
+authors = ["\"引用\" 著者"]
+modified = 2026-10-09T09:00:00+09:00
+page_progression_direction = "ltr"
+cover_image = "assets/画像集/写真.jpg"
