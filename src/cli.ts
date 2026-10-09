@@ -309,14 +309,27 @@ language = ${tomlString(language)}
 
 ${title}
 `,
-    'assets/style.css': `/* 見出しは本文より一回り大きい程度にとどめる */
-h1 { font-size: 1.4em; }
-h2 { font-size: 1.2em; }
-h3, h4, h5, h6 { font-size: 1em; }
+    'assets/style.css': `@page { margin-top: 5pt; margin-bottom: 5pt; }
+html, body {
+  line-break: strict;
+  -epub-line-break: strict;
+  -webkit-line-break: strict;
+}
+/* 行間は Kindle で body からの継承が効かないことがあるため、p と br に em で直接書く */
+body { text-align: justify; margin: 0 5pt; padding: 0; }
+p { margin: 0; padding: 0; line-height: 1.7em; }
+br { line-height: 1.7em; }
+ruby > rt { font-size: 0.33em !important; text-align: start; }
+/* 見出しは本文より一回り大きい程度にとどめる */
+h1 { font-size: 1.4em; line-height: 1.5em; }
+h2 { font-size: 1.2em; line-height: 1.5em; }
+h3, h4, h5, h6 { font-size: 1em; line-height: 1.5em; }
 .footnotes { margin-top: 2em; font-size: 0.9em; }
 .noteref { font-size: 0.7em; }
 /* EPUB 2.0.1 ではルビが括弧書きになる。括弧を隠すには次を使う */
 .ruby .rp { display: none; }
+/* 縦書きにするには次を使う */
+/* html, body { -epub-writing-mode: vertical-rl; -webkit-writing-mode: vertical-rl; writing-mode: vertical-rl; } */
 `,
   };
   for (const [path, content] of Object.entries(files)) {

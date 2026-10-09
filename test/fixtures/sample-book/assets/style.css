@@ -1,9 +1,18 @@
-html {
+@page { margin-top: 5pt; margin-bottom: 5pt; }
+html, body {
+  line-break: strict;
+  -epub-line-break: strict;
+  -webkit-line-break: strict;
+  -epub-writing-mode: vertical-rl;
+  -webkit-writing-mode: vertical-rl;
   writing-mode: vertical-rl;
 }
-.cover {
-  background: url("images/cover.svg");
-}
-.note {
-  color: gray;
-}
+/* 行間は Kindle で body からの継承が効かないことがあるため、p と br に em で直接書く */
+body { text-align: justify; margin: 0 5pt; padding: 0; }
+p { margin: 0; padding: 0; line-height: 1.7em; word-break: break-all; }
+br { line-height: 1.7em; }
+ruby > rt { font-size: 0.33em !important; text-align: start; }
+h1 { font-size: 1.3em; line-height: 1.5em; }
+h2 { font-size: 1.15em; line-height: 1.5em; }
+.cover { background: url("images/cover.svg"); }
+.note { color: gray; }
