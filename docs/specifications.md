@@ -3,9 +3,8 @@
 この文書は、現在の実装が満たす仕様をまとめたものである。
 決定の理由は ADR に記録しており、この文書では繰り返さない。
 
-- ADR 0003：対応する仕様と、版ごとの出力の構成
 - ADR 0004：公開 API と zip の書き出し
-- ADR 0014：ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け（ADR 0005 から 0013 を置き換えた）
+- ADR 0019：対応する仕様と版ごとの出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`（ADR 0003 と、ADR 0005 から 0014 を置き換えた）
 - ADR 0018：コマンドライン（ADR 0015 から 0017 を置き換えた）
 
 この文書と ADR が食い違う場合は、ADR を正とする。
@@ -111,6 +110,7 @@ interface Book {
     publisher?: string;
     description?: string;
     modified?: Date; // 省略したら呼んだ時刻
+    primaryWritingMode?: 'horizontal-lr' | 'horizontal-rl' | 'vertical-lr' | 'vertical-rl'; // Kindle の組み方向
   };
   pageProgressionDirection?: 'ltr' | 'rtl';
   stylesheets?: { path: string; content: string }[];
@@ -191,19 +191,21 @@ zip の書き方は次のとおり。
 
 ### 版ごとの違い
 
-|                            | EPUB 2.0.1                                   | EPUB 3.0                                                                   |
-| -------------------------- | -------------------------------------------- | -------------------------------------------------------------------------- |
-| パッケージ文書の `version` | `2.0`                                        | `3.0`                                                                      |
-| 更新日時                   | `<dc:date opf:event="modification">`（日付） | `<meta property="dcterms:modified">`（秒まで、UTC）                        |
-| 著者                       | `<dc:creator opf:role="aut">`                | `<dc:creator>`                                                             |
-| 表紙の画像                 | `<meta name="cover" content="…">`            | `properties="cover-image"`                                                 |
-| landmarks、guide           | `guide`（cover、title-page、text、colophon） | ナビゲーション文書の landmarks（cover、titlepage、bodymatter、backmatter） |
-| 頁送りの向き               | 書かない                                     | spine の `page-progression-direction`                                      |
-| 目次                       | NCX                                          | ナビゲーション文書と NCX                                                   |
-| 内容文書                   | XHTML 1.1 の DOCTYPE                         | `<!DOCTYPE html>`、`xmlns:epub` を宣言                                     |
-| 内容文書の `properties`    | なし                                         | インラインの SVG を含めば `svg`、MathML を含めば `mathml`                  |
-| `body` の `epub:type`      | 書かない                                     | `epubType` を書く                                                          |
+|                            | EPUB 2.0.1                                        | EPUB 3.0                                                                   |
+| -------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------- |
+| パッケージ文書の `version` | `2.0`                                             | `3.0`                                                                      |
+| 更新日時                   | `<dc:date opf:event="modification">`（日付）      | `<meta property="dcterms:modified">`（秒まで、UTC）                        |
+| 著者                       | `<dc:creator opf:role="aut">`                     | `<dc:creator>`                                                             |
+| 表紙の画像                 | `<meta name="cover" content="…">`                 | `properties="cover-image"`                                                 |
+| landmarks、guide           | `guide`（cover、title-page、text、colophon）      | ナビゲーション文書の landmarks（cover、titlepage、bodymatter、backmatter） |
+| 頁送りの向き               | 書かない                                          | spine の `page-progression-direction`                                      |
+| 組み方向（Kindle）         | `<meta name="primary-writing-mode" content="…"/>` | 同じ                                                                       |
+| 目次                       | NCX                                               | ナビゲーション文書と NCX                                                   |
+| 内容文書                   | XHTML 1.1 の DOCTYPE                              | `<!DOCTYPE html>`、`xmlns:epub` を宣言                                     |
+| 内容文書の `properties`    | なし                                              | インラインの SVG を含めば `svg`、MathML を含めば `mathml`                  |
+| `body` の `epub:type`      | 書かない                                          | `epubType` を書く                                                          |
 
+- `metadata.primaryWritingMode` があれば、どちらの版でもパッケージ文書に Kindle の `<meta name="primary-writing-mode" content="…"/>` を書く。値が四つのどれでもないとき、`pageProgressionDirection` と食い違うとき（`vertical-rl` と `horizontal-rl` は `rtl`、`vertical-lr` と `horizontal-lr` は `ltr` と合う）は例外とする。組み方向から頁送りの向きやスタイルシートの `writing-mode` を決めることはしない。
 - 内容文書の `html` 要素には `xml:lang`（EPUB 3.0 では `lang` も）に書誌情報の言語を書く。
 - 内容文書の `title` は、章の題名（表紙と扉は本の題名）とする。
 - スタイルシートは、`../` から始まる相対パスの `link` 要素で参照する。パスは区切りごとにパーセントエンコードする。
@@ -310,20 +312,22 @@ publisher = "出版者"
 description = "説明"
 modified = 2026-10-09T00:00:00Z
 page_progression_direction = "rtl"
+primary_writing_mode = "vertical-rl"
 cover_image = "assets/images/cover.jpg"
 ```
 
-| キー                         | 型                   | 説明                                                                   |
-| ---------------------------- | -------------------- | ---------------------------------------------------------------------- |
-| `identifier`                 | 文字列               | 必須。空白だけは不可                                                   |
-| `title`                      | 文字列               | 必須                                                                   |
-| `language`                   | 文字列               | 必須                                                                   |
-| `authors`                    | 文字列の配列         |                                                                        |
-| `publisher`                  | 文字列               |                                                                        |
-| `description`                | 文字列               |                                                                        |
-| `modified`                   | オフセット付きの日時 | タイムゾーンのない日時、日付だけ、時刻だけは例外。省略したら呼んだ時刻 |
-| `page_progression_direction` | `"ltr"` か `"rtl"`   | EPUB 3.0 だけで使う                                                    |
-| `cover_image`                | 文字列               | プロジェクトからの相対パスで、`assets/` の下の画像を指す               |
+| キー                         | 型                                                                     | 説明                                                                                                                                                  |
+| ---------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `identifier`                 | 文字列                                                                 | 必須。空白だけは不可                                                                                                                                  |
+| `title`                      | 文字列                                                                 | 必須                                                                                                                                                  |
+| `language`                   | 文字列                                                                 | 必須                                                                                                                                                  |
+| `authors`                    | 文字列の配列                                                           |                                                                                                                                                       |
+| `publisher`                  | 文字列                                                                 |                                                                                                                                                       |
+| `description`                | 文字列                                                                 |                                                                                                                                                       |
+| `modified`                   | オフセット付きの日時                                                   | タイムゾーンのない日時、日付だけ、時刻だけは例外。省略したら呼んだ時刻                                                                                |
+| `page_progression_direction` | `"ltr"` か `"rtl"`                                                     | EPUB 3.0 だけで使う                                                                                                                                   |
+| `primary_writing_mode`       | `"horizontal-lr"`、`"horizontal-rl"`、`"vertical-lr"`、`"vertical-rl"` | Kindle の組み方向。省略したら `page_progression_direction` から決める（`rtl` は `vertical-rl`、`ltr` は `horizontal-lr`）。両方を書いて食い違えば例外 |
+| `cover_image`                | 文字列                                                                 | プロジェクトからの相対パスで、`assets/` の下の画像を指す                                                                                              |
 
 - 知らないキーは例外とする。
 - 書誌情報の中ではルビの記法を解釈しない。書いた文字のまま使う。
@@ -792,7 +796,7 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 ## 17. 扱わないこと
 
 - 固定レイアウト、EPUB 3.1 以降に固有の機能、音声、動画、メディアオーバーレイ、スクリプト、フォントの難読化
-- 特定のリーダーや配信サービスに固有の拡張
+- 特定のリーダーや配信サービスに固有の拡張（Kindle の `primary-writing-mode` を除く）
 - EPUB を読むこと、書き換えること
 - ストリームでの書き出し、ZIP64
 - landmarks と guide に、表に挙げたほかの項目（`toc`、`preface` など）を書くこと、landmarks と guide の表示名の設定

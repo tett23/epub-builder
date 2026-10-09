@@ -1,0 +1,1 @@
+primary_writing_mode vertical-rl と page_progression_direction ltr が食い違う

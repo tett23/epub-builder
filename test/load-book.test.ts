@@ -66,6 +66,8 @@ cover_image = "assets/c.png"
     publisher: '出版者',
     description: '説明',
     modified: new Date('2026-10-09T00:00:00Z'),
+    // 頁送りの向きが rtl なので vertical-rl とみなす（ADR 0019）
+    primaryWritingMode: 'vertical-rl',
   });
   expect(book.pageProgressionDirection).toBe('rtl');
   expect(book.coverImage).toBe('assets/c.png');

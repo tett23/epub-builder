@@ -1,4 +1,4 @@
-// EPUB の構成を作る（ADR 0003、ADR 0004）
+// EPUB の構成を作る（ADR 0019、ADR 0004）
 
 import { type Book, type BuildOptions, type Chapter, EpubInputError, type EpubVersion, type Section } from './types.ts';
 import { encodePath, escapeAttribute, escapeText, hasInvalidXmlChar } from './xml.ts';
@@ -7,6 +7,14 @@ import { writeZip, type ZipEntry } from './zip.ts';
 const IMAGE_MEDIA_TYPES = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml']);
 const RESERVED_PATHS = new Set(['content.opf', 'toc.ncx', 'nav.xhtml']);
 const TEXT_DIR = 'text';
+
+/** 組み方向に合う頁送りの向き（ADR 0019） */
+export const WRITING_MODE_DIRECTIONS: Record<string, 'ltr' | 'rtl'> = {
+  'horizontal-lr': 'ltr',
+  'horizontal-rl': 'rtl',
+  'vertical-lr': 'ltr',
+  'vertical-rl': 'rtl',
+};
 
 interface ContentDocument {
   /** `OEBPS/` からの相対パス */
@@ -24,7 +32,7 @@ interface TocEntry {
   children: TocEntry[];
 }
 
-/** 内容文書のファイルの名前を、読み順の番号から作る（ADR 0014） */
+/** 内容文書のファイルの名前を、読み順の番号から作る（ADR 0019） */
 export function contentDocumentName(index: number, count: number): string {
   return `${String(index + 1).padStart(Math.max(4, String(count).length), '0')}.xhtml`;
 }
@@ -57,6 +65,14 @@ export function validateBook(book: Book, options: BuildOptions): void {
     book.pageProgressionDirection !== 'rtl'
   ) {
     throw new EpubInputError(`知らない頁送りの向き: ${book.pageProgressionDirection}`);
+  }
+  const pwm = metadata.primaryWritingMode;
+  if (pwm !== undefined) {
+    const direction = WRITING_MODE_DIRECTIONS[pwm];
+    if (direction === undefined) throw new EpubInputError(`知らない組み方向: ${String(pwm)}`);
+    if (book.pageProgressionDirection !== undefined && book.pageProgressionDirection !== direction) {
+      throw new EpubInputError(`組み方向 ${pwm} と頁送りの向き ${book.pageProgressionDirection} が食い違う`);
+    }
   }
 
   const seen = new Map<string, string>();
@@ -229,7 +245,7 @@ function collect(book: Book): { documents: ContentDocument[]; toc: TocEntry[] } 
     href: `${path}#${encodeURIComponent(section.id)}`,
     children: (section.children ?? []).map(sectionToToc(path)),
   });
-  // 節を子の章より前に置く（ADR 0014）
+  // 節を子の章より前に置く（ADR 0019）
   const toToc = (entry: PendingEntry): TocEntry => ({
     title: entry.title,
     href: documents[firstIndex(entry)].path,
@@ -268,6 +284,8 @@ function packageDocument(
   }
   if (m.publisher) dc.push(`<dc:publisher>${escapeText(m.publisher)}</dc:publisher>`);
   if (m.description) dc.push(`<dc:description>${escapeText(m.description)}</dc:description>`);
+  // Kindle の組み方向（ADR 0019）
+  if (m.primaryWritingMode) dc.push(`<meta name="primary-writing-mode" content="${m.primaryWritingMode}"/>`);
   if (version === '2.0.1') {
     dc.push(`<dc:date opf:event="modification">${modified.toISOString().slice(0, 10)}</dc:date>`);
     if (book.coverImage) dc.push(`<meta name="cover" content="${imageIds.get(book.coverImage)}"/>`);
@@ -363,7 +381,7 @@ function hasTerm(epubType: string | undefined, term: string): boolean {
   return (epubType ?? '').split(/\s+/).includes(term);
 }
 
-/** 後付けの語と、landmarks と guide での表示名と guide の型（ADR 0014）。この順で書く */
+/** 後付けの語と、landmarks と guide での表示名と guide の型（ADR 0019）。この順で書く */
 const BACK_MATTER: { term: string; ja: string; en: string; guideType: string }[] = [
   { term: 'afterword', ja: 'あとがき', en: 'Afterword', guideType: 'other.afterword' },
   { term: 'acknowledgments', ja: '謝辞', en: 'Acknowledgments', guideType: 'acknowledgements' },
@@ -384,7 +402,7 @@ interface NavigationItem {
   label: string;
 }
 
-/** landmarks と guide が指す文書を、文書の役割から決める（ADR 0014） */
+/** landmarks と guide が指す文書を、文書の役割から決める（ADR 0019） */
 function navigation(book: Book, documents: ContentDocument[]): NavigationItem[] {
   const ja = /^ja(-|$)/i.test(book.metadata.language);
   const front = (book.cover ? 1 : 0) + (book.titlepage ? 1 : 0);

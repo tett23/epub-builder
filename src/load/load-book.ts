@@ -1,7 +1,7 @@
-// ディレクトリから本を読む（ADR 0014）
+// ディレクトリから本を読む（ADR 0019）
 
 import type { Element, ElementContent, Nodes as HastNodes, Root as HastRoot } from 'hast';
-import { contentDocumentName } from '../epub.ts';
+import { contentDocumentName, WRITING_MODE_DIRECTIONS } from '../epub.ts';
 import {
   type Book,
   type BuildOptions,
@@ -11,6 +11,7 @@ import {
   type ImageMediaType,
   type Metadata,
   type PageProgressionDirection,
+  type PrimaryWritingMode,
   type Section,
   type Stylesheet,
 } from '../types.ts';
@@ -19,7 +20,7 @@ import { type SourceFormat, sourceToTree } from './convert.ts';
 import { parseToml, TomlDateTime, TomlError, type TomlTable } from './toml.ts';
 import { ConversionError, writeXhtml } from './xhtml-writer.ts';
 
-/** loadBook の警告（ADR 0014） */
+/** loadBook の警告（ADR 0019） */
 export interface LoadWarning {
   /**
    * - `renamed-file`：assets/ のファイル名の空白を `_` に置き換えた
@@ -44,7 +45,7 @@ function defaultOnWarning(warning: LoadWarning): void {
   console.warn(`警告: ${warning.path}${at}: ${warning.message}`);
 }
 
-/** EPUB の中のファイル名に空白類を使わないよう、`_` に置き換える（ADR 0014） */
+/** EPUB の中のファイル名に空白類を使わないよう、`_` に置き換える（ADR 0019） */
 export function replaceSpaces(path: string): string {
   return path.replace(/\s/gu, '_');
 }
@@ -58,7 +59,7 @@ const ASSET_TYPES: Record<string, ImageMediaType | 'text/css'> = {
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
 };
-/** meta/ の後付けの名前。読み順はこの順（ADR 0014） */
+/** meta/ の後付けの名前。読み順はこの順（ADR 0019） */
 export const BACK_MATTER_NAMES = [
   'afterword',
   'acknowledgments',
@@ -273,6 +274,7 @@ const BOOK_KEYS = new Set([
   'description',
   'modified',
   'page_progression_direction',
+  'primary_writing_mode',
   'cover_image',
 ]);
 
@@ -319,6 +321,22 @@ async function readBookToml(root: string): Promise<{
   if (ppd !== undefined && ppd !== 'ltr' && ppd !== 'rtl') {
     throw new EpubInputError('book.toml の page_progression_direction は "ltr" か "rtl" で書く');
   }
+  // Kindle の組み方向。書いていなければ頁送りの向きから決める（ADR 0019）
+  const pwm = expectString(table, 'primary_writing_mode');
+  if (pwm !== undefined && WRITING_MODE_DIRECTIONS[pwm] === undefined) {
+    throw new EpubInputError(
+      'book.toml の primary_writing_mode は "horizontal-lr"、"horizontal-rl"、"vertical-lr"、"vertical-rl" のいずれかで書く',
+    );
+  }
+  if (pwm !== undefined && ppd !== undefined && WRITING_MODE_DIRECTIONS[pwm] !== ppd) {
+    throw new EpubInputError(
+      `book.toml の primary_writing_mode ${pwm} と page_progression_direction ${ppd} が食い違う`,
+    );
+  }
+  const primaryWritingMode = (pwm ?? (ppd === 'rtl' ? 'vertical-rl' : ppd === 'ltr' ? 'horizontal-lr' : undefined)) as
+    | PrimaryWritingMode
+    | undefined;
+  if (primaryWritingMode) metadata.primaryWritingMode = primaryWritingMode;
   return { metadata, pageProgressionDirection: ppd, coverImage: expectString(table, 'cover_image') };
 }
 
@@ -350,7 +368,7 @@ function headingText(heading: Element): string | undefined {
     if (node.type === 'text') return node.value;
     if (node.type !== 'element') return '';
     if (node.tagName === 'rt' || node.tagName === 'rp') return '';
-    // EPUB 2.0.1 の括弧書きのルビ（ADR 0014）と、脚注の参照
+    // EPUB 2.0.1 の括弧書きのルビ（ADR 0019）と、脚注の参照
     if (['rt', 'rp', 'noteref'].some((c) => hasClass(node, c))) return '';
     return node.children.map(text).join('');
   };
@@ -366,7 +384,7 @@ export function headingTitle(tree: HastRoot): string | undefined {
 }
 
 /**
- * 文書の題名に使った最初の見出しを除くすべての見出しを、レベルで入れ子にした節にする（ADR 0014）。
+ * 文書の題名に使った最初の見出しを除くすべての見出しを、レベルで入れ子にした節にする（ADR 0019）。
  * id のない見出しには `sec-<番号>` を付ける
  */
 export function extractSections(tree: HastRoot, sectionHeadings?: Set<Element>): Section[] {
@@ -402,7 +420,7 @@ export function extractSections(tree: HastRoot, sectionHeadings?: Set<Element>):
 }
 
 /**
- * 本文の直下の、節にした見出しごとのまとまりを section 要素で囲む（ADR 0014）。
+ * 本文の直下の、節にした見出しごとのまとまりを section 要素で囲む（ADR 0019）。
  * 脚注の欄の前で、開いている section をすべて閉じる
  */
 export function wrapSections(tree: HastRoot, sectionHeadings: Set<Element>): void {
@@ -513,7 +531,7 @@ interface ConvertedDocument {
   sections: Section[];
 }
 
-/** EPUB 2.0.1 で使えない要素を警告する（ADR 0014） */
+/** EPUB 2.0.1 で使えない要素を警告する（ADR 0019） */
 function warnEpub2Markup(tree: HastRoot, path: string, onWarning: (warning: LoadWarning) => void): void {
   const walk = (node: HastNodes) => {
     if (node.type === 'element' && (node.tagName === 'math' || node.tagName === 'ruby')) {
@@ -559,7 +577,7 @@ async function convert(
     const tree = sourceToTree(src, doc.format, version);
     rewriteReferences(tree, doc.path, targets);
     if (version === '2.0.1') warnEpub2Markup(tree, doc.path, onWarning);
-    // 表紙と扉は目次に入れないため、見出しを節にしない（ADR 0014）
+    // 表紙と扉は目次に入れないため、見出しを節にしない（ADR 0019）
     const sectionHeadings = new Set<Element>();
     const sections = withSections ? extractSections(tree, sectionHeadings) : [];
     if (version === '3.0') wrapSections(tree, sectionHeadings);
@@ -574,7 +592,7 @@ async function convert(
 }
 
 /**
- * ディレクトリから本を読む（ADR 0014）。
+ * ディレクトリから本を読む（ADR 0019）。
  * `options.version` は、ルビと脚注の書き出し方を決めるため、`buildEpub` に渡すものと同じにする。
  */
 export async function loadBook(dir: string, options: LoadOptions): Promise<Book> {
@@ -654,7 +672,7 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
   stylesheets.sort((a, b) => compareCodePoints(a.path, b.path));
   const stylesheetPaths = stylesheets.map((s) => s.path);
 
-  // 文書の役割。EPUB 3.0 では body の epub:type に、EPUB 2.0.1 では guide に使う（ADR 0014）
+  // 文書の役割。EPUB 3.0 では body の epub:type に、EPUB 2.0.1 では guide に使う（ADR 0019）
   const role = (epubType: string) => ({ epubType });
   const withSections = (chapter: Chapter, sections: Section[]): Chapter =>
     sections.length > 0 ? { ...chapter, sections } : chapter;
@@ -676,7 +694,7 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
     }, index?.sections ?? []);
   };
   const chapters = body.map((node) => toChapter(node, 0));
-  // 後付けは本文の後、奥付の前に置き、目次に入れる（ADR 0014）
+  // 後付けは本文の後、奥付の前に置き、目次に入れる（ADR 0019）
   for (const name of BACK_MATTER_NAMES) {
     const source = meta[name];
     if (!source) continue;

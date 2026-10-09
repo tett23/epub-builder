@@ -1,4 +1,4 @@
-// meta/ の後付け（ADR 0014）
+// meta/ の後付け（ADR 0019）
 import { expect } from '@std/expect';
 import { buildEpub, EpubInputError } from '../mod.ts';
 import { loadBook } from '../load.ts';

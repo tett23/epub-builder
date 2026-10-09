@@ -293,6 +293,7 @@ language = ${tomlString(language)}
 # description = "説明"
 # modified = 2026-01-01T00:00:00Z
 # page_progression_direction = "rtl"
+# primary_writing_mode = "vertical-rl"
 # cover_image = "assets/cover.jpg"
 `,
     'body/01-はじめに.md': `# はじめに

@@ -9,4 +9,5 @@ description = """
 ルビと脚注を多く含む。"""
 modified = 2026-10-09T00:00:00Z
 page_progression_direction = "rtl"
+primary_writing_mode = "vertical-rl"
 cover_image = "assets/images/cover.svg"

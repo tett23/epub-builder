@@ -49,10 +49,9 @@ epub-builder build my-book
 
 設計上の決定とその理由は [docs/adr/](docs/adr/) に記録している。
 
-- 対応する仕様と出力の構成：[ADR 0003](docs/adr/0003-epub-2-0-1-and-3-0-output.md)
 - 公開 API と zip の作り方：[ADR 0004](docs/adr/0004-public-api-and-zip-writer.md)
 - 現在の仕様のまとめ：[docs/specifications.md](docs/specifications.md)
-- ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け：[ADR 0014](docs/adr/0014-back-matter.md)
+- 対応する仕様と出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`：[ADR 0019](docs/adr/0019-epub-output-and-project-layout-with-primary-writing-mode.md)
 - コマンドライン：[ADR 0018](docs/adr/0018-command-line-interface-all-versions-by-default.md)
 
 ## 開発
