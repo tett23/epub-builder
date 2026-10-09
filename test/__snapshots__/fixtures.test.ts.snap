@@ -249,13 +249,12 @@ html, body {
   -webkit-writing-mode: vertical-rl;
   writing-mode: vertical-rl;
 }
-/* 行間は Kindle で body からの継承が効かないことがあるため、p と br に em で直接書く */
+/* 本文の行間は指定しない。Kindle は本文の行間を読者の設定で決め、ガイドラインも本文に line-height を書かないよう求めている */
 body { text-align: justify; margin: 0 5pt; padding: 0; }
-p { margin: 0; padding: 0; line-height: 1.7em; word-break: break-all; }
-br { line-height: 1.7em; }
+p { margin: 0; padding: 0; word-break: break-all; }
 ruby > rt { font-size: 0.33em !important; text-align: start; }
-h1 { font-size: 1.3em; line-height: 1.5em; }
-h2 { font-size: 1.15em; line-height: 1.5em; }
+h1 { font-size: 1.3em; line-height: 1.5; }
+h2 { font-size: 1.15em; line-height: 1.5; }
 .cover { background: url("images/cover.svg"); }
 .note { color: gray; }
 
@@ -540,13 +539,12 @@ html, body {
   -webkit-writing-mode: vertical-rl;
   writing-mode: vertical-rl;
 }
-/* 行間は Kindle で body からの継承が効かないことがあるため、p と br に em で直接書く */
+/* 本文の行間は指定しない。Kindle は本文の行間を読者の設定で決め、ガイドラインも本文に line-height を書かないよう求めている */
 body { text-align: justify; margin: 0 5pt; padding: 0; }
-p { margin: 0; padding: 0; line-height: 1.7em; word-break: break-all; }
-br { line-height: 1.7em; }
+p { margin: 0; padding: 0; word-break: break-all; }
 ruby > rt { font-size: 0.33em !important; text-align: start; }
-h1 { font-size: 1.3em; line-height: 1.5em; }
-h2 { font-size: 1.15em; line-height: 1.5em; }
+h1 { font-size: 1.3em; line-height: 1.5; }
+h2 { font-size: 1.15em; line-height: 1.5; }
 .cover { background: url("images/cover.svg"); }
 .note { color: gray; }
 
@@ -1908,7 +1906,7 @@ html, body {
   -webkit-writing-mode: vertical-rl;
   writing-mode: vertical-rl;
 }
-/* 行間は Kindle で body からの継承が効かないことがあるため、p と br に em で直接書く */
+/* 本文の行間は指定しない。Kindle は本文の行間を読者の設定で決め、ガイドラインも本文に line-height を書かないよう求めている */
 body {
   font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
   text-align: justify;
@@ -1920,17 +1918,13 @@ p {
   margin: 0;
   padding: 0;
   border: none;
-  line-height: 1.7em;
   text-indent: 1em;
   word-break: break-all;
 }
-br {
-  line-height: 1.7em;
-  word-break: break-all;
-}
+br { word-break: break-all; }
 hr { margin: 0 2em; }
 ruby > rt { font-size: 0.33em !important; text-align: start; }
-h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.5em; }
+h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.5; }
 /* 見出しは本文より一回り大きい程度にとどめる（既定の 2 倍、1.5 倍は縦書きでは大きすぎる） */
 h1 { font-size: 1.3em; margin: 0 0 0 2em; }
 h2 { font-size: 1.15em; margin: 0 0 0 1.5em; }
@@ -2672,7 +2666,7 @@ html, body {
   -webkit-writing-mode: vertical-rl;
   writing-mode: vertical-rl;
 }
-/* 行間は Kindle で body からの継承が効かないことがあるため、p と br に em で直接書く */
+/* 本文の行間は指定しない。Kindle は本文の行間を読者の設定で決め、ガイドラインも本文に line-height を書かないよう求めている */
 body {
   font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
   text-align: justify;
@@ -2684,17 +2678,13 @@ p {
   margin: 0;
   padding: 0;
   border: none;
-  line-height: 1.7em;
   text-indent: 1em;
   word-break: break-all;
 }
-br {
-  line-height: 1.7em;
-  word-break: break-all;
-}
+br { word-break: break-all; }
 hr { margin: 0 2em; }
 ruby > rt { font-size: 0.33em !important; text-align: start; }
-h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.5em; }
+h1, h2 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.5; }
 /* 見出しは本文より一回り大きい程度にとどめる（既定の 2 倍、1.5 倍は縦書きでは大きすぎる） */
 h1 { font-size: 1.3em; margin: 0 0 0 2em; }
 h2 { font-size: 1.15em; margin: 0 0 0 1.5em; }
@@ -5695,7 +5685,7 @@ on the next line.</p>
 </html>
 
 == OEBPS/assets/css/base.css
-body { font-family: sans-serif; line-height: 1.6; }
+body { font-family: sans-serif; }
 
 == OEBPS/assets/css/code.css
 pre, code { font-family: monospace; }
@@ -6240,7 +6230,7 @@ on the next line.</p>
 </html>
 
 == OEBPS/assets/css/base.css
-body { font-family: sans-serif; line-height: 1.6; }
+body { font-family: sans-serif; }
 
 == OEBPS/assets/css/code.css
 pre, code { font-family: monospace; }

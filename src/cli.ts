@@ -316,15 +316,14 @@ html, body {
   -epub-line-break: strict;
   -webkit-line-break: strict;
 }
-/* 行間は Kindle で body からの継承が効かないことがあるため、p と br に em で直接書く */
+/* 本文の行間は指定しない。Kindle は本文の行間を読者の設定で決め、ガイドラインも本文に line-height を書かないよう求めている */
 body { text-align: justify; margin: 0 5pt; padding: 0; }
-p { margin: 0; padding: 0; line-height: 1.7em; }
-br { line-height: 1.7em; }
+p { margin: 0; padding: 0; }
 ruby > rt { font-size: 0.33em !important; text-align: start; }
 /* 見出しは本文より一回り大きい程度にとどめる */
-h1 { font-size: 1.4em; line-height: 1.5em; }
-h2 { font-size: 1.2em; line-height: 1.5em; }
-h3, h4, h5, h6 { font-size: 1em; line-height: 1.5em; }
+h1 { font-size: 1.4em; line-height: 1.5; }
+h2 { font-size: 1.2em; line-height: 1.5; }
+h3, h4, h5, h6 { font-size: 1em; line-height: 1.5; }
 .footnotes { margin-top: 2em; font-size: 0.9em; }
 .noteref { font-size: 0.7em; }
 /* EPUB 2.0.1 ではルビが括弧書きになる。括弧を隠すには次を使う */
