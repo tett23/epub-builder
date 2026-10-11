@@ -1,4 +1,4 @@
-// コマンドラインの入口（ADR 0022）
+// コマンドラインの入口（ADR 0024）
 import { expect } from '@std/expect';
 import { main } from '../cli.ts';
 import { VERSION } from '../src/version.ts';
@@ -30,7 +30,7 @@ const opfVersion = async (path: string) =>
   /<package [^>]*version="([^"]+)"/.exec((await unzipText(await Deno.readFile(path))).get('OEBPS/content.opf')!)![1];
 
 Deno.test('build', async (t) => {
-  await t.step('既定は両方の版を、版を付けた <dir の名前> のファイルに書く', async () => {
+  await t.step('既定はすべての版を、版を付けた <dir の名前> のファイルに書く', async () => {
     await withTemp(async (tmp) => {
       const cwd = Deno.cwd();
       const fixture = `${cwd}/test/fixtures/minimal-book`;
@@ -39,11 +39,13 @@ Deno.test('build', async (t) => {
         const result = await run('build', fixture);
         expect(result).toEqual({
           code: 0,
-          stdout: ['minimal-book-2.0.1.epub', 'minimal-book-3.0.epub'],
+          stdout: ['minimal-book-2.0.1.epub', 'minimal-book-3.0.epub', 'minimal-book-3.2.epub'],
           stderr: [],
         });
         expect(await opfVersion(`${tmp}/minimal-book-2.0.1.epub`)).toBe('2.0');
         expect(await opfVersion(`${tmp}/minimal-book-3.0.epub`)).toBe('3.0');
+        // EPUB 3.2 のパッケージ文書の version は 3.0（ADR 0024）
+        expect(await opfVersion(`${tmp}/minimal-book-3.2.epub`)).toBe('3.0');
       } finally {
         Deno.chdir(cwd);
       }
@@ -64,10 +66,10 @@ Deno.test('build', async (t) => {
       }
     });
   });
-  await t.step('-o だけなら、その名前に版を付けて両方を書く', async () => {
+  await t.step('-o だけなら、その名前に版を付けてすべての版を書く', async () => {
     await withTemp(async (tmp) => {
       const result = await run('build', 'test/fixtures/minimal-book', '-o', `${tmp}/book.epub`);
-      expect(result.stdout).toEqual([`${tmp}/book-2.0.1.epub`, `${tmp}/book-3.0.epub`]);
+      expect(result.stdout).toEqual([`${tmp}/book-2.0.1.epub`, `${tmp}/book-3.0.epub`, `${tmp}/book-3.2.epub`]);
     });
   });
   await t.step('-o と -e 2.0.1', async () => {
@@ -77,7 +79,7 @@ Deno.test('build', async (t) => {
       expect(await opfVersion(`${tmp}/a/b.epub`)).toBe('2.0');
     });
   });
-  await t.step('all は版を付けた二つのファイルを書く', async () => {
+  await t.step('all は版を付けた三つのファイルを書く', async () => {
     await withTemp(async (tmp) => {
       const result = await run(
         'build',
@@ -85,7 +87,7 @@ Deno.test('build', async (t) => {
         '--epub-version=all',
         `--output=${tmp}/book.epub`,
       );
-      expect(result.stdout).toEqual([`${tmp}/book-2.0.1.epub`, `${tmp}/book-3.0.epub`]);
+      expect(result.stdout).toEqual([`${tmp}/book-2.0.1.epub`, `${tmp}/book-3.0.epub`, `${tmp}/book-3.2.epub`]);
       expect(await opfVersion(`${tmp}/book-2.0.1.epub`)).toBe('2.0');
       expect(await opfVersion(`${tmp}/book-3.0.epub`)).toBe('3.0');
     });
@@ -101,7 +103,11 @@ Deno.test('build', async (t) => {
   await t.step('all の警告には版を付ける', async () => {
     await withTemp(async (tmp) => {
       const result = await run('build', 'test/fixtures/edge-book', '-e', 'all', '-o', `${tmp}/e.epub`);
-      expect(result.stderr.map((l) => l.slice(0, 15))).toEqual(['[2.0.1] 警告: ass', '[3.0] 警告: asset']);
+      expect(result.stderr.map((l) => l.slice(0, 15))).toEqual([
+        '[2.0.1] 警告: ass',
+        '[3.0] 警告: asset',
+        '[3.2] 警告: asset',
+      ]);
     });
   });
   await t.step('--strict は警告で EPUB を書かずに 1 で終える', async () => {
@@ -144,7 +150,7 @@ Deno.test('check', async (t) => {
   await t.step('誤りがなければ版ごとに知らせて 0 で終える', async () => {
     expect(await run('check', 'test/fixtures/sample-book')).toEqual({
       code: 0,
-      stdout: ['2.0.1: 誤りはない', '3.0: 誤りはない'],
+      stdout: ['2.0.1: 誤りはない', '3.0: 誤りはない', '3.2: 誤りはない'],
       stderr: [],
     });
   });
@@ -159,9 +165,9 @@ Deno.test('check', async (t) => {
   await t.step('警告と --strict', async () => {
     const warn = await run('check', 'test/fixtures/edge-book');
     expect(warn.code).toBe(0);
-    // 既定で両方の版を調べ、警告に版を付ける
-    expect(warn.stderr.map((l) => l.slice(0, 11))).toEqual(['[2.0.1] 警告:', '[3.0] 警告: a']);
-    expect(warn.stdout).toEqual(['2.0.1: 誤りはない', '3.0: 誤りはない']);
+    // 既定ですべての版を調べ、警告に版を付ける
+    expect(warn.stderr.map((l) => l.slice(0, 11))).toEqual(['[2.0.1] 警告:', '[3.0] 警告: a', '[3.2] 警告: a']);
+    expect(warn.stdout).toEqual(['2.0.1: 誤りはない', '3.0: 誤りはない', '3.2: 誤りはない']);
     const single = await run('check', 'test/fixtures/edge-book', '-e', '3.0');
     expect(single.stdout).toEqual(['3.0: 誤りはない']);
     expect(single.stderr).toEqual([expect.stringMatching(/^警告: /)]);
@@ -189,12 +195,16 @@ Deno.test('toc は目次の木を題名の入れ子で出す', async () => {
   expect(result.stdout).not.toContain('扉の見出しは目次に入らない');
 });
 
-Deno.test('toc は既定で両方の版を、版ごとの見出しの下に出す', async () => {
+Deno.test('toc は既定ですべての版を、版ごとの見出しの下に出す', async () => {
   const single = (await run('toc', 'test/fixtures/minimal-book', '-e', '2.0.1')).stdout;
   expect(single).toEqual(['本文']);
   for (const args of [[], ['-e', 'all']]) {
     const result = await run('toc', 'test/fixtures/minimal-book', ...args);
-    expect(result).toEqual({ code: 0, stdout: ['EPUB 2.0.1', '  本文', 'EPUB 3.0', '  本文'], stderr: [] });
+    expect(result).toEqual({
+      code: 0,
+      stdout: ['EPUB 2.0.1', '  本文', 'EPUB 3.0', '  本文', 'EPUB 3.2', '  本文'],
+      stderr: [],
+    });
   }
 });
 
@@ -283,8 +293,8 @@ Deno.test('使い方の誤りは 2 で終え、使い方を標準エラー出力
     ['知らないコマンド', ['make'], '知らないコマンド: make'],
     ['知らないオプション', ['build', '--fast'], '知らないオプション: --fast'],
     ['知らない短いオプション', ['check', '-x'], '知らないオプション: -x'],
-    ['知らない版', ['build', '-e', '3.3'], '知らない版: 3.3（2.0.1、3.0、all のいずれか）'],
-    ['toc の知らない版', ['toc', '-e', '2'], '知らない版: 2（2.0.1、3.0、all のいずれか）'],
+    ['知らない版', ['build', '-e', '3.3'], '知らない版: 3.3（2.0.1、3.0、3.2、all のいずれか）'],
+    ['toc の知らない版', ['toc', '-e', '2'], '知らない版: 2（2.0.1、3.0、3.2、all のいずれか）'],
     ['値のないオプション', ['build', '-o'], '--output に値が要る'],
     ['余分な引数', ['check', 'a', 'b'], '余分な引数: b'],
     ['version の余分な引数', ['version', 'x'], '余分な引数: x'],

@@ -1,6 +1,16 @@
-// EPUB の構成を作る（ADR 0019、ADR 0004）
+// EPUB の構成を作る（ADR 0024、ADR 0004）
 
-import { type Book, type BuildOptions, type Chapter, epubInputError, type EpubVersion, type Section } from './types.ts';
+import {
+  type Book,
+  type BuildOptions,
+  type Chapter,
+  EPUB_VERSIONS,
+  epubInputError,
+  type EpubVersion,
+  hasNcx,
+  isEpub3,
+  type Section,
+} from './types.ts';
 import { encodePath, escapeAttribute, escapeText, hasInvalidXmlChar } from './xml.ts';
 import { writeZip, type ZipEntry } from './zip.ts';
 
@@ -8,7 +18,7 @@ const IMAGE_MEDIA_TYPES = new Set(['image/jpeg', 'image/png', 'image/gif', 'imag
 const RESERVED_PATHS = new Set(['content.opf', 'toc.ncx', 'nav.xhtml']);
 const TEXT_DIR = 'text';
 
-/** 組み方向に合う頁送りの向き（ADR 0019） */
+/** 組み方向に合う頁送りの向き（ADR 0024） */
 export const WRITING_MODE_DIRECTIONS: Record<string, 'ltr' | 'rtl'> = {
   'horizontal-lr': 'ltr',
   'horizontal-rl': 'rtl',
@@ -32,14 +42,14 @@ interface TocEntry {
   children: TocEntry[];
 }
 
-/** 内容文書のファイルの名前を、読み順の番号から作る（ADR 0019） */
+/** 内容文書のファイルの名前を、読み順の番号から作る（ADR 0024） */
 export function contentDocumentName(index: number, count: number): string {
   return `${String(index + 1).padStart(Math.max(4, String(count).length), '0')}.xhtml`;
 }
 
 /** 本の値の誤りを調べ、誤りがあれば例外とする */
 export function validateBook(book: Book, options: BuildOptions): void {
-  if (options.version !== '2.0.1' && options.version !== '3.0') {
+  if (!EPUB_VERSIONS.includes(options.version)) {
     throw epubInputError(`知らない版: ${String(options.version)}`);
   }
   const { metadata } = book;
@@ -245,7 +255,7 @@ function collect(book: Book): { documents: ContentDocument[]; toc: TocEntry[] } 
     href: `${path}#${encodeURIComponent(section.id)}`,
     children: (section.children ?? []).map(sectionToToc(path)),
   });
-  // 節を子の章より前に置く（ADR 0019）
+  // 節を子の章より前に置く（ADR 0024）
   const toToc = (entry: PendingEntry): TocEntry => ({
     title: entry.title,
     href: documents[firstIndex(entry)].path,
@@ -284,7 +294,7 @@ function packageDocument(
   }
   if (m.publisher) dc.push(`<dc:publisher>${escapeText(m.publisher)}</dc:publisher>`);
   if (m.description) dc.push(`<dc:description>${escapeText(m.description)}</dc:description>`);
-  // Kindle の組み方向（ADR 0019）
+  // Kindle の組み方向（ADR 0024）
   if (m.primaryWritingMode) dc.push(`<meta name="primary-writing-mode" content="${m.primaryWritingMode}"/>`);
   if (version === '2.0.1') {
     dc.push(`<dc:date opf:event="modification">${modified.toISOString().slice(0, 10)}</dc:date>`);
@@ -294,12 +304,12 @@ function packageDocument(
   }
 
   const manifest: string[] = [];
-  if (version === '3.0') {
+  if (isEpub3(version)) {
     manifest.push('<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>');
   }
-  manifest.push('<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>');
+  if (hasNcx(version)) manifest.push('<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>');
   for (const doc of documents) {
-    const properties = version === '3.0' ? contentProperties(doc.body) : [];
+    const properties = isEpub3(version) ? contentProperties(doc.body) : [];
     const attr = properties.length > 0 ? ` properties="${properties.join(' ')}"` : '';
     manifest.push(`<item id="${doc.id}" href="${doc.path}" media-type="application/xhtml+xml"${attr}/>`);
   }
@@ -309,11 +319,11 @@ function packageDocument(
   }
   for (const image of book.images ?? []) {
     const href = escapeAttribute(encodePath(image.path));
-    const cover = version === '3.0' && image.path === book.coverImage ? ' properties="cover-image"' : '';
+    const cover = isEpub3(version) && image.path === book.coverImage ? ' properties="cover-image"' : '';
     manifest.push(`<item id="${imageIds.get(image.path)}" href="${href}" media-type="${image.mediaType}"${cover}/>`);
   }
 
-  const ppd = version === '3.0' && book.pageProgressionDirection
+  const ppd = isEpub3(version) && book.pageProgressionDirection
     ? ` page-progression-direction="${book.pageProgressionDirection}"`
     : '';
   const spine = documents.map((doc) => `<itemref idref="${doc.id}"/>`);
@@ -331,7 +341,7 @@ ${dc.join('\n')}
 <manifest>
 ${manifest.join('\n')}
 </manifest>
-<spine toc="ncx"${ppd}>
+<spine${hasNcx(version) ? ' toc="ncx"' : ''}${ppd}>
 ${spine.join('\n')}
 </spine>
 ${version === '2.0.1' ? guide(book, documents) : ''}</package>
@@ -381,7 +391,7 @@ function hasTerm(epubType: string | undefined, term: string): boolean {
   return (epubType ?? '').split(/\s+/).includes(term);
 }
 
-/** 後付けの語と、landmarks と guide での表示名と guide の型（ADR 0019）。この順で書く */
+/** 後付けの語と、landmarks と guide での表示名と guide の型（ADR 0024）。この順で書く */
 const BACK_MATTER: { term: string; ja: string; en: string; guideType: string }[] = [
   { term: 'afterword', ja: 'あとがき', en: 'Afterword', guideType: 'other.afterword' },
   { term: 'acknowledgments', ja: '謝辞', en: 'Acknowledgments', guideType: 'acknowledgements' },
@@ -402,7 +412,7 @@ interface NavigationItem {
   label: string;
 }
 
-/** landmarks と guide が指す文書を、文書の役割から決める（ADR 0019） */
+/** landmarks と guide が指す文書を、文書の役割から決める（ADR 0024） */
 function navigation(book: Book, documents: ContentDocument[]): NavigationItem[] {
   const ja = /^ja(-|$)/i.test(book.metadata.language);
   const front = (book.cover ? 1 : 0) + (book.titlepage ? 1 : 0);
@@ -491,9 +501,10 @@ export async function buildEpub(book: Book, options: BuildOptions): Promise<Uint
     { name: 'mimetype', data: encoder.encode('application/epub+zip'), store: true },
     { name: 'META-INF/container.xml', data: encoder.encode(CONTAINER) },
     text('content.opf', packageDocument(book, version, documents, imageIds, stylesheetIds, modified)),
-    text('toc.ncx', ncxDocument(book, toc)),
   ];
-  if (version === '3.0') entries.push(text('nav.xhtml', navDocument(book, toc, documents)));
+  // EPUB 3.2 は NCX を含まない（ADR 0024）
+  if (hasNcx(version)) entries.push(text('toc.ncx', ncxDocument(book, toc)));
+  if (isEpub3(version)) entries.push(text('nav.xhtml', navDocument(book, toc, documents)));
   for (const doc of documents) entries.push(text(doc.path, wrapDocument(doc, book, version)));
   for (const stylesheet of book.stylesheets ?? []) entries.push(text(stylesheet.path, stylesheet.content));
   for (const image of book.images ?? []) entries.push({ name: `OEBPS/${image.path}`, data: image.data });

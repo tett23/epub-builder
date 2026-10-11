@@ -1,6 +1,14 @@
 # epub-builder
 
-EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ。Deno で動く。
+EPUB 2.0.1、EPUB 3.0、EPUB 3.2 のファイルを作る TypeScript のライブラリ。Deno で動く。
+
+| 版      | 向いている環境                                                       |
+| ------- | -------------------------------------------------------------------- |
+| `2.0.1` | EPUB 3 に対応しない古い端末やアプリ。ルビは括弧書きになる            |
+| `3.0`   | EPUB 3 に対応する端末やアプリ。古いアプリのための目次（NCX）も入れる |
+| `3.2`   | EPUB 3 に対応する新しい端末やアプリ。目次は EPUB 3 の形式だけにする  |
+
+迷ったら、すべての版を作って読む環境で試す（CLI の既定）。
 
 書誌情報、本文（XHTML）、スタイルシート、画像を渡すと、EPUB のファイル（zip）のバイト列を返す。
 中核のモジュール（`mod.ts`）は実行時の依存を持たない。
@@ -36,14 +44,14 @@ epub-builder init my-book
 epub-builder build my-book
 ```
 
-| コマンド         | 働き                                                                                                                   |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `build [dir]`    | EPUB を作る。既定で 2.0.1 と 3.0 の両方。`-e 2.0.1` か `-e 3.0` で一つの版だけ（ほかに `-o <path>`、`--strict`、`-q`） |
-| `check [dir]`    | EPUB を書かずに、誤りと警告を調べる（既定で両方の版）                                                                  |
-| `toc [dir]`      | 目次の木を表示する（既定で両方の版）                                                                                   |
-| `init [dir]`     | 新しい本の雛形を作る                                                                                                   |
-| `help [command]` | 使い方を表示する                                                                                                       |
-| `version`        | 版を表示する                                                                                                           |
+| コマンド         | 働き                                                                                                                                |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `build [dir]`    | EPUB を作る。既定で 2.0.1、3.0、3.2 のすべて。`-e 2.0.1`、`-e 3.0`、`-e 3.2` で一つの版だけ（ほかに `-o <path>`、`--strict`、`-q`） |
+| `check [dir]`    | EPUB を書かずに、誤りと警告を調べる（既定ですべての版）                                                                             |
+| `toc [dir]`      | 目次の木を表示する（既定ですべての版）                                                                                              |
+| `init [dir]`     | 新しい本の雛形を作る                                                                                                                |
+| `help [command]` | 使い方を表示する                                                                                                                    |
+| `version`        | 版を表示する                                                                                                                        |
 
 インストールせずに `deno task cli build my-book` としても動く。
 
@@ -51,8 +59,7 @@ epub-builder build my-book
 
 - 公開 API と zip の作り方：[ADR 0004](docs/adr/0004-public-api-and-zip-writer.md)
 - 現在の仕様のまとめ：[docs/specifications.md](docs/specifications.md)
-- 対応する仕様と出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`：[ADR 0019](docs/adr/0019-epub-output-and-project-layout-with-primary-writing-mode.md)
-- コマンドライン：[ADR 0022](docs/adr/0022-command-line-interface-own-argument-parser.md)
+- 対応する仕様と出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`、EPUB 3.2、コマンドライン：[ADR 0024](docs/adr/0024-epub-3-2.md)
 - ADR の運用と保護：[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)
 - クラスを使わない（誤りと TOML の日時を値で表す）：[ADR 0021](docs/adr/0021-no-classes.md)
 - 依存の再実装と、残す依存：[ADR 0023](docs/adr/0023-reimplement-hastscript.md)

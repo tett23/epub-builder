@@ -1,11 +1,19 @@
-// コマンドラインの入口の処理（ADR 0022）
+// コマンドラインの入口の処理（ADR 0024）
 
 import { basename, resolve } from 'node:path';
 import { parseArguments } from './args.ts';
 import { buildEpub } from './epub.ts';
 import { hasErrorName, type NamedError, namedError } from './errors.ts';
 import { loadBook, type LoadWarning } from './load/load-book.ts';
-import { type Book, type Chapter, epubInputError, type EpubVersion, isEpubInputError, type Section } from './types.ts';
+import {
+  type Book,
+  type Chapter,
+  EPUB_VERSIONS,
+  epubInputError,
+  type EpubVersion,
+  isEpubInputError,
+  type Section,
+} from './types.ts';
 import { VERSION } from './version.ts';
 
 export interface Io {
@@ -35,21 +43,27 @@ export function isUsageError(value: unknown): value is UsageError {
 
 const HELP: Record<string, string> = {
   '': `epub-builder ${VERSION}
-ディレクトリから EPUB 2.0.1 と EPUB 3.0 のファイルを作る。
+ディレクトリから EPUB 2.0.1、EPUB 3.0、EPUB 3.2 のファイルを作る。
 
 使い方:
   epub-builder <command> [options]
 
 コマンド:
-  build [dir]      ディレクトリから EPUB を作る（既定で 2.0.1 と 3.0 の両方）
-  check [dir]      EPUB を書かずに、誤りと警告を調べる（既定で両方の版）
-  toc [dir]        目次の木を表示する（既定で両方の版）
+  build [dir]      ディレクトリから EPUB を作る（既定ですべての版）
+  check [dir]      EPUB を書かずに、誤りと警告を調べる（既定ですべての版）
+  toc [dir]        目次の木を表示する（既定ですべての版）
   init [dir]       新しい本の雛形を作る
   help [command]   使い方を表示する
   version          版を表示する
 
 dir を省いたときは、今のディレクトリを使う。
 コマンドごとの使い方は epub-builder help <command> で表示する。
+
+版（-e, --epub-version）:
+  2.0.1   EPUB 3 に対応しない古い端末やアプリ向け。ルビは括弧書きになる
+  3.0     EPUB 3 に対応する端末やアプリ向け。古いアプリのための目次（NCX）も入れる
+  3.2     EPUB 3 に対応する新しい端末やアプリ向け。目次は EPUB 3 の形式だけにする
+  all     上の三つすべて（既定）
 
 オプション:
   -h, --help       使い方を表示する
@@ -58,21 +72,27 @@ dir を省いたときは、今のディレクトリを使う。
   epub-builder build [dir] [options]
 
 ディレクトリ（book.toml、body/、meta/、assets/）から EPUB を作る。
-既定では EPUB 2.0.1 と EPUB 3.0 の両方を作る。
+既定では EPUB 2.0.1、EPUB 3.0、EPUB 3.2 のすべてを作る。
 
 オプション:
-  -e, --epub-version <v>  作る版。2.0.1、3.0、all（両方）のいずれか。既定は all
+  -e, --epub-version <v>  作る版。2.0.1、3.0、3.2、all（すべて）のいずれか。既定は all
   -o, --output <path>     出力するファイル。既定は <dir の名前>.epub
-                          両方の版を作るときは、拡張子の前に版を付けた二つのファイルを書く
-                          （book.epub なら book-2.0.1.epub と book-3.0.epub）
+                          複数の版を作るときは、拡張子の前に版を付けたファイルを書く
+                          （book.epub なら book-2.0.1.epub、book-3.0.epub、book-3.2.epub）
       --strict            警告を誤りとして扱い、EPUB を書かずに終了コード 1 で終える
   -q, --quiet             警告を表示しない
   -h, --help              この使い方を表示する
 
 例:
-  epub-builder build my-book                  my-book-2.0.1.epub と my-book-3.0.epub を作る
-  epub-builder build my-book -e 3.0           my-book.epub（EPUB 3.0）だけを作る
-  epub-builder build my-book -o out/book.epub out/book-2.0.1.epub と out/book-3.0.epub を作る`,
+  epub-builder build my-book                  my-book-2.0.1.epub、my-book-3.0.epub、my-book-3.2.epub を作る
+  epub-builder build my-book -e 3.2           my-book.epub（EPUB 3.2）だけを作る
+  epub-builder build my-book -o out/book.epub out/book-2.0.1.epub、out/book-3.0.epub、out/book-3.2.epub を作る
+
+版（-e, --epub-version）:
+  2.0.1   EPUB 3 に対応しない古い端末やアプリ向け。ルビは括弧書きになる
+  3.0     EPUB 3 に対応する端末やアプリ向け。古いアプリのための目次（NCX）も入れる
+  3.2     EPUB 3 に対応する新しい端末やアプリ向け。目次は EPUB 3 の形式だけにする
+  all     上の三つすべて（既定）`,
   check: `使い方:
   epub-builder check [dir] [options]
 
@@ -80,7 +100,7 @@ EPUB を書かずに、ディレクトリを読み込んで、誤りと警告を
 EPUBCheck は呼ばない。
 
 オプション:
-  -e, --epub-version <v>  調べる版。2.0.1、3.0、all（両方）のいずれか。既定は all
+  -e, --epub-version <v>  調べる版。2.0.1、3.0、3.2、all（すべて）のいずれか。既定は all
       --strict            警告を誤りとして扱い、終了コード 1 で終える
   -q, --quiet             警告を表示しない
   -h, --help              この使い方を表示する`,
@@ -88,10 +108,10 @@ EPUBCheck は呼ばない。
   epub-builder toc [dir] [options]
 
 目次の木を、題名の入れ子で表示する。表紙と扉は目次に入らない。
-両方の版を扱うときは、版ごとに「EPUB <版>」の行の下に字下げして表示する。
+複数の版を扱うときは、版ごとに「EPUB <版>」の行の下に字下げして表示する。
 
 オプション:
-  -e, --epub-version <v>  目次を作る版。2.0.1、3.0、all（両方）のいずれか。既定は all
+  -e, --epub-version <v>  目次を作る版。2.0.1、3.0、3.2、all（すべて）のいずれか。既定は all
   -h, --help              この使い方を表示する`,
   init: `使い方:
   epub-builder init [dir] [options]
@@ -133,11 +153,11 @@ function parse(
   return { positional: parsed.positional, options: parsed.options };
 }
 
-/** --epub-version の値を版の並びにする。省けば両方の版（ADR 0022） */
+/** --epub-version の値を版の並びにする。省けばすべての版（ADR 0024） */
 function versions(value: unknown): EpubVersion[] {
-  if (value === undefined || value === 'all') return ['2.0.1', '3.0'];
-  if (value === '2.0.1' || value === '3.0') return [value];
-  throw usageError(`知らない版: ${String(value)}（2.0.1、3.0、all のいずれか）`);
+  if (value === undefined || value === 'all') return [...EPUB_VERSIONS];
+  if (EPUB_VERSIONS.includes(value as EpubVersion)) return [value as EpubVersion];
+  throw usageError(`知らない版: ${String(value)}（2.0.1、3.0、3.2、all のいずれか）`);
 }
 
 function singleDir(positional: string[]): string {
@@ -255,7 +275,7 @@ async function toc(args: string[], io: Io): Promise<number> {
     if (targets.length === 1) {
       for (const line of lines) io.stdout(line);
     } else {
-      // 両方の版を扱うときは、版ごとの見出しの下に字下げして出す
+      // 複数の版を扱うときは、版ごとの見出しの下に字下げして出す
       io.stdout(`EPUB ${version}`);
       for (const line of lines) io.stdout(`  ${line}`);
     }

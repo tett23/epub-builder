@@ -1,4 +1,4 @@
-// コマンドラインの引数の解析（ADR 0022）。@std/cli の parseArgs のうち、CLI が使う機能だけを自前で書く
+// コマンドラインの引数の解析（ADR 0024）。@std/cli の parseArgs のうち、CLI が使う機能だけを自前で書く
 
 export interface ArgumentSpec {
   /** 値の要る長いオプションの名前 */
