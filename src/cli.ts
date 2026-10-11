@@ -1,7 +1,7 @@
-// コマンドラインの入口の処理（ADR 0018）
+// コマンドラインの入口の処理（ADR 0022）
 
-import { parseArgs } from '@std/cli/parse-args';
 import { basename, resolve } from 'node:path';
+import { parseArguments } from './args.ts';
 import { buildEpub } from './epub.ts';
 import { hasErrorName, type NamedError, namedError } from './errors.ts';
 import { loadBook, type LoadWarning } from './load/load-book.ts';
@@ -117,34 +117,23 @@ const COMMANDS = ['build', 'check', 'toc', 'init', 'help', 'version'];
 
 interface Parsed {
   positional: string[];
-  options: Record<string, unknown>;
+  options: Record<string, string | boolean>;
 }
 
 function parse(
   args: string[],
   spec: { string?: string[]; boolean?: string[]; alias?: Record<string, string> },
 ): Parsed {
-  const known = new Set([...(spec.string ?? []), ...(spec.boolean ?? []), ...Object.keys(spec.alias ?? {})]);
-  const options = parseArgs(args, {
+  const parsed = parseArguments(args, {
     string: spec.string,
     boolean: [...(spec.boolean ?? []), 'help'],
     alias: { ...spec.alias, h: 'help' },
-    unknown: (arg) => {
-      if (arg.startsWith('-') && !known.has(arg.replace(/^-+/, '').replace(/=.*$/, ''))) {
-        throw usageError(`知らないオプション: ${arg}`);
-      }
-      return true;
-    },
   });
-  for (const name of spec.string ?? []) {
-    if (name in options && (options[name] === '' || typeof options[name] !== 'string')) {
-      throw usageError(`--${name} に値が要る`);
-    }
-  }
-  return { positional: options._.map(String), options };
+  if (!parsed.ok) throw usageError(parsed.message);
+  return { positional: parsed.positional, options: parsed.options };
 }
 
-/** --epub-version の値を版の並びにする。省けば両方の版（ADR 0018） */
+/** --epub-version の値を版の並びにする。省けば両方の版（ADR 0022） */
 function versions(value: unknown): EpubVersion[] {
   if (value === undefined || value === 'all') return ['2.0.1', '3.0'];
   if (value === '2.0.1' || value === '3.0') return [value];

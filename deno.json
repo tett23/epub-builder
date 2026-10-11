@@ -22,7 +22,6 @@
     ]
   },
   "imports": {
-    "@std/cli": "jsr:@std/cli@1.0.32",
     "@std/expect": "jsr:@std/expect@^1",
     "@std/testing": "jsr:@std/testing@^1",
     "hast": "npm:@types/hast@3.0.5",

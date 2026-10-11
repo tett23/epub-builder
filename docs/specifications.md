@@ -5,7 +5,7 @@
 
 - ADR 0004：公開 API と zip の書き出し
 - ADR 0019：対応する仕様と版ごとの出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`（ADR 0003 と、ADR 0005 から 0014 を置き換えた）
-- ADR 0018：コマンドライン（ADR 0015 から 0017 を置き換えた）
+- ADR 0022：コマンドライン（ADR 0015 から 0018 を置き換えた）
 - ADR 0020：ADR の運用と、コミット済みの ADR の保護（ADR 0002 を置き換えた）
 - ADR 0021：クラスを使わず、誤りと TOML の日時を値と関数で表す
 
@@ -54,10 +54,11 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 
 ## 2. 公開するモジュールと関数
 
-| モジュール | 公開するもの                                                                                                                                                                | 外部の依存             |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `mod.ts`   | `buildEpub`、`Book` などの型、`EpubInputError`（型）、`epubInputError`、`isEpubInputError`                                                                                  | なし                   |
-| `load.ts`  | `loadBook`、`LoadOptions`、`LoadWarning`、`parseToml`、`TomlDateTime`（型）、`tomlDateTime`、`isTomlDateTime`、`TomlError`（型）、`tomlError`、`isTomlError`、TOML の値の型 | unified 系のライブラリ |
+| モジュール | 公開するもの                                                                                                                                                                | 外部の依存                                                                 |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `mod.ts`   | `buildEpub`、`Book` などの型、`EpubInputError`（型）、`epubInputError`、`isEpubInputError`                                                                                  | なし                                                                       |
+| `load.ts`  | `loadBook`、`LoadOptions`、`LoadWarning`、`parseToml`、`TomlDateTime`（型）、`tomlDateTime`、`isTomlDateTime`、`TomlError`（型）、`tomlError`、`isTomlError`、TOML の値の型 | unified 系のライブラリ                                                     |
+| `cli.ts`   | `main`（CLI の入口）                                                                                                                                                        | unified 系のライブラリ（`load.ts` を通して）。引数の解析は自前（ADR 0022） |
 
 ### `buildEpub(book, options): Promise<Uint8Array>`
 
@@ -790,6 +791,8 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 | `-l`、`--language <lang>`  | `init`                  | 言語。既定は `ja`                                                                                                                                                                                          |
 | `-h`、`--help`             | すべて                  | 使い方を出す                                                                                                                                                                                               |
 | `-V`、`--version`          | （コマンドの代わり）    | CLI の版を出す                                                                                                                                                                                             |
+
+- 引数の解析は自前で書いている（ADR 0022）。長いオプション（`--name`）、短いオプション（`-n`）、値の `--name value`・`--name=value`・`-n value` の形、`--` の後の位置引数を扱う。同じオプションを二度書くと後の値を使う。短いオプションのまとめ書き（`-qe 3.0`）、否定（`--no-strict`）、真偽のオプションへの値（`--strict=true`）は使い方の誤りとする。
 
 ### 出力と終了コード
 
