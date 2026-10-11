@@ -1,6 +1,6 @@
 # ADR 0016: ディレクトリから EPUB を作る CLI を、build、check、toc、init、help、version のコマンドで提供し、`deno.json` を設定として渡してインストールする
 
-ステータス: 置換（ADR 0017）
+ステータス: 採択→ADR 0017
 
 ## 文脈
 

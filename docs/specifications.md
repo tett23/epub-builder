@@ -5,7 +5,10 @@
 
 - ADR 0004：公開 API と zip の書き出し
 - ADR 0019：対応する仕様と版ごとの出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`（ADR 0003 と、ADR 0005 から 0014 を置き換えた）
-- ADR 0018：コマンドライン（ADR 0015 から 0017 を置き換えた）
+- ADR 0022：コマンドライン（ADR 0015 から 0018 を置き換えた）
+- ADR 0023：hastscript の再実装と、残す依存
+- ADR 0020：ADR の運用と、コミット済みの ADR の保護（ADR 0002 を置き換えた）
+- ADR 0021：クラスを使わず、誤りと TOML の日時を値と関数で表す
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 
@@ -29,6 +32,7 @@
 16. コマンドライン
 17. 扱わないこと
 18. 試験
+19. 破棄した ADR
 
 ## 1. 概要
 
@@ -51,10 +55,23 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 
 ## 2. 公開するモジュールと関数
 
-| モジュール | 公開するもの                                                                                      | 外部の依存             |
-| ---------- | ------------------------------------------------------------------------------------------------- | ---------------------- |
-| `mod.ts`   | `buildEpub`、`Book` などの型、`EpubInputError`                                                    | なし                   |
-| `load.ts`  | `loadBook`、`LoadOptions`、`LoadWarning`、`parseToml`、`TomlDateTime`、`TomlError`、TOML の値の型 | unified 系のライブラリ |
+| モジュール | 公開するもの                                                                                                                                                                | 外部の依存                                                                 |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `mod.ts`   | `buildEpub`、`Book` などの型、`EpubInputError`（型）、`epubInputError`、`isEpubInputError`                                                                                  | なし                                                                       |
+| `load.ts`  | `loadBook`、`LoadOptions`、`LoadWarning`、`parseToml`、`TomlDateTime`（型）、`tomlDateTime`、`isTomlDateTime`、`TomlError`（型）、`tomlError`、`isTomlError`、TOML の値の型 | unified 系のライブラリ                                                     |
+| `cli.ts`   | `main`（CLI の入口）                                                                                                                                                        | unified 系のライブラリ（`load.ts` を通して）。引数の解析は自前（ADR 0022） |
+
+### 実行時の依存
+
+| 依存                                                                     | 使い方                      | 残す理由                                              |
+| ------------------------------------------------------------------------ | --------------------------- | ----------------------------------------------------- |
+| `unified`、`remark-parse`、`remark-rehype`、`rehype-raw`、`rehype-parse` | Markdown と HTML の解析     | CommonMark と HTML Living Standard の解析は小さくない |
+| `micromark-extension-gfm-footnote`、`mdast-util-gfm-footnote`            | 脚注の記法の解析            | `remark-parse` と組で使う構文の拡張である             |
+| `property-information`                                                   | hast の属性の名前と値の対応 | `rehype-parse` が作る hast と同じ対応を使う必要がある |
+
+- これらは `load.ts` と `cli.ts` だけが使う。`mod.ts` は依存を持たない。
+- CLI の引数の解析（ADR 0022）と、XML の断片の解析器が使う hast の要素の作り方（ADR 0023）は、自前で書いている。hast の要素の属性の扱いは hastscript 9.0.1 と同じにしている。
+- テストのときだけ `@std/expect` と `@std/testing` を使う。
 
 ### `buildEpub(book, options): Promise<Uint8Array>`
 
@@ -82,21 +99,42 @@ interface LoadWarning {
 
 ### `parseToml(src): TomlTable`
 
-- TOML 1.0.0 の文書を解析する。誤りは `TomlError`（`line`、`column` を持つ）を投げる。
+- TOML 1.0.0 の文書を解析する。誤りは `TomlError`（`line`、`column` を持つ。`isTomlError` で判別する）を投げる。
 - 値の型は次のとおり。
 
-| TOML             | TypeScript                                                                                                                              |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| 文字列           | `string`                                                                                                                                |
-| 整数             | `number`（安全な整数の範囲）、`bigint`（それを超える 64 ビットの範囲）                                                                  |
-| 浮動小数点数     | `number`（`inf`、`nan` を含む）                                                                                                         |
-| 真偽値           | `boolean`                                                                                                                               |
-| 日時の 4 種      | `TomlDateTime`（`kind` が `offset-date-time`、`local-date-time`、`local-date`、`local-time`。オフセット付きの日時だけが `date` を持つ） |
-| 配列             | 配列                                                                                                                                    |
-| 表、インライン表 | 通常のオブジェクト                                                                                                                      |
+| TOML             | TypeScript                                                                                                                                                                                                                 |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 文字列           | `string`                                                                                                                                                                                                                   |
+| 整数             | `number`（安全な整数の範囲）、`bigint`（それを超える 64 ビットの範囲）                                                                                                                                                     |
+| 浮動小数点数     | `number`（`inf`、`nan` を含む）                                                                                                                                                                                            |
+| 真偽値           | `boolean`                                                                                                                                                                                                                  |
+| 日時の 4 種      | `TomlDateTime`（`kind` が `offset-date-time`、`local-date-time`、`local-date`、`local-time`。書いたとおりの文字列 `text` を持ち、オフセット付きの日時だけが `date` を持つ。変更できない値で、`isTomlDateTime` で判別する） |
+| 配列             | 配列                                                                                                                                                                                                                       |
+| 表、インライン表 | 通常のオブジェクト                                                                                                                                                                                                         |
 
 - `__proto__` などの名前のキーも、オブジェクト自身のプロパティとして置く。プロトタイプは変えない。
 - 閏秒（`:60`）は書いたとおりの文字列を `text` に残し、`date` は 59 秒の時点にする。
+
+### 誤りの値
+
+誤りは、自前のクラスでなく、標準の `Error` に種類の名前（`name`）と種類ごとの情報を加えた値である（ADR 0021）。`instanceof` ではなく、判別する関数で見分ける。
+
+| 種類        | 型               | 作る関数                           | 判別する関数              | 加える情報       | 公開      |
+| ----------- | ---------------- | ---------------------------------- | ------------------------- | ---------------- | --------- |
+| 入力の誤り  | `EpubInputError` | `epubInputError(message)`          | `isEpubInputError(value)` | なし             | `mod.ts`  |
+| TOML の誤り | `TomlError`      | `tomlError(message, line, column)` | `isTomlError(value)`      | `line`、`column` | `load.ts` |
+
+```ts
+try {
+  await buildEpub(book, { version: '3.0' });
+} catch (e) {
+  if (isEpubInputError(e)) console.error(e.message);
+  else throw e;
+}
+```
+
+- 判別する関数は、`Error` のインスタンスで、`name` が種類の名前であるものを真とする。
+- 位置を持つ誤りのメッセージは、`<行>:<列>:` で始まる。
 
 ## 3. 本を表す値（`Book`）
 
@@ -767,6 +805,8 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 | `-h`、`--help`             | すべて                  | 使い方を出す                                                                                                                                                                                               |
 | `-V`、`--version`          | （コマンドの代わり）    | CLI の版を出す                                                                                                                                                                                             |
 
+- 引数の解析は自前で書いている（ADR 0022）。長いオプション（`--name`）、短いオプション（`-n`）、値の `--name value`・`--name=value`・`-n value` の形、`--` の後の位置引数を扱う。同じオプションを二度書くと後の値を使う。短いオプションのまとめ書き（`-qe 3.0`）、否定（`--no-strict`）、真偽のオプションへの値（`--strict=true`）は使い方の誤りとする。
+
 ### 出力と終了コード
 
 - 結果（作ったファイルのパス、`check` の結果、目次、使い方、版）は標準出力に書く。
@@ -832,3 +872,8 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 - `edge-book` には空白類を含む名前の画像を置き、置き換えた EPUB が EPUBCheck を通ることを確かめる。
 - `test/invalid-fixtures/` の壊れたプロジェクトは、`expected-error.txt` の文字列を含む例外になることを、両方の版で確かめる。
 - CI は、整形、lint、型検査、テストに加え、`deno task build:sample` で全フィクスチャから EPUB を作り、EPUBCheck に `--failonwarnings` を付けて掛ける。誤りも警告もないことを求める。
+
+## 19. 破棄した ADR
+
+ADR を破棄したときは、ここに経緯と理由を書き、その ADR の番号は欠番にする（ADR 0020）。
+破棄した ADR はまだない。

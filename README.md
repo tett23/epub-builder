@@ -52,7 +52,10 @@ epub-builder build my-book
 - 公開 API と zip の作り方：[ADR 0004](docs/adr/0004-public-api-and-zip-writer.md)
 - 現在の仕様のまとめ：[docs/specifications.md](docs/specifications.md)
 - 対応する仕様と出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`：[ADR 0019](docs/adr/0019-epub-output-and-project-layout-with-primary-writing-mode.md)
-- コマンドライン：[ADR 0018](docs/adr/0018-command-line-interface-all-versions-by-default.md)
+- コマンドライン：[ADR 0022](docs/adr/0022-command-line-interface-own-argument-parser.md)
+- ADR の運用と保護：[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)
+- クラスを使わない（誤りと TOML の日時を値で表す）：[ADR 0021](docs/adr/0021-no-classes.md)
+- 依存の再実装と、残す依存：[ADR 0023](docs/adr/0023-reimplement-hastscript.md)
 
 ## 開発
 
@@ -65,13 +68,21 @@ deno task fmt
 deno task test
 ```
 
-clone した後に一度、コミット済み ADR の変更を拒否する git の hook を有効にする。
+コミット済みの ADR は、ステータスの行のほかを変更できない（[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)）。
+これを [tett23/adr-guard](https://github.com/tett23/adr-guard) で強制する。git の pre-commit hook と Claude Code の hook で使うため、adr-guard を入れる。
+
+```bash
+cargo install --git https://github.com/tett23/adr-guard --tag v0.1.0
+```
+
+リリースのバイナリを使う手順は adr-guard の README にある。
+clone した後に一度、git の hook を有効にする。
 
 ```bash
 git config core.hooksPath .githooks
 ```
 
-コミット済みの ADR は、ステータス行以外を変更できない([ADR 0002](docs/adr/0002-immutable-adrs.md))。
+CI でも、push と pull request のすべてのコミットを adr-guard で検査する。
 
 ## ライセンス
 

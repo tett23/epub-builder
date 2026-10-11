@@ -1,10 +1,11 @@
 // TOML 1.0.0 の仕様の例に沿った、正しい文書と誤った文書の網羅
 import { expect } from '@std/expect';
-import { parseToml, TomlDateTime, TomlError, type TomlTable } from '../load.ts';
+import { thrown } from './helpers/errors.ts';
+import { isTomlDateTime, parseToml, type TomlDateTime, type TomlTable } from '../load.ts';
 
 /** 日時を文字列にして比べやすくする */
 function plain(value: unknown): unknown {
-  if (value instanceof TomlDateTime) return `${value.kind}:${value.text}`;
+  if (isTomlDateTime(value)) return `${value.kind}:${value.text}`;
   if (Array.isArray(value)) return value.map(plain);
   if (typeof value === 'object' && value !== null) {
     return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, plain(v)]));
@@ -189,7 +190,7 @@ const invalid: [string, string][] = [
 Deno.test('TOML 1.0.0 の誤った文書は例外になる', async (t) => {
   for (const [label, src] of invalid) {
     await t.step(label, () => {
-      expect(() => parseToml(src)).toThrow(TomlError);
+      expect(thrown(() => parseToml(src))).toMatchObject({ name: 'TomlError' });
     });
   }
 });
@@ -205,8 +206,9 @@ Deno.test('例外は行と列を持つ', () => {
       parseToml(src);
       throw new Error(`例外にならない: ${src}`);
     } catch (e) {
-      expect(e).toBeInstanceOf(TomlError);
-      expect([(e as TomlError).line, (e as TomlError).column], src).toEqual([line, column]);
+      expect(e).toMatchObject({ name: 'TomlError' });
+      expect([(e as { line?: number; column?: number }).line, (e as { line?: number; column?: number }).column], src)
+        .toEqual([line, column]);
     }
   }
 });

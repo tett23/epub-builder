@@ -1,10 +1,11 @@
-// コマンドラインの入口の処理（ADR 0018）
+// コマンドラインの入口の処理（ADR 0022）
 
-import { parseArgs } from '@std/cli/parse-args';
 import { basename, resolve } from 'node:path';
+import { parseArguments } from './args.ts';
 import { buildEpub } from './epub.ts';
+import { hasErrorName, type NamedError, namedError } from './errors.ts';
 import { loadBook, type LoadWarning } from './load/load-book.ts';
-import { type Book, type Chapter, EpubInputError, type EpubVersion, type Section } from './types.ts';
+import { type Book, type Chapter, epubInputError, type EpubVersion, isEpubInputError, type Section } from './types.ts';
 import { VERSION } from './version.ts';
 
 export interface Io {
@@ -21,7 +22,16 @@ const EXIT_OK = 0;
 const EXIT_INPUT = 1;
 const EXIT_USAGE = 2;
 
-class UsageError extends Error {}
+/** 使い方の誤り（ADR 0021） */
+export type UsageError = NamedError<'UsageError'>;
+
+export function usageError(message: string): UsageError {
+  return namedError('UsageError', message);
+}
+
+export function isUsageError(value: unknown): value is UsageError {
+  return hasErrorName(value, 'UsageError');
+}
 
 const HELP: Record<string, string> = {
   '': `epub-builder ${VERSION}
@@ -107,42 +117,31 @@ const COMMANDS = ['build', 'check', 'toc', 'init', 'help', 'version'];
 
 interface Parsed {
   positional: string[];
-  options: Record<string, unknown>;
+  options: Record<string, string | boolean>;
 }
 
 function parse(
   args: string[],
   spec: { string?: string[]; boolean?: string[]; alias?: Record<string, string> },
 ): Parsed {
-  const known = new Set([...(spec.string ?? []), ...(spec.boolean ?? []), ...Object.keys(spec.alias ?? {})]);
-  const options = parseArgs(args, {
+  const parsed = parseArguments(args, {
     string: spec.string,
     boolean: [...(spec.boolean ?? []), 'help'],
     alias: { ...spec.alias, h: 'help' },
-    unknown: (arg) => {
-      if (arg.startsWith('-') && !known.has(arg.replace(/^-+/, '').replace(/=.*$/, ''))) {
-        throw new UsageError(`知らないオプション: ${arg}`);
-      }
-      return true;
-    },
   });
-  for (const name of spec.string ?? []) {
-    if (name in options && (options[name] === '' || typeof options[name] !== 'string')) {
-      throw new UsageError(`--${name} に値が要る`);
-    }
-  }
-  return { positional: options._.map(String), options };
+  if (!parsed.ok) throw usageError(parsed.message);
+  return { positional: parsed.positional, options: parsed.options };
 }
 
-/** --epub-version の値を版の並びにする。省けば両方の版（ADR 0018） */
+/** --epub-version の値を版の並びにする。省けば両方の版（ADR 0022） */
 function versions(value: unknown): EpubVersion[] {
   if (value === undefined || value === 'all') return ['2.0.1', '3.0'];
   if (value === '2.0.1' || value === '3.0') return [value];
-  throw new UsageError(`知らない版: ${String(value)}（2.0.1、3.0、all のいずれか）`);
+  throw usageError(`知らない版: ${String(value)}（2.0.1、3.0、all のいずれか）`);
 }
 
 function singleDir(positional: string[]): string {
-  if (positional.length > 1) throw new UsageError(`余分な引数: ${positional.slice(1).join(' ')}`);
+  if (positional.length > 1) throw usageError(`余分な引数: ${positional.slice(1).join(' ')}`);
   return positional[0] ?? '.';
 }
 
@@ -277,7 +276,7 @@ async function init(args: string[], io: Io): Promise<number> {
   const dir = singleDir(positional);
   try {
     for await (const _ of Deno.readDir(dir)) {
-      throw new EpubInputError(`空でないディレクトリには雛形を作らない: ${dir}`);
+      throw epubInputError(`空でないディレクトリには雛形を作らない: ${dir}`);
     }
   } catch (e) {
     if (!(e instanceof Deno.errors.NotFound)) throw e;
@@ -343,12 +342,12 @@ h3, h4, h5, h6 { font-size: 1em; line-height: 1.5; }
 
 function help(args: string[], io: Io): number {
   const [command, ...rest] = args;
-  if (rest.length > 0) throw new UsageError(`余分な引数: ${rest.join(' ')}`);
+  if (rest.length > 0) throw usageError(`余分な引数: ${rest.join(' ')}`);
   if (command === undefined) {
     io.stdout(HELP['']);
     return EXIT_OK;
   }
-  if (!(command in HELP) || command === '') throw new UsageError(`知らないコマンド: ${command}`);
+  if (!(command in HELP) || command === '') throw usageError(`知らないコマンド: ${command}`);
   io.stdout(HELP[command]);
   return EXIT_OK;
 }
@@ -356,7 +355,7 @@ function help(args: string[], io: Io): number {
 function version(args: string[], io: Io): number {
   const { positional, options } = parse(args, {});
   if (options.help) return help(['version'], io);
-  if (positional.length > 0) throw new UsageError(`余分な引数: ${positional.join(' ')}`);
+  if (positional.length > 0) throw usageError(`余分な引数: ${positional.join(' ')}`);
   io.stdout(VERSION);
   return EXIT_OK;
 }
@@ -365,10 +364,10 @@ function version(args: string[], io: Io): number {
 export async function main(args: string[], io: Io = defaultIo): Promise<number> {
   const [command, ...rest] = args;
   try {
-    if (command === undefined) throw new UsageError('コマンドが要る');
+    if (command === undefined) throw usageError('コマンドが要る');
     if (command === '-h' || command === '--help') return help([], io);
     if (command === '-V' || command === '--version') return version([], io);
-    if (!COMMANDS.includes(command)) throw new UsageError(`知らないコマンド: ${command}`);
+    if (!COMMANDS.includes(command)) throw usageError(`知らないコマンド: ${command}`);
     switch (command) {
       case 'build':
         return await build(rest, io);
@@ -384,13 +383,13 @@ export async function main(args: string[], io: Io = defaultIo): Promise<number> 
         return version(rest, io);
     }
   } catch (e) {
-    if (e instanceof UsageError) {
+    if (isUsageError(e)) {
       io.stderr(`使い方の誤り: ${e.message}`);
       io.stderr('');
       io.stderr(HELP[COMMANDS.includes(command ?? '') && command !== 'help' ? command! : '']);
       return EXIT_USAGE;
     }
-    if (e instanceof EpubInputError) {
+    if (isEpubInputError(e)) {
       io.stderr(`誤り: ${e.message}`);
       return EXIT_INPUT;
     }

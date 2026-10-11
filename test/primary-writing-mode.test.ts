@@ -1,6 +1,6 @@
 // Kindle の primary-writing-mode（ADR 0019）
 import { expect } from '@std/expect';
-import { type Book, buildEpub, EpubInputError, type PrimaryWritingMode } from '../mod.ts';
+import { type Book, buildEpub, type PrimaryWritingMode } from '../mod.ts';
 import { loadBook } from '../load.ts';
 import { unzipText } from './helpers/unzip.ts';
 
@@ -23,11 +23,15 @@ Deno.test('buildEpub は、どちらの版でも primary-writing-mode を書く'
 });
 
 Deno.test('buildEpub は、知らない組み方向と、頁送りの向きと食い違う組み方向を例外にする', async () => {
-  await expect(buildEpub(book('vertical' as PrimaryWritingMode), { version: '3.0' })).rejects.toThrow(EpubInputError);
+  await expect(buildEpub(book('vertical' as PrimaryWritingMode), { version: '3.0' })).rejects.toMatchObject({
+    name: 'EpubInputError',
+  });
   await expect(buildEpub(book('vertical-rl', 'ltr'), { version: '3.0' })).rejects.toThrow(
     '組み方向 vertical-rl と頁送りの向き ltr が食い違う',
   );
-  await expect(buildEpub(book('horizontal-lr', 'rtl'), { version: '2.0.1' })).rejects.toThrow(EpubInputError);
+  await expect(buildEpub(book('horizontal-lr', 'rtl'), { version: '2.0.1' })).rejects.toMatchObject({
+    name: 'EpubInputError',
+  });
   // 合う組み合わせ
   await buildEpub(book('vertical-rl', 'rtl'), { version: '3.0' });
   await buildEpub(book('horizontal-rl', 'rtl'), { version: '3.0' });
@@ -59,7 +63,7 @@ Deno.test('loadBook は primary_writing_mode を読み、ないときは頁送�
 
 Deno.test('loadBook は、知らない組み方向と、頁送りの向きと食い違う組み方向を例外にする', async () => {
   await expect(load('primary_writing_mode = "tb-rl"\n')).rejects.toThrow('primary_writing_mode は');
-  await expect(load('primary_writing_mode = 1\n')).rejects.toThrow(EpubInputError);
+  await expect(load('primary_writing_mode = 1\n')).rejects.toMatchObject({ name: 'EpubInputError' });
   await expect(load('primary_writing_mode = "vertical-rl"\npage_progression_direction = "ltr"\n')).rejects.toThrow(
     'book.toml の primary_writing_mode vertical-rl と page_progression_direction ltr が食い違う',
   );

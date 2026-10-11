@@ -1,7 +1,7 @@
 // EPUB 3.0 の部・章・節の意味づけ（ADR 0019）
 import { expect } from '@std/expect';
 import type { Element, Root } from 'hast';
-import { type Book, buildEpub, EpubInputError } from '../mod.ts';
+import { type Book, buildEpub } from '../mod.ts';
 import { loadBook } from '../load.ts';
 import { sourceToTree } from '../src/load/convert.ts';
 import { extractSections, wrapSections } from '../src/load/load-book.ts';
@@ -80,7 +80,7 @@ Deno.test('buildEpub は EPUB 3.0 でだけ body に epub:type を書く', async
 
 Deno.test('buildEpub は epubType の誤りを例外にする', async () => {
   for (const epubType of [' ', 'a\u0000']) {
-    await expect(buildEpub(book({ epubType }), { version: '3.0' })).rejects.toThrow(EpubInputError);
+    await expect(buildEpub(book({ epubType }), { version: '3.0' })).rejects.toMatchObject({ name: 'EpubInputError' });
   }
   const files = await unzipText(await buildEpub(book({ epubType: 'a"<&' }), { version: '3.0' }));
   expect(files.get('OEBPS/text/0002.xhtml')).toContain('<body epub:type="a&quot;&lt;&amp;">');

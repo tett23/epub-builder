@@ -1,6 +1,6 @@
 // EPUB の構成を作る（ADR 0019、ADR 0004）
 
-import { type Book, type BuildOptions, type Chapter, EpubInputError, type EpubVersion, type Section } from './types.ts';
+import { type Book, type BuildOptions, type Chapter, epubInputError, type EpubVersion, type Section } from './types.ts';
 import { encodePath, escapeAttribute, escapeText, hasInvalidXmlChar } from './xml.ts';
 import { writeZip, type ZipEntry } from './zip.ts';
 
@@ -40,38 +40,38 @@ export function contentDocumentName(index: number, count: number): string {
 /** 本の値の誤りを調べ、誤りがあれば例外とする */
 export function validateBook(book: Book, options: BuildOptions): void {
   if (options.version !== '2.0.1' && options.version !== '3.0') {
-    throw new EpubInputError(`知らない版: ${String(options.version)}`);
+    throw epubInputError(`知らない版: ${String(options.version)}`);
   }
   const { metadata } = book;
   for (const key of ['identifier', 'title', 'language'] as const) {
     if (typeof metadata[key] !== 'string' || metadata[key].trim() === '') {
-      throw new EpubInputError(`書誌情報の ${key} がない`);
+      throw epubInputError(`書誌情報の ${key} がない`);
     }
   }
   for (const author of metadata.authors ?? []) {
-    if (typeof author !== 'string' || author.trim() === '') throw new EpubInputError('空の著者がある');
+    if (typeof author !== 'string' || author.trim() === '') throw epubInputError('空の著者がある');
   }
   if (metadata.modified !== undefined && Number.isNaN(metadata.modified.getTime())) {
-    throw new EpubInputError('書誌情報の modified が正しい日時でない');
+    throw epubInputError('書誌情報の modified が正しい日時でない');
   }
   const strings = [metadata.identifier, metadata.title, metadata.language, metadata.publisher, metadata.description];
   for (const value of [...strings, ...(metadata.authors ?? [])]) {
     if (value !== undefined && hasInvalidXmlChar(value)) {
-      throw new EpubInputError(`書誌情報に XML で使えない文字がある: ${JSON.stringify(value)}`);
+      throw epubInputError(`書誌情報に XML で使えない文字がある: ${JSON.stringify(value)}`);
     }
   }
   if (
     book.pageProgressionDirection !== undefined && book.pageProgressionDirection !== 'ltr' &&
     book.pageProgressionDirection !== 'rtl'
   ) {
-    throw new EpubInputError(`知らない頁送りの向き: ${book.pageProgressionDirection}`);
+    throw epubInputError(`知らない頁送りの向き: ${book.pageProgressionDirection}`);
   }
   const pwm = metadata.primaryWritingMode;
   if (pwm !== undefined) {
     const direction = WRITING_MODE_DIRECTIONS[pwm];
-    if (direction === undefined) throw new EpubInputError(`知らない組み方向: ${String(pwm)}`);
+    if (direction === undefined) throw epubInputError(`知らない組み方向: ${String(pwm)}`);
     if (book.pageProgressionDirection !== undefined && book.pageProgressionDirection !== direction) {
-      throw new EpubInputError(`組み方向 ${pwm} と頁送りの向き ${book.pageProgressionDirection} が食い違う`);
+      throw epubInputError(`組み方向 ${pwm} と頁送りの向き ${book.pageProgressionDirection} が食い違う`);
     }
   }
 
@@ -82,31 +82,31 @@ export function validateBook(book: Book, options: BuildOptions): void {
       path === '' || path.startsWith('/') || path.includes('\\') ||
       segments.some((s) => s === '' || s === '.' || s === '..') || hasInvalidXmlChar(path)
     ) {
-      throw new EpubInputError(`正しくないパス: ${JSON.stringify(path)}`);
+      throw epubInputError(`正しくないパス: ${JSON.stringify(path)}`);
     }
     if (RESERVED_PATHS.has(path) || segments[0] === TEXT_DIR) {
-      throw new EpubInputError(`ライブラリが使うパスと重なる: ${path}`);
+      throw epubInputError(`ライブラリが使うパスと重なる: ${path}`);
     }
     const key = path.normalize('NFC').toLowerCase();
     const other = seen.get(key);
-    if (other !== undefined) throw new EpubInputError(`パスが重なる: ${other} と ${path}`);
+    if (other !== undefined) throw epubInputError(`パスが重なる: ${other} と ${path}`);
     seen.set(key, path);
   };
   for (const stylesheet of book.stylesheets ?? []) checkPath(stylesheet.path);
   for (const image of book.images ?? []) {
     checkPath(image.path);
     if (!IMAGE_MEDIA_TYPES.has(image.mediaType)) {
-      throw new EpubInputError(`知らないメディアタイプ: ${image.mediaType}（${image.path}）`);
+      throw epubInputError(`知らないメディアタイプ: ${image.mediaType}（${image.path}）`);
     }
   }
   if (book.coverImage !== undefined && !(book.images ?? []).some((image) => image.path === book.coverImage)) {
-    throw new EpubInputError(`表紙の画像がない: ${book.coverImage}`);
+    throw epubInputError(`表紙の画像がない: ${book.coverImage}`);
   }
 
   const stylesheetPaths = new Set((book.stylesheets ?? []).map((s) => s.path));
   const checkStylesheets = (paths: string[] | undefined) => {
     for (const path of paths ?? []) {
-      if (!stylesheetPaths.has(path)) throw new EpubInputError(`スタイルシートがない: ${path}`);
+      if (!stylesheetPaths.has(path)) throw epubInputError(`スタイルシートがない: ${path}`);
     }
   };
   checkStylesheets(book.cover?.stylesheets);
@@ -114,36 +114,36 @@ export function validateBook(book: Book, options: BuildOptions): void {
   const checkEpubType = (epubType: string | undefined) => {
     if (epubType === undefined) return;
     if (typeof epubType !== 'string' || epubType.trim() === '' || hasInvalidXmlChar(epubType)) {
-      throw new EpubInputError(`正しくない epubType: ${JSON.stringify(epubType)}`);
+      throw epubInputError(`正しくない epubType: ${JSON.stringify(epubType)}`);
     }
   };
   checkEpubType(book.cover?.epubType);
   checkEpubType(book.titlepage?.epubType);
-  if (book.chapters.length === 0) throw new EpubInputError('本文の章がない');
+  if (book.chapters.length === 0) throw epubInputError('本文の章がない');
   const checkChapter = (chapter: Chapter) => {
     if (typeof chapter.title !== 'string' || chapter.title.trim() === '') {
-      throw new EpubInputError('題名のない章がある');
+      throw epubInputError('題名のない章がある');
     }
     if (hasInvalidXmlChar(chapter.title)) {
-      throw new EpubInputError(`章の題名に XML で使えない文字がある: ${JSON.stringify(chapter.title)}`);
+      throw epubInputError(`章の題名に XML で使えない文字がある: ${JSON.stringify(chapter.title)}`);
     }
     if (chapter.body === undefined && (chapter.children ?? []).length === 0) {
-      throw new EpubInputError(`本文も子もない章がある: ${chapter.title}`);
+      throw epubInputError(`本文も子もない章がある: ${chapter.title}`);
     }
     checkStylesheets(chapter.stylesheets);
     checkEpubType(chapter.epubType);
     if ((chapter.sections ?? []).length > 0 && chapter.body === undefined) {
-      throw new EpubInputError(`本文のない章に節がある: ${chapter.title}`);
+      throw epubInputError(`本文のない章に節がある: ${chapter.title}`);
     }
     const checkSection = (section: Section) => {
       if (typeof section.title !== 'string' || section.title.trim() === '' || hasInvalidXmlChar(section.title)) {
-        throw new EpubInputError(`正しくない節の題名がある: ${chapter.title}`);
+        throw epubInputError(`正しくない節の題名がある: ${chapter.title}`);
       }
       if (typeof section.id !== 'string' || section.id === '' || /[\s#]/.test(section.id)) {
-        throw new EpubInputError(`正しくない節の id: ${JSON.stringify(section.id)}（${chapter.title}）`);
+        throw epubInputError(`正しくない節の id: ${JSON.stringify(section.id)}（${chapter.title}）`);
       }
       if (!chapter.body!.includes(`id="${escapeAttribute(section.id)}"`)) {
-        throw new EpubInputError(`節の id が本文にない: ${section.id}（${chapter.title}）`);
+        throw epubInputError(`節の id が本文にない: ${section.id}（${chapter.title}）`);
       }
       section.children?.forEach(checkSection);
     };

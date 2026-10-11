@@ -4,14 +4,16 @@ EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ�
 
 ## ADR
 
-設計上の決定は `docs/adr/` に ADR として記録する。
+設計上の決定は `docs/adr/` に ADR として記録する（ADR 0020）。
 
-- 後から理由を問われうる決定をしたら、実装と同じコミットで ADR を追加する
+- 決定が要る変更は、実装に入る前に ADR を書く。ステータスを `提案` にし、コミットせずに人間のレビューを受ける。認められたら `採択` にしてコミットし、実装に入る
 - ファイル名は `NNNN-kebab-case.md`（連番は 4 桁）とする
-- 見出しは `# ADR NNNN: <決定を述べる一文>`、その下に `ステータス: 採択` を置く
-- 節は「文脈」「実装すること」「実装しないこと」「テスト設計」「トレードオフ」とする
-- コミット済みの ADR は変更不可。変えてよいのは `ステータス:` の行だけ。決定を覆すときは新しい ADR を追加し、元の ADR のステータスを `置換（ADR NNNN）` に変える
-- コミット前の ADR は自由に直してよい。書き上げてからコミットする
+- 見出しは `# ADR NNNN: <決定を述べる一文>`、その下に `ステータス: <状態>` を置く。状態は `提案`、`採択`、`採択→ADR NNNN`（置き換えられた）、`却下` のいずれか
+- 節は「文脈」「実装すること」「実装しないこと」「テスト設計」「トレードオフ」とする。データ構造やアルゴリズムを変えるときは、その節も立てる
+- コミット済みの ADR は変更不可。変えてよいのは `ステータス:` の行だけ。決定を覆すときは、元の ADR の全体を写して改めた新しい ADR を作り、元の ADR のステータスを `採択→ADR NNNN` に変える
+- コミット前の ADR は自由に直してよい
+- ADR を破棄するときは、経緯と理由を `docs/specifications.md` の「破棄した ADR」に書き、番号は欠番にする
+- ADR で仕様が変わったら、`docs/specifications.md` と `README.md` を同じ変更で直す
 
 ## 境界
 
@@ -20,5 +22,15 @@ EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ�
 
 ## ADR の保護
 
-- コミット済み ADR の変更不可は hook で強制されている（ADR 0002）。Claude Code の hook（`.claude/settings.json`）が Edit / Write を止め、Bash の後に違反を差し戻す。git の pre-commit（`.githooks/pre-commit`）がコミットを拒否する。hook を迂回しない（`--no-verify` を使わない）
-- hook の判定は `scripts/adr-guard.ts`。テストは `deno task test`
+- コミット済み ADR の変更不可は、[tett23/adr-guard](https://github.com/tett23/adr-guard) で強制されている（ADR 0020）。Claude Code の hook（`.claude/settings.json`）が Edit / Write を止め、git の pre-commit（`.githooks/pre-commit`）がコミットを拒否し、CI がすべてのコミットを検査する。hook を迂回しない（`--no-verify` を使わない）
+
+## Git
+
+- main への rebase はしない。作業はブランチで行い、no-ff でマージする。ブランチはマージするまで rebase してよい
+- `v` で始まるタグはリリースとする。`v0.0.1-rc` のように `-` を含むタグはプレリリースとする
+
+## 実装
+
+- TypeScript でクラスを使わない（ADR 0021）
+- ライセンスに問題がなく再実装が容易な依存は、依存に入れずに再実装する。テストは本家を参考に厚く書く
+- GitHub Actions は、Node 24 以降で動く最新のメジャー版を使う

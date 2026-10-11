@@ -1,8 +1,9 @@
 import { expect } from '@std/expect';
+import { thrown } from './helpers/errors.ts';
 import { sourceToTree } from '../src/load/convert.ts';
 import { headingTitle } from '../src/load/load-book.ts';
 import { parseRuby } from '../src/load/ruby.ts';
-import { ConversionError, writeXhtml } from '../src/load/xhtml-writer.ts';
+import { writeXhtml } from '../src/load/xhtml-writer.ts';
 import { parseXhtmlFragment } from '../src/load/xml-fragment.ts';
 import type { EpubVersion } from '../src/types.ts';
 
@@ -77,7 +78,7 @@ Deno.test('脚注の誤りは例外になる', () => {
     'a[^x]\n\n[^x]: 中で[^y]\n\n[^y]: y',
     'a[^x]\n\n<p id="fn-1">衝突</p>\n\n[^x]: x',
   ];
-  for (const src of invalid) expect(() => convert(src, 'md'), src).toThrow(ConversionError);
+  for (const src of invalid) expect(thrown(() => convert(src, 'md')), src).toMatchObject({ name: 'ConversionError' });
 });
 
 Deno.test('Markdown と HTML は XHTML の構文で出る', () => {
@@ -113,7 +114,7 @@ Deno.test('XHTML に直せないものは位置を示す例外になる', () => 
     ['<p epub:type="x"/>', 'xhtml', '2.0.1'],
   ];
   for (const [src, format, version] of invalid) {
-    expect(() => convert(src, format, version ?? '3.0'), src).toThrow(ConversionError);
+    expect(thrown(() => convert(src, format, version ?? '3.0')), src).toMatchObject({ name: 'ConversionError' });
   }
   expect(() => convert('<p>\n  <b>x</p>', 'xhtml')).toThrow(/^2:7: /);
 });

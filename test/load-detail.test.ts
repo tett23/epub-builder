@@ -1,6 +1,6 @@
 // loadBook の細かな場合
 import { expect } from '@std/expect';
-import { type Book, buildEpub, type Chapter, EpubInputError } from '../mod.ts';
+import { type Book, buildEpub, type Chapter } from '../mod.ts';
 import { loadBook } from '../load.ts';
 import { unzipText } from './helpers/unzip.ts';
 
@@ -104,7 +104,9 @@ Deno.test('index の細かな場合', async (t) => {
     expect(titles(book.chapters)).toEqual([['a', ['b', ['index', ['x']]]]]);
   });
   await t.step('同じディレクトリの index.md と index.html', async () => {
-    await expect(load({ 'body/a/index.md': 'a', 'body/a/index.html': 'b' })).rejects.toThrow(EpubInputError);
+    await expect(load({ 'body/a/index.md': 'a', 'body/a/index.html': 'b' })).rejects.toMatchObject({
+      name: 'EpubInputError',
+    });
   });
   await t.step('最初の子がディレクトリのとき、その中の最初の文書を指す', async () => {
     const book = await load({ 'body/a/1/x.md': 'x', 'body/a/2.md': 'y' });
@@ -130,10 +132,10 @@ Deno.test('meta/ の細かな場合', async (t) => {
     expect(book.cover).toBe(undefined);
   });
   await t.step('meta/ のディレクトリ', async () => {
-    await expect(load({ 'body/a.md': 'a', 'meta/cover/': '' })).rejects.toThrow(EpubInputError);
+    await expect(load({ 'body/a.md': 'a', 'meta/cover/': '' })).rejects.toMatchObject({ name: 'EpubInputError' });
   });
   await t.step('meta/ の知らない拡張子', async () => {
-    await expect(load({ 'body/a.md': 'a', 'meta/cover.txt': 'x' })).rejects.toThrow(EpubInputError);
+    await expect(load({ 'body/a.md': 'a', 'meta/cover.txt': 'x' })).rejects.toMatchObject({ name: 'EpubInputError' });
   });
 });
 
@@ -185,7 +187,9 @@ Deno.test('参照の細かな場合', async (t) => {
   ];
   for (const [label, src] of invalid) {
     await t.step(label, async () => {
-      await expect(load({ ...assets, 'body/a.html': src, 'body/b.md': 'b' })).rejects.toThrow(EpubInputError);
+      await expect(load({ ...assets, 'body/a.html': src, 'body/b.md': 'b' })).rejects.toMatchObject({
+        name: 'EpubInputError',
+      });
     });
   }
   await t.step('例外はファイルと位置を示す', async () => {
@@ -244,10 +248,10 @@ Deno.test('ファイルとディレクトリの細かな場合', async (t) => {
         { 'book.toml': `${BOOK_TOML}cover_image = "assets/s.css"`, 'body/a.md': 'a', 'assets/s.css': '' },
         (dir) => loadBook(dir, { version: '3.0' }),
       ),
-    ).rejects.toThrow(EpubInputError);
+    ).rejects.toMatchObject({ name: 'EpubInputError' });
   });
   await t.step('知らない版', async () => {
-    await expect(load({ 'body/a.md': 'a' }, '3.1' as '3.0')).rejects.toThrow(EpubInputError);
+    await expect(load({ 'body/a.md': 'a' }, '3.1' as '3.0')).rejects.toMatchObject({ name: 'EpubInputError' });
   });
   await t.step('同じ名前のファイルとディレクトリは並べて読む', async () => {
     const book = await load({ 'body/a.md': '# A', 'body/a/b.md': '# B' });

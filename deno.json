@@ -4,7 +4,7 @@
     "check": "deno check mod.ts load.ts cli.ts src/ scripts/ test/",
     "lint": "deno lint",
     "fmt": "deno fmt",
-    "test": "deno test --allow-read --allow-write --allow-run=git,unzip test/",
+    "test": "deno test --allow-read --allow-write --allow-run=unzip test/",
     "build:sample": "deno run --allow-read --allow-write scripts/build-sample.ts",
     "cli": "deno run --allow-read --allow-write cli.ts",
     "install": "deno install -g -f --allow-read --allow-write --config deno.json -n epub-builder cli.ts"
@@ -22,12 +22,10 @@
     ]
   },
   "imports": {
-    "@std/cli": "jsr:@std/cli@1.0.32",
     "@std/expect": "jsr:@std/expect@^1",
     "@std/testing": "jsr:@std/testing@^1",
     "hast": "npm:@types/hast@3.0.5",
     "mdast": "npm:@types/mdast@4.0.4",
-    "hastscript": "npm:hastscript@9.0.1",
     "mdast-util-gfm-footnote": "npm:mdast-util-gfm-footnote@2.1.0",
     "micromark-extension-gfm-footnote": "npm:micromark-extension-gfm-footnote@2.1.0",
     "property-information": "npm:property-information@7.2.0",

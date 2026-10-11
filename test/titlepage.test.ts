@@ -1,6 +1,6 @@
 // 扉（titlepage）（ADR 0019）
 import { expect } from '@std/expect';
-import { type Book, buildEpub, EpubInputError } from '../mod.ts';
+import { type Book, buildEpub } from '../mod.ts';
 import { loadBook } from '../load.ts';
 import { unzipText } from './helpers/unzip.ts';
 
@@ -64,10 +64,10 @@ Deno.test('扉の bodymatter は、扉の後の最初の章にする', async () 
 
 Deno.test('扉の値の誤り', async () => {
   await expect(buildEpub(book({ titlepage: { body: '', stylesheets: ['x.css'] } }), { version: '3.0' })).rejects
-    .toThrow(EpubInputError);
-  await expect(buildEpub(book({ titlepage: { body: '', epubType: ' ' } }), { version: '3.0' })).rejects.toThrow(
-    EpubInputError,
-  );
+    .toMatchObject({ name: 'EpubInputError' });
+  await expect(buildEpub(book({ titlepage: { body: '', epubType: ' ' } }), { version: '3.0' })).rejects.toMatchObject({
+    name: 'EpubInputError',
+  });
 });
 
 Deno.test('loadBook は meta/titlepage を扉にする', async () => {
