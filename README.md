@@ -65,13 +65,21 @@ deno task fmt
 deno task test
 ```
 
-clone した後に一度、コミット済み ADR の変更を拒否する git の hook を有効にする。
+コミット済みの ADR は、ステータスの行のほかを変更できない（[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)）。
+これを [tett23/adr-guard](https://github.com/tett23/adr-guard) で強制する。git の pre-commit hook と Claude Code の hook で使うため、adr-guard を入れる。
+
+```bash
+cargo install --git https://github.com/tett23/adr-guard --tag v0.1.0
+```
+
+リリースのバイナリを使う手順は adr-guard の README にある。
+clone した後に一度、git の hook を有効にする。
 
 ```bash
 git config core.hooksPath .githooks
 ```
 
-コミット済みの ADR は、ステータス行以外を変更できない([ADR 0002](docs/adr/0002-immutable-adrs.md))。
+CI でも、push と pull request のすべてのコミットを adr-guard で検査する。
 
 ## ライセンス
 

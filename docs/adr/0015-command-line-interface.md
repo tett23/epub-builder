@@ -1,6 +1,6 @@
 # ADR 0015: ディレクトリから EPUB を作る CLI を、build、check、toc、init、help、version のコマンドで提供する
 
-ステータス: 置換（ADR 0016）
+ステータス: 採択→ADR 0016
 
 ## 文脈
 
