@@ -55,6 +55,7 @@ epub-builder build my-book
 - コマンドライン：[ADR 0022](docs/adr/0022-command-line-interface-own-argument-parser.md)
 - ADR の運用と保護：[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)
 - クラスを使わない（誤りと TOML の日時を値で表す）：[ADR 0021](docs/adr/0021-no-classes.md)
+- 依存の再実装と、残す依存：[ADR 0023](docs/adr/0023-reimplement-hastscript.md)
 
 ## 開発
 

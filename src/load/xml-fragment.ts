@@ -2,10 +2,10 @@
 // 対象は断片に要るもの（要素、属性、文字、コメント、CDATA 区間、事前定義の実体参照と文字参照）に限る。
 
 import type { Element, ElementContent, Root } from 'hast';
-import { h, s } from 'hastscript';
 import type { EpubVersion } from '../types.ts';
 import { hasInvalidXmlChar } from '../xml.ts';
 import { hasErrorName, type NamedError, namedError } from '../errors.ts';
+import { createElement } from './hast-element.ts';
 import { attributePrefixes, NCNAME, NS } from './namespaces.ts';
 
 /** XML の断片の誤り。位置を持つ（ADR 0021） */
@@ -269,10 +269,7 @@ function createFragmentParser(src: string, version: EpubVersion): { parse: () =>
       if (name === 'xmlns' || name.startsWith('xmlns:')) continue;
       properties[name] = value;
     }
-    // hastscript は要素の名前の `.` と `#` をセレクタとして読むため、名前は後から入れる
-    const build = open.namespace === NS.svg ? s : h;
-    const element = build('x', properties, open.children) as Element;
-    element.tagName = open.name;
+    const element = createElement(open.name, properties, open.children, open.namespace === NS.svg ? 'svg' : 'html');
     element.position = { start: open.start, end: point() };
     if (open.namespace === NS.mathml) element.data = { ...element.data, namespace: NS.mathml } as Element['data'];
     return element;

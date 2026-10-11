@@ -26,7 +26,6 @@
     "@std/testing": "jsr:@std/testing@^1",
     "hast": "npm:@types/hast@3.0.5",
     "mdast": "npm:@types/mdast@4.0.4",
-    "hastscript": "npm:hastscript@9.0.1",
     "mdast-util-gfm-footnote": "npm:mdast-util-gfm-footnote@2.1.0",
     "micromark-extension-gfm-footnote": "npm:micromark-extension-gfm-footnote@2.1.0",
     "property-information": "npm:property-information@7.2.0",

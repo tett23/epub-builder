@@ -6,6 +6,7 @@
 - ADR 0004：公開 API と zip の書き出し
 - ADR 0019：対応する仕様と版ごとの出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`（ADR 0003 と、ADR 0005 から 0014 を置き換えた）
 - ADR 0022：コマンドライン（ADR 0015 から 0018 を置き換えた）
+- ADR 0023：hastscript の再実装と、残す依存
 - ADR 0020：ADR の運用と、コミット済みの ADR の保護（ADR 0002 を置き換えた）
 - ADR 0021：クラスを使わず、誤りと TOML の日時を値と関数で表す
 
@@ -59,6 +60,18 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 | `mod.ts`   | `buildEpub`、`Book` などの型、`EpubInputError`（型）、`epubInputError`、`isEpubInputError`                                                                                  | なし                                                                       |
 | `load.ts`  | `loadBook`、`LoadOptions`、`LoadWarning`、`parseToml`、`TomlDateTime`（型）、`tomlDateTime`、`isTomlDateTime`、`TomlError`（型）、`tomlError`、`isTomlError`、TOML の値の型 | unified 系のライブラリ                                                     |
 | `cli.ts`   | `main`（CLI の入口）                                                                                                                                                        | unified 系のライブラリ（`load.ts` を通して）。引数の解析は自前（ADR 0022） |
+
+### 実行時の依存
+
+| 依存                                                                     | 使い方                      | 残す理由                                              |
+| ------------------------------------------------------------------------ | --------------------------- | ----------------------------------------------------- |
+| `unified`、`remark-parse`、`remark-rehype`、`rehype-raw`、`rehype-parse` | Markdown と HTML の解析     | CommonMark と HTML Living Standard の解析は小さくない |
+| `micromark-extension-gfm-footnote`、`mdast-util-gfm-footnote`            | 脚注の記法の解析            | `remark-parse` と組で使う構文の拡張である             |
+| `property-information`                                                   | hast の属性の名前と値の対応 | `rehype-parse` が作る hast と同じ対応を使う必要がある |
+
+- これらは `load.ts` と `cli.ts` だけが使う。`mod.ts` は依存を持たない。
+- CLI の引数の解析（ADR 0022）と、XML の断片の解析器が使う hast の要素の作り方（ADR 0023）は、自前で書いている。hast の要素の属性の扱いは hastscript 9.0.1 と同じにしている。
+- テストのときだけ `@std/expect` と `@std/testing` を使う。
 
 ### `buildEpub(book, options): Promise<Uint8Array>`
 
