@@ -1,4 +1,4 @@
-// EPUB 3.0 のナビゲーション文書の landmarks（ADR 0019）
+// EPUB 3.0 のナビゲーション文書の landmarks（ADR 0024）
 import { expect } from '@std/expect';
 import { type Book, buildEpub } from '../mod.ts';
 import { unzipText } from './helpers/unzip.ts';

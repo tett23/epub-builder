@@ -1,4 +1,4 @@
-// Kindle の primary-writing-mode（ADR 0019）
+// Kindle の primary-writing-mode（ADR 0024）
 import { expect } from '@std/expect';
 import { type Book, buildEpub, type PrimaryWritingMode } from '../mod.ts';
 import { loadBook } from '../load.ts';

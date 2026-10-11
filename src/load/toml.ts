@@ -1,4 +1,4 @@
-// TOML 1.0.0 の解析器（ADR 0019）。外部の依存を持たない。クラスは使わない（ADR 0021）
+// TOML 1.0.0 の解析器（ADR 0024）。外部の依存を持たない。クラスは使わない（ADR 0021）
 
 import { hasErrorName, type NamedError, namedError } from '../errors.ts';
 

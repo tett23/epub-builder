@@ -1,4 +1,4 @@
-import type { EpubVersion } from '../types.ts';
+import { type EpubVersion, isEpub3 } from '../types.ts';
 
 export const NS = {
   xhtml: 'http://www.w3.org/1999/xhtml',
@@ -13,7 +13,7 @@ export const NS = {
 /** 本文の断片の中で、宣言せずに使える属性の接頭辞（`buildEpub` が包む文書で宣言するもの） */
 export function attributePrefixes(version: EpubVersion): Map<string, string> {
   const prefixes = new Map<string, string>([['xml', NS.xml], ['xlink', NS.xlink]]);
-  if (version === '3.0') prefixes.set('epub', NS.epub);
+  if (isEpub3(version)) prefixes.set('epub', NS.epub);
   return prefixes;
 }
 

@@ -1,4 +1,4 @@
-// コマンドラインの引数の解析（ADR 0022）。@std/cli の parseArgs のテストのうち、扱う機能に当たるものを移した
+// コマンドラインの引数の解析（ADR 0024）。@std/cli の parseArgs のテストのうち、扱う機能に当たるものを移した
 import { expect } from '@std/expect';
 import { type ArgumentSpec, parseArguments } from '../src/args.ts';
 

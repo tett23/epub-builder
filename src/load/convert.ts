@@ -1,4 +1,4 @@
-// 本文の三つの形式を hast に読む（ADR 0019）
+// 本文の三つの形式を hast に読む（ADR 0024）
 
 import type { ElementContent, Nodes as HastNodes, Root as HastRoot } from 'hast';
 import type {
@@ -16,7 +16,7 @@ import rehypeRaw from 'rehype-raw';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { type Processor, unified } from 'unified';
-import type { EpubVersion } from '../types.ts';
+import { type EpubVersion, isEpub3 } from '../types.ts';
 import { parseRuby } from './ruby.ts';
 import { type ConversionError, conversionError } from './xhtml-writer.ts';
 import { isXmlError, parseXhtmlFragment } from './xml-fragment.ts';
@@ -108,7 +108,7 @@ function transformFootnotes(tree: MdastRoot, src: string, version: EpubVersion):
     const id = count === 1 ? `fnref-${number}` : `fnref-${number}-${count}`;
     ids.push(id);
     const properties: Record<string, unknown> = { className: ['noteref'], id, href: `#fn-${number}` };
-    if (version === '3.0') properties['epub:type'] = 'noteref';
+    if (isEpub3(version)) properties['epub:type'] = 'noteref';
     const replacement = {
       type: 'noteref',
       data: {
@@ -143,8 +143,8 @@ function transformFootnotes(tree: MdastRoot, src: string, version: EpubVersion):
     }
     ids.push(`fn-${number}`);
     const hProperties: Record<string, unknown> = { className: ['footnote'], id: `fn-${number}` };
-    if (version === '3.0') hProperties['epub:type'] = 'footnote';
-    return { type: 'footnoteBody', data: { hName: version === '3.0' ? 'aside' : 'div', hProperties }, children };
+    if (isEpub3(version)) hProperties['epub:type'] = 'footnote';
+    return { type: 'footnoteBody', data: { hName: isEpub3(version) ? 'aside' : 'div', hProperties }, children };
   });
   tree.children.push(
     { type: 'footnotes', data: { hName: 'div', hProperties: { className: ['footnotes'] } }, children: notes } as never,
@@ -154,7 +154,7 @@ function transformFootnotes(tree: MdastRoot, src: string, version: EpubVersion):
 
 /**
  * 文字列のノードの中のルビの記法を置き換える。
- * EPUB 3.0 では ruby 要素、EPUB 2.0.1 では括弧書きの span とする（OPS 2.0.1 は ruby 要素を持たないため。ADR 0019）
+ * EPUB 3.0 では ruby 要素、EPUB 2.0.1 では括弧書きの span とする（OPS 2.0.1 は ruby 要素を持たないため。ADR 0024）
  */
 function transformRuby(tree: MdastRoot, version: EpubVersion): void {
   visit(tree, (node, parent) => {
