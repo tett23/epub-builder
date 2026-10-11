@@ -1,7 +1,7 @@
 // ファイル名の空白の置き換えと、EPUB 2.0.1 で使えない要素の警告（ADR 0019）
 import { expect } from '@std/expect';
 import { stub } from '@std/testing/mock';
-import { type Book, buildEpub, EpubInputError } from '../mod.ts';
+import { type Book, buildEpub } from '../mod.ts';
 import { loadBook, type LoadWarning } from '../load.ts';
 import { replaceSpaces } from '../src/load/load-book.ts';
 import { unzipText } from './helpers/unzip.ts';
@@ -73,9 +73,9 @@ Deno.test('assets/ のファイルとディレクトリの名前の空白を置�
 });
 
 Deno.test('置き換えた結果が重なるパスは例外になる', async () => {
-  await expect(load({ 'body/a.md': 'a', 'assets/a b.png': png, 'assets/a_b.png': png })).rejects.toThrow(
-    EpubInputError,
-  );
+  await expect(load({ 'body/a.md': 'a', 'assets/a b.png': png, 'assets/a_b.png': png })).rejects.toMatchObject({
+    name: 'EpubInputError',
+  });
   await expect(load({ 'body/a.md': 'a', 'assets/x y/a.png': png, 'assets/x_y/a.png': png })).rejects.toThrow(
     '空白を _ に置き換えると、ファイルのパスが重なる',
   );

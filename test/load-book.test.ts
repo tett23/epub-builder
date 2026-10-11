@@ -1,5 +1,5 @@
 import { expect } from '@std/expect';
-import { type Book, buildEpub, type Chapter, EpubInputError } from '../mod.ts';
+import { type Book, buildEpub, type Chapter } from '../mod.ts';
 import { loadBook } from '../load.ts';
 import { compareCodePoints, stripSerial } from '../src/load/load-book.ts';
 import { FIXTURES } from './fixtures.ts';
@@ -84,7 +84,9 @@ Deno.test('book.toml の誤りは例外になる', async () => {
     'TOML の誤り': `${BOOK_TOML}title = "b"`,
   };
   for (const [label, toml] of Object.entries(cases)) {
-    await expect(load({ 'book.toml': toml, 'body/a.md': 'a' }), label).rejects.toThrow(EpubInputError);
+    await expect(load({ 'book.toml': toml, 'body/a.md': 'a' }), label).rejects.toMatchObject({
+      name: 'EpubInputError',
+    });
   }
   await expect(load({ 'body/a.md': 'a' })).rejects.toThrow('book.toml がない');
 });
@@ -148,7 +150,7 @@ Deno.test('ファイルの構成の誤りは例外になる', async () => {
     'assets/ の大文字の拡張子': { 'body/a.md': 'a', 'assets/a.JPG': 'a' },
   };
   for (const [label, tree] of Object.entries(cases)) {
-    await expect(load({ 'book.toml': BOOK_TOML, ...tree }), label).rejects.toThrow(EpubInputError);
+    await expect(load({ 'book.toml': BOOK_TOML, ...tree }), label).rejects.toMatchObject({ name: 'EpubInputError' });
   }
 });
 
@@ -194,7 +196,9 @@ Deno.test('参照の誤りは例外になる', async () => {
     'assets/ の外の画像': '![a](../book.toml)',
   };
   for (const [label, md] of Object.entries(cases)) {
-    await expect(load({ 'book.toml': BOOK_TOML, 'body/a.md': md }), label).rejects.toThrow(EpubInputError);
+    await expect(load({ 'book.toml': BOOK_TOML, 'body/a.md': md }), label).rejects.toMatchObject({
+      name: 'EpubInputError',
+    });
   }
   await expect(load({ 'book.toml': BOOK_TOML, 'body/a.xhtml': '<p>\n<b></p>' })).rejects.toThrow(
     'body/a.xhtml:2:4:',
@@ -218,7 +222,9 @@ Deno.test('すべてのフィクスチャから、決めた版の EPUB を作れ
 });
 
 Deno.test('EPUB 3.0 にしかない機能を使うフィクスチャは、EPUB 2.0.1 では例外になる', async () => {
-  await expect(loadBook('test/fixtures/epub3-book', { version: '2.0.1' })).rejects.toThrow(EpubInputError);
+  await expect(loadBook('test/fixtures/epub3-book', { version: '2.0.1' })).rejects.toMatchObject({
+    name: 'EpubInputError',
+  });
 });
 
 Deno.test('test/fixtures/ のディレクトリはすべて一覧に載っている', async () => {

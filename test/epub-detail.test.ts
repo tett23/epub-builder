@@ -1,6 +1,6 @@
 // buildEpub と zip の細かな場合
 import { expect } from '@std/expect';
-import { type Book, buildEpub, type Chapter, EpubInputError } from '../mod.ts';
+import { type Book, buildEpub, type Chapter } from '../mod.ts';
 import { contentDocumentName } from '../src/epub.ts';
 import { crc32, writeZip } from '../src/zip.ts';
 import { unzip, unzipText } from './helpers/unzip.ts';
@@ -155,11 +155,11 @@ Deno.test('本の値の誤り', async (t) => {
     await t.step(label, async () => {
       const book = minimal();
       mutate(book);
-      await expect(buildEpub(book, { version: '3.0' })).rejects.toThrow(EpubInputError);
+      await expect(buildEpub(book, { version: '3.0' })).rejects.toMatchObject({ name: 'EpubInputError' });
     });
   }
   await t.step('知らない版', async () => {
-    await expect(buildEpub(minimal(), { version: '3.3' as '3.0' })).rejects.toThrow(EpubInputError);
+    await expect(buildEpub(minimal(), { version: '3.3' as '3.0' })).rejects.toMatchObject({ name: 'EpubInputError' });
   });
 });
 

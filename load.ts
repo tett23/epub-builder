@@ -8,10 +8,14 @@
 
 export { loadBook, type LoadOptions, type LoadWarning } from './src/load/load-book.ts';
 export {
+  isTomlDateTime,
+  isTomlError,
   parseToml,
-  TomlDateTime,
+  type TomlDateTime,
+  tomlDateTime,
   type TomlDateTimeKind,
-  TomlError,
+  type TomlError,
+  tomlError,
   type TomlTable,
   type TomlValue,
 } from './src/load/toml.ts';

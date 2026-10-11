@@ -1,5 +1,6 @@
 import { expect } from '@std/expect';
-import { parseToml, TomlDateTime, TomlError } from '../load.ts';
+import { thrown } from './helpers/errors.ts';
+import { parseToml, type TomlDateTime } from '../load.ts';
 
 Deno.test('文字列の 4 種', () => {
   const doc = parseToml(String.raw`
@@ -102,6 +103,6 @@ Deno.test('誤った TOML は位置を示す例外になる', () => {
     'a = {\nb = 1}',
     'a = """a""""""',
   ];
-  for (const src of invalid) expect(() => parseToml(src), src).toThrow(TomlError);
+  for (const src of invalid) expect(thrown(() => parseToml(src)), src).toMatchObject({ name: 'TomlError' });
   expect(() => parseToml('a = 1\nb = ?')).toThrow(/^2:5: /);
 });

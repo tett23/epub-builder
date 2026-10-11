@@ -1,6 +1,6 @@
 // meta/ の後付け（ADR 0019）
 import { expect } from '@std/expect';
-import { buildEpub, EpubInputError } from '../mod.ts';
+import { buildEpub } from '../mod.ts';
 import { loadBook } from '../load.ts';
 import { unzipText } from './helpers/unzip.ts';
 
@@ -98,7 +98,7 @@ Deno.test('後付けの誤り', async (t) => {
   for (const [label, files] of Object.entries(cases)) {
     await t.step(label, async () => {
       await expect(project({ 'body/a.md': 'a', ...files }, (dir) => loadBook(dir, { version: '3.0' }))).rejects
-        .toThrow(EpubInputError);
+        .toMatchObject({ name: 'EpubInputError' });
     });
   }
 });

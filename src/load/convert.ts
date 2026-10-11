@@ -18,8 +18,8 @@ import remarkRehype from 'remark-rehype';
 import { type Processor, unified } from 'unified';
 import type { EpubVersion } from '../types.ts';
 import { parseRuby } from './ruby.ts';
-import { ConversionError } from './xhtml-writer.ts';
-import { parseXhtmlFragment, XmlError } from './xml-fragment.ts';
+import { type ConversionError, conversionError } from './xhtml-writer.ts';
+import { isXmlError, parseXhtmlFragment } from './xml-fragment.ts';
 
 export type SourceFormat = 'md' | 'xhtml' | 'html';
 
@@ -40,7 +40,7 @@ function documentLevelError(src: string, offset: number, base = { line: 1, colum
   const p = offsetToPoint(src, offset);
   const line = base.line + p.line - 1;
   const column = p.line === 1 ? base.column + p.column - 1 : p.column;
-  return new ConversionError('断片の中に <!DOCTYPE>、html、head、body は書けない', line, column);
+  return conversionError('断片の中に <!DOCTYPE>、html、head、body は書けない', line, column);
 }
 
 function footnoteSyntax(this: Processor) {
@@ -54,7 +54,7 @@ const markdownToHast = unified().use(remarkRehype, { allowDangerousHtml: true })
 const htmlParser = unified().use(rehypeParse, { fragment: true });
 
 function failAt(message: string, node: { position?: { start: { line: number; column: number } } }): never {
-  throw new ConversionError(message, node.position?.start.line, node.position?.start.column);
+  throw conversionError(message, node.position?.start.line, node.position?.start.column);
 }
 
 function visit(node: MdastNodes, fn: (node: MdastNodes, parent: Parent | undefined) => void, parent?: Parent) {
@@ -213,7 +213,7 @@ function checkGeneratedIds(tree: HastRoot, generated: string[]): void {
   };
   walk(tree);
   for (const id of generated) {
-    if ((seen.get(id) ?? 0) > 1) throw new ConversionError(`脚注の ID ${id} が、本文に書いた ID と重なる`);
+    if ((seen.get(id) ?? 0) > 1) throw conversionError(`脚注の ID ${id} が、本文に書いた ID と重なる`);
   }
 }
 
@@ -244,7 +244,7 @@ export function sourceToTree(src: string, format: SourceFormat, version: EpubVer
       try {
         return parseXhtmlFragment(src, version);
       } catch (e) {
-        if (e instanceof XmlError) throw new ConversionError(e.message.replace(/^\d+:\d+: /, ''), e.line, e.column);
+        if (isXmlError(e)) throw conversionError(e.message.replace(/^\d+:\d+: /, ''), e.line, e.column);
         throw e;
       }
   }

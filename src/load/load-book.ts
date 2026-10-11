@@ -6,7 +6,7 @@ import {
   type Book,
   type BuildOptions,
   type Chapter,
-  EpubInputError,
+  epubInputError,
   type Image,
   type ImageMediaType,
   type Metadata,
@@ -17,8 +17,8 @@ import {
 } from '../types.ts';
 import { encodePath } from '../xml.ts';
 import { type SourceFormat, sourceToTree } from './convert.ts';
-import { parseToml, TomlDateTime, TomlError, type TomlTable } from './toml.ts';
-import { ConversionError, writeXhtml } from './xhtml-writer.ts';
+import { isTomlDateTime, isTomlError, parseToml, type TomlTable } from './toml.ts';
+import { conversionError, isConversionError, writeXhtml } from './xhtml-writer.ts';
 
 /** loadBook の警告（ADR 0019） */
 export interface LoadWarning {
@@ -158,7 +158,7 @@ function checkStemConflicts(dir: string, files: DirEntry[]): void {
     const stem = stemOf(file.name);
     const other = stems.get(stem);
     if (other !== undefined) {
-      throw new EpubInputError(
+      throw epubInputError(
         `拡張子を除いて同じ名前のファイルがある: ${join(dir, other)} と ${join(dir, file.name)}`,
       );
     }
@@ -168,17 +168,17 @@ function checkStemConflicts(dir: string, files: DirEntry[]): void {
 
 function toSourceDocument(root: string, path: string, diskPath: string, name: string): SourceDocument {
   const format = DOCUMENT_EXTENSIONS[extensionOf(name)];
-  if (format === undefined) throw new EpubInputError(`本文に使えない拡張子のファイル: ${path}`);
+  if (format === undefined) throw epubInputError(`本文に使えない拡張子のファイル: ${path}`);
   return { path, diskPath: `${root}/${diskPath}`, format, fallbackTitle: stripSerial(stemOf(name)) };
 }
 
 async function readBodyDirectory(root: string, path: string, diskPath: string): Promise<BodyNode[]> {
   const entries = await readEntries(`${root}/${diskPath}`);
-  if (entries.length === 0) throw new EpubInputError(`中身のないディレクトリ: ${path}`);
+  if (entries.length === 0) throw epubInputError(`中身のないディレクトリ: ${path}`);
   const files = entries.filter((e) => !e.isDirectory);
   for (const file of files) {
     if (DOCUMENT_EXTENSIONS[extensionOf(file.name)] === undefined) {
-      throw new EpubInputError(`本文に使えない拡張子のファイル: ${join(path, file.name)}`);
+      throw epubInputError(`本文に使えない拡張子のファイル: ${join(path, file.name)}`);
     }
   }
   checkStemConflicts(path, files);
@@ -208,10 +208,10 @@ async function readMeta(
   const result: Partial<Record<string, SourceDocument>> = {};
   for (const entry of entries) {
     const path = `meta/${entry.name}`;
-    if (entry.isDirectory) throw new EpubInputError(`meta/ にディレクトリは置けない: ${path}`);
+    if (entry.isDirectory) throw epubInputError(`meta/ にディレクトリは置けない: ${path}`);
     const stem = stemOf(entry.name);
     if (!META_NAMES.has(stem) || DOCUMENT_EXTENSIONS[extensionOf(entry.name)] === undefined) {
-      throw new EpubInputError(
+      throw epubInputError(
         `meta/ に置けないファイル: ${path}（${[...META_NAMES].join('、')} の .md、.xhtml、.html）`,
       );
     }
@@ -249,7 +249,7 @@ async function readAssets(root: string, path = 'assets', diskPath = 'assets'): P
     }
     const mediaType = ASSET_TYPES[extensionOf(entry.name)];
     if (mediaType === undefined) {
-      throw new EpubInputError(
+      throw epubInputError(
         `assets/ に置けない拡張子のファイル: ${childPath}（.css、.jpg、.jpeg、.png、.gif、.svg）`,
       );
     }
@@ -261,7 +261,7 @@ async function readAssets(root: string, path = 'assets', diskPath = 'assets'): P
 function expectString(table: TomlTable, key: string): string | undefined {
   const value = table[key];
   if (value === undefined) return undefined;
-  if (typeof value !== 'string') throw new EpubInputError(`book.toml の ${key} は文字列で書く`);
+  if (typeof value !== 'string') throw epubInputError(`book.toml の ${key} は文字列で書く`);
   return value;
 }
 
@@ -284,52 +284,52 @@ async function readBookToml(root: string): Promise<{
   coverImage?: string;
 }> {
   const path = `${root}/book.toml`;
-  if (!(await exists(path))) throw new EpubInputError('book.toml がない');
+  if (!(await exists(path))) throw epubInputError('book.toml がない');
   let table: TomlTable;
   try {
     table = parseToml(new TextDecoder('utf-8', { fatal: true }).decode(await Deno.readFile(path)));
   } catch (e) {
-    if (e instanceof TomlError) throw new EpubInputError(`book.toml:${e.message}`);
-    if (e instanceof TypeError) throw new EpubInputError('book.toml が UTF-8 でない');
+    if (isTomlError(e)) throw epubInputError(`book.toml:${e.message}`);
+    if (e instanceof TypeError) throw epubInputError('book.toml が UTF-8 でない');
     throw e;
   }
   for (const key of Object.keys(table)) {
-    if (!BOOK_KEYS.has(key)) throw new EpubInputError(`book.toml に知らないキーがある: ${key}`);
+    if (!BOOK_KEYS.has(key)) throw epubInputError(`book.toml に知らないキーがある: ${key}`);
   }
   const metadata: Metadata = { identifier: '', title: '', language: '' };
   for (const key of ['identifier', 'title', 'language'] as const) {
     const value = expectString(table, key);
-    if (value === undefined || value.trim() === '') throw new EpubInputError(`book.toml に ${key} がない`);
+    if (value === undefined || value.trim() === '') throw epubInputError(`book.toml に ${key} がない`);
     metadata[key] = value;
   }
   metadata.publisher = expectString(table, 'publisher');
   metadata.description = expectString(table, 'description');
   if (table.authors !== undefined) {
     if (!Array.isArray(table.authors) || !table.authors.every((a) => typeof a === 'string')) {
-      throw new EpubInputError('book.toml の authors は文字列の配列で書く');
+      throw epubInputError('book.toml の authors は文字列の配列で書く');
     }
     metadata.authors = table.authors as string[];
   }
   if (table.modified !== undefined) {
     const modified = table.modified;
-    if (!(modified instanceof TomlDateTime) || modified.kind !== 'offset-date-time') {
-      throw new EpubInputError('book.toml の modified はオフセット付きの日時（例 2026-10-09T00:00:00Z）で書く');
+    if (!isTomlDateTime(modified) || modified.kind !== 'offset-date-time') {
+      throw epubInputError('book.toml の modified はオフセット付きの日時（例 2026-10-09T00:00:00Z）で書く');
     }
     metadata.modified = modified.date;
   }
   const ppd = expectString(table, 'page_progression_direction');
   if (ppd !== undefined && ppd !== 'ltr' && ppd !== 'rtl') {
-    throw new EpubInputError('book.toml の page_progression_direction は "ltr" か "rtl" で書く');
+    throw epubInputError('book.toml の page_progression_direction は "ltr" か "rtl" で書く');
   }
   // Kindle の組み方向。書いていなければ頁送りの向きから決める（ADR 0019）
   const pwm = expectString(table, 'primary_writing_mode');
   if (pwm !== undefined && WRITING_MODE_DIRECTIONS[pwm] === undefined) {
-    throw new EpubInputError(
+    throw epubInputError(
       'book.toml の primary_writing_mode は "horizontal-lr"、"horizontal-rl"、"vertical-lr"、"vertical-rl" のいずれかで書く',
     );
   }
   if (pwm !== undefined && ppd !== undefined && WRITING_MODE_DIRECTIONS[pwm] !== ppd) {
-    throw new EpubInputError(
+    throw epubInputError(
       `book.toml の primary_writing_mode ${pwm} と page_progression_direction ${ppd} が食い違う`,
     );
   }
@@ -522,7 +522,7 @@ function rewriteReferences(tree: HastRoot, sourcePath: string, targets: Referenc
 }
 
 function fail(message: string, node: Element): never {
-  throw new ConversionError(message, node.position?.start.line, node.position?.start.column);
+  throw conversionError(message, node.position?.start.line, node.position?.start.column);
 }
 
 interface ConvertedDocument {
@@ -570,7 +570,7 @@ async function convert(
   try {
     src = new TextDecoder('utf-8', { fatal: true }).decode(await Deno.readFile(doc.diskPath));
   } catch (e) {
-    if (e instanceof TypeError) throw new EpubInputError(`${doc.path}: UTF-8 でない`);
+    if (e instanceof TypeError) throw epubInputError(`${doc.path}: UTF-8 でない`);
     throw e;
   }
   try {
@@ -583,9 +583,9 @@ async function convert(
     if (version === '3.0') wrapSections(tree, sectionHeadings);
     return { title: headingTitle(tree) ?? doc.fallbackTitle, body: writeXhtml(tree, version), sections };
   } catch (e) {
-    if (e instanceof ConversionError) {
+    if (isConversionError(e)) {
       const at = e.line !== undefined ? `:${e.line}:${e.column}` : '';
-      throw new EpubInputError(`${doc.path}${at}: ${e.message.replace(/^\d+:\d+: /, '')}`);
+      throw epubInputError(`${doc.path}${at}: ${e.message.replace(/^\d+:\d+: /, '')}`);
     }
     throw e;
   }
@@ -598,10 +598,10 @@ async function convert(
 export async function loadBook(dir: string, options: LoadOptions): Promise<Book> {
   const root = dir.replace(/\/+$/, '');
   if (options.version !== '2.0.1' && options.version !== '3.0') {
-    throw new EpubInputError(`知らない版: ${String(options.version)}`);
+    throw epubInputError(`知らない版: ${String(options.version)}`);
   }
   const { metadata, pageProgressionDirection, coverImage } = await readBookToml(root);
-  if (!(await exists(`${root}/body`))) throw new EpubInputError('body/ がない');
+  if (!(await exists(`${root}/body`))) throw epubInputError('body/ がない');
   const body = await readBodyDirectory(root, 'body', 'body');
   const meta = await readMeta(root);
   const assets = await readAssets(root);
@@ -611,7 +611,7 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
     const key = asset.outputPath.toLowerCase();
     const other = outputPaths.get(key);
     if (other !== undefined) {
-      throw new EpubInputError(`空白を _ に置き換えると、ファイルのパスが重なる: ${other} と ${asset.path}`);
+      throw epubInputError(`空白を _ に置き換えると、ファイルのパスが重なる: ${other} と ${asset.path}`);
     }
     outputPaths.set(key, asset.path);
     if (asset.outputPath !== asset.path) {
@@ -649,7 +649,7 @@ export async function loadBook(dir: string, options: LoadOptions): Promise<Book>
   };
   const coverImagePath = coverImage === undefined ? undefined : targets.images.get(coverImage.normalize('NFC'));
   if (coverImage !== undefined && coverImagePath === undefined) {
-    throw new EpubInputError(`book.toml の cover_image が assets/ の下の画像を指していない: ${coverImage}`);
+    throw epubInputError(`book.toml の cover_image が assets/ の下の画像を指していない: ${coverImage}`);
   }
 
   const converted = new Map<SourceDocument, ConvertedDocument>();

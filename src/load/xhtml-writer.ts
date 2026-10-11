@@ -5,13 +5,23 @@ import type { Element, Nodes, Properties } from 'hast';
 import { find, html, svg } from 'property-information';
 import type { EpubVersion } from '../types.ts';
 import { escapeAttribute, escapeText, hasInvalidXmlChar } from '../xml.ts';
+import { hasErrorName, type NamedError, namedError } from '../errors.ts';
 import { attributePrefixes, NCNAME, NS } from './namespaces.ts';
 
-export class ConversionError extends Error {
-  constructor(message: string, readonly line?: number, readonly column?: number) {
-    super(line !== undefined ? `${line}:${column}: ${message}` : message);
-    this.name = 'ConversionError';
-  }
+/** XHTML に直せないものの誤り。分かれば位置を持つ（ADR 0021） */
+export type ConversionError = NamedError<'ConversionError', { line?: number; column?: number }>;
+
+/** 変換の誤りを作る。位置があればメッセージの先頭に付ける */
+export function conversionError(message: string, line?: number, column?: number): ConversionError {
+  return namedError('ConversionError', line !== undefined ? `${line}:${column}: ${message}` : message, {
+    line,
+    column,
+  });
+}
+
+/** 変換の誤りかを判別する */
+export function isConversionError(value: unknown): value is ConversionError {
+  return hasErrorName(value, 'ConversionError');
 }
 
 const VOID_ELEMENTS = new Set([
@@ -36,7 +46,7 @@ const DECLARED_BY_WRITER: Record<string, string> = { xlink: NS.xlink };
 
 function fail(message: string, node: Nodes): never {
   const start = node.position?.start;
-  throw new ConversionError(message, start?.line, start?.column);
+  throw conversionError(message, start?.line, start?.column);
 }
 
 interface Context {
@@ -56,17 +66,13 @@ function attributeValue(value: Properties[string], info: ReturnType<typeof find>
   return String(value);
 }
 
-class Writer {
-  readonly prefixes: Map<string, string>;
+function createWriter(version: EpubVersion): { write: (node: Nodes, context: Context) => string } {
+  const prefixes = attributePrefixes(version);
 
-  constructor(version: EpubVersion) {
-    this.prefixes = attributePrefixes(version);
-  }
-
-  write(node: Nodes, context: Context): string {
+  function write(node: Nodes, context: Context): string {
     switch (node.type) {
       case 'root':
-        return node.children.map((child) => this.write(child, context)).join('');
+        return node.children.map((child) => write(child, context)).join('');
       case 'text':
         if (hasInvalidXmlChar(node.value)) fail('XML で使えない文字がある', node);
         return escapeText(node.value);
@@ -80,13 +86,13 @@ class Writer {
         fail('断片の中に DOCTYPE は書けない', node);
         break;
       case 'element':
-        return this.element(node, context);
+        return element(node, context);
       default:
-        fail(`扱えないノード: ${node.type}`, node);
+        fail(`扱えないノード: ${(node as { type: string }).type}`, node);
     }
   }
 
-  element(node: Element, context: Context): string {
+  function element(node: Element, context: Context): string {
     const name = node.tagName;
     if (!NCNAME.test(name)) {
       fail(name.includes(':') ? `知らない接頭辞を持つ要素: ${name}` : `XML の名前として正しくない要素: ${name}`, node);
@@ -113,7 +119,7 @@ class Writer {
       }
       if (attr.startsWith('xmlns:')) {
         const prefix = attr.slice(6);
-        if (this.prefixes.get(prefix) !== value) fail(`知らない接頭辞の宣言: ${attr}`, node);
+        if (prefixes.get(prefix) !== value) fail(`知らない接頭辞の宣言: ${attr}`, node);
         continue;
       }
       const parts = attr.split(':');
@@ -122,7 +128,7 @@ class Writer {
       }
       if (parts.length === 2) {
         const prefix = parts[0];
-        if (!this.prefixes.has(prefix)) fail(`知らない接頭辞を持つ属性: ${attr}`, node);
+        if (!prefixes.has(prefix)) fail(`知らない接頭辞を持つ属性: ${attr}`, node);
         if (prefix in DECLARED_BY_WRITER && !declared.has(prefix)) {
           attrs.push(`xmlns:${prefix}="${DECLARED_BY_WRITER[prefix]}"`);
           declared.add(prefix);
@@ -138,7 +144,7 @@ class Writer {
     // SVG の foreignObject の中身は XHTML に戻る
     const childNamespace = namespace === NS.svg && name === 'foreignObject' ? NS.xhtml : namespace;
     const inner = node.children
-      .map((child) => this.write(child, { namespace: childNamespace, defaultNamespace: namespace, declared }))
+      .map((child) => write(child, { namespace: childNamespace, defaultNamespace: namespace, declared }))
       .join('');
     if (inner === '') {
       if (namespace !== NS.xhtml || VOID_ELEMENTS.has(name)) return `${open}/>`;
@@ -147,9 +153,11 @@ class Writer {
     if (namespace === NS.xhtml && VOID_ELEMENTS.has(name)) fail(`空要素 ${name} は中身を持てない`, node);
     return `${open}>${inner}</${name}>`;
   }
+
+  return { write };
 }
 
 /** hast を、XHTML の `body` の中身として書き出す */
 export function writeXhtml(tree: Nodes, version: EpubVersion): string {
-  return new Writer(version).write(tree, { namespace: NS.xhtml, defaultNamespace: NS.xhtml, declared: new Set() });
+  return createWriter(version).write(tree, { namespace: NS.xhtml, defaultNamespace: NS.xhtml, declared: new Set() });
 }

@@ -53,6 +53,8 @@ epub-builder build my-book
 - 現在の仕様のまとめ：[docs/specifications.md](docs/specifications.md)
 - 対応する仕様と出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`：[ADR 0019](docs/adr/0019-epub-output-and-project-layout-with-primary-writing-mode.md)
 - コマンドライン：[ADR 0018](docs/adr/0018-command-line-interface-all-versions-by-default.md)
+- ADR の運用と保護：[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)
+- クラスを使わない（誤りと TOML の日時を値で表す）：[ADR 0021](docs/adr/0021-no-classes.md)
 
 ## 開発
 

@@ -2,7 +2,7 @@
 import { expect } from '@std/expect';
 import { sourceToTree } from '../src/load/convert.ts';
 import { parseRuby } from '../src/load/ruby.ts';
-import { ConversionError, writeXhtml } from '../src/load/xhtml-writer.ts';
+import { writeXhtml } from '../src/load/xhtml-writer.ts';
 import type { EpubVersion } from '../src/types.ts';
 
 const md = (src: string, version: EpubVersion = '3.0') => writeXhtml(sourceToTree(src, 'md', version), version);
@@ -167,7 +167,7 @@ Deno.test('Markdown の中の生の HTML の誤りは、Markdown の中の位置
     md('a\n\nb\n\n  <p>x</p><body>');
     throw new Error('例外にならない');
   } catch (e) {
-    expect(e).toBeInstanceOf(ConversionError);
-    expect((e as ConversionError).line).toBe(5);
+    expect(e).toMatchObject({ name: 'ConversionError' });
+    expect((e as { line?: number; column?: number }).line).toBe(5);
   }
 });

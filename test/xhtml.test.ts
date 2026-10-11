@@ -1,9 +1,10 @@
 // 自前の XML の断片の解析器と、XHTML の書き出し器
 import { expect } from '@std/expect';
+import { thrown } from './helpers/errors.ts';
 import type { Element, Root } from 'hast';
 import { sourceToTree } from '../src/load/convert.ts';
-import { ConversionError, writeXhtml } from '../src/load/xhtml-writer.ts';
-import { parseXhtmlFragment, XmlError } from '../src/load/xml-fragment.ts';
+import { writeXhtml } from '../src/load/xhtml-writer.ts';
+import { parseXhtmlFragment } from '../src/load/xml-fragment.ts';
 import type { EpubVersion } from '../src/types.ts';
 
 const roundTrip = (src: string, version: EpubVersion = '3.0') => writeXhtml(parseXhtmlFragment(src, version), version);
@@ -95,7 +96,10 @@ Deno.test('XML の断片の誤り', async (t) => {
     ['知らない名前空間', '<p xmlns="urn:x"/>'],
   ];
   for (const [label, src, version] of cases) {
-    await t.step(label, () => expect(() => parseXhtmlFragment(src, version ?? '3.0')).toThrow(XmlError));
+    await t.step(
+      label,
+      () => expect(thrown(() => parseXhtmlFragment(src, version ?? '3.0'))).toMatchObject({ name: 'XmlError' }),
+    );
   }
 });
 
@@ -111,8 +115,11 @@ Deno.test('XML の断片の誤りの位置', () => {
       parseXhtmlFragment(src, '3.0');
       throw new Error(`例外にならない: ${JSON.stringify(src)}`);
     } catch (e) {
-      expect(e).toBeInstanceOf(XmlError);
-      expect([(e as XmlError).line, (e as XmlError).column], JSON.stringify(src)).toEqual([line, column]);
+      expect(e).toMatchObject({ name: 'XmlError' });
+      expect(
+        [(e as { line?: number; column?: number }).line, (e as { line?: number; column?: number }).column],
+        JSON.stringify(src),
+      ).toEqual([line, column]);
     }
   }
 });
@@ -193,7 +200,10 @@ Deno.test('XHTML に直せない HTML', async (t) => {
     ['template', '<template><p>x</p></template>'],
   ];
   for (const [label, src, version] of cases) {
-    await t.step(label, () => expect(() => html(src, version ?? '3.0')).toThrow(ConversionError));
+    await t.step(
+      label,
+      () => expect(thrown(() => html(src, version ?? '3.0'))).toMatchObject({ name: 'ConversionError' }),
+    );
   }
 });
 
@@ -206,14 +216,20 @@ Deno.test('HTML の誤りの位置', () => {
     html('<p>a</p>\n\n  <p a"b=1>x</p>');
     throw new Error('例外にならない');
   } catch (e) {
-    expect(e).toBeInstanceOf(ConversionError);
-    expect([(e as ConversionError).line, (e as ConversionError).column]).toEqual([3, 3]);
+    expect(e).toMatchObject({ name: 'ConversionError' });
+    expect([(e as { line?: number; column?: number }).line, (e as { line?: number; column?: number }).column]).toEqual([
+      3,
+      3,
+    ]);
   }
   try {
     html('<p>a</p>\n<body>');
     throw new Error('例外にならない');
   } catch (e) {
-    expect([(e as ConversionError).line, (e as ConversionError).column]).toEqual([2, 1]);
+    expect([(e as { line?: number; column?: number }).line, (e as { line?: number; column?: number }).column]).toEqual([
+      2,
+      1,
+    ]);
   }
 });
 

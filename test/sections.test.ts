@@ -1,6 +1,6 @@
 // 文書の中の見出しを節として目次に出す（ADR 0019）
 import { expect } from '@std/expect';
-import { type Book, buildEpub, EpubInputError, type Section } from '../mod.ts';
+import { type Book, buildEpub, type Section } from '../mod.ts';
 import { loadBook } from '../load.ts';
 import { sourceToTree } from '../src/load/convert.ts';
 import { extractSections, headingTitle } from '../src/load/load-book.ts';
@@ -168,7 +168,7 @@ Deno.test('buildEpub は節の誤りを例外にする', async (t) => {
   ];
   for (const [label, chapters] of cases) {
     await t.step(label, async () => {
-      await expect(buildEpub(book(chapters), { version: '3.0' })).rejects.toThrow(EpubInputError);
+      await expect(buildEpub(book(chapters), { version: '3.0' })).rejects.toMatchObject({ name: 'EpubInputError' });
     });
   }
 });

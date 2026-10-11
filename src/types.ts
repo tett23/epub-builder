@@ -1,3 +1,5 @@
+import { hasErrorName, type NamedError, namedError } from './errors.ts';
+
 /** 出す EPUB の版（ADR 0019） */
 export type EpubVersion = '2.0.1' | '3.0';
 
@@ -86,10 +88,15 @@ export interface BuildOptions {
   version: EpubVersion;
 }
 
-/** 入力の誤り */
-export class EpubInputError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'EpubInputError';
-  }
+/** 入力の誤り（ADR 0021） */
+export type EpubInputError = NamedError<'EpubInputError'>;
+
+/** 入力の誤りを作る */
+export function epubInputError(message: string): EpubInputError {
+  return namedError('EpubInputError', message);
+}
+
+/** 入力の誤りかを判別する */
+export function isEpubInputError(value: unknown): value is EpubInputError {
+  return hasErrorName(value, 'EpubInputError');
 }

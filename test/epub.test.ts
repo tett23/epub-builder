@@ -1,5 +1,5 @@
 import { expect } from '@std/expect';
-import { type Book, buildEpub, EpubInputError } from '../mod.ts';
+import { type Book, buildEpub } from '../mod.ts';
 import { unzip, unzipText } from './helpers/unzip.ts';
 
 const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
@@ -104,6 +104,6 @@ Deno.test('入力の誤りを、EPUB を作る前に例外で知らせる', asyn
   for (const [label, mutate] of cases) {
     const book = sampleBook();
     mutate(book);
-    await expect(buildEpub(book, { version: '3.0' }), label).rejects.toThrow(EpubInputError);
+    await expect(buildEpub(book, { version: '3.0' }), label).rejects.toMatchObject({ name: 'EpubInputError' });
   }
 });
