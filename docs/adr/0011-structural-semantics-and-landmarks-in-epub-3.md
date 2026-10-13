@@ -1,15 +1,15 @@
 # ADR 0011: EPUB 3.0 では、部・章・節の構造を、本文の `epub:type` と見出しごとの `section` 要素で表し、ナビゲーション文書に landmarks を書く
 
-ステータス: 採択→ADR 0012
+ステータス: 採択→[ADR 0012](0012-structural-semantics-landmarks-and-guide.md)
 
 ## 文脈
 
-この ADR は ADR 0010 を置き換える。
-ADR 0010 では、EPUB 3 の `landmarks` を作らないとした。
+この ADR は [ADR 0010](0010-structural-semantics-in-epub-3.md) を置き換える。
+[ADR 0010](0010-structural-semantics-in-epub-3.md) では、EPUB 3 の `landmarks` を作らないとした。
 しかし、文書の役割（表紙、本文、後付け）を `epub:type` で付けるようになったため、それをもとに、リーダーが表紙や本文の始まりへ移れる `landmarks` を作れる。
-そこで、ADR 0010 の決定に `landmarks` を加え、決定の全体をこの ADR に写す。ADR 0010 の決定の中身は変えない。
+そこで、[ADR 0010](0010-structural-semantics-in-epub-3.md) の決定に `landmarks` を加え、決定の全体をこの ADR に写す。[ADR 0010](0010-structural-semantics-in-epub-3.md) の決定の中身は変えない。
 
-ADR 0009 では、ディレクトリの構造（部、章）と文書の中の見出し（節）から目次を作るとした。
+[ADR 0009](0009-project-directory-layout.md) では、ディレクトリの構造（部、章）と文書の中の見出し（節）から目次を作るとした。
 しかし、本文の文書そのものには、どれが部の扉で、どれが章で、どこからどこまでが節かという構造が書かれていない。
 EPUB 3.0 では、構造の意味を `epub:type`（EPUB 3 Structural Semantics Vocabulary）で示せ、HTML の `section` 要素で節のまとまりを表せる。
 リーダーや支援技術は、これを使って文書の役割を読み取れる。
@@ -40,13 +40,13 @@ EPUB 2.0.1（OPS 2.0.1）の本文には `epub:type` も `section` 要素もな�
 
 ### 節の section 要素
 
-- `loadBook` に `version: "3.0"` を渡したとき、本文の直下（ほかの要素の中でない位置）にある見出しのうち、ADR 0009 で節にしたものごとに、その見出しから始まるまとまりを `section` 要素で囲む
+- `loadBook` に `version: "3.0"` を渡したとき、本文の直下（ほかの要素の中でない位置）にある見出しのうち、[ADR 0009](0009-project-directory-layout.md) で節にしたものごとに、その見出しから始まるまとまりを `section` 要素で囲む
   - まとまりは、その見出しから、同じかより小さいレベルの数の、次の節の見出しの前までとする
   - 入れ子は見出しのレベルで決める。`h2` の節の中に `h3` の節を入れる
   - 文書の題名に使った見出しと、それより前の内容は、`section` で囲まない
   - 脚注の欄（`<div class="footnotes">`）の前で、開いている `section` をすべて閉じる
-- 節の `id` は、ADR 0009 のとおり見出しの要素に置き、`section` 要素には付けない。目次の行き先は変わらない
-- ほかの要素の中にある見出し（`div` や `blockquote` の中など）は、目次の節にはなる（ADR 0009）が、`section` で囲まない。まとまりの範囲が要素の境界をまたぐためである
+- 節の `id` は、[ADR 0009](0009-project-directory-layout.md) のとおり見出しの要素に置き、`section` 要素には付けない。目次の行き先は変わらない
+- ほかの要素の中にある見出し（`div` や `blockquote` の中など）は、目次の節にはなる（[ADR 0009](0009-project-directory-layout.md)）が、`section` で囲まない。まとまりの範囲が要素の境界をまたぐためである
 - `section` 要素に `epub:type` は付けない
 - `version: "2.0.1"` では囲まない
 
@@ -63,7 +63,7 @@ EPUB 2.0.1（OPS 2.0.1）の本文には `epub:type` も `section` 要素もな�
 
 - 項目の表示名は、書誌情報の言語で決める。言語が `ja` か `ja-` で始まるときは「表紙」「本文」「後付け」、それ以外は「Cover」「Start of Content」「Back Matter」とする
 - `hidden` を付け、リーダーが本文として表示しないようにする
-- 目次（`toc`）の項目は書かない。ナビゲーション文書は読み順（spine）に入れない（ADR 0009）ため、landmarks から指すと EPUBCheck で誤り（RSC-011）になる
+- 目次（`toc`）の項目は書かない。ナビゲーション文書は読み順（spine）に入れない（[ADR 0009](0009-project-directory-layout.md)）ため、landmarks から指すと EPUBCheck で誤り（RSC-011）になる
 - `loadBook` の役割（`epubType`）は上の表のとおりなので、`loadBook` で読んだ本では、表紙、本文の最初の文書、奥付が landmarks に入る
 
 ## 実装しないこと

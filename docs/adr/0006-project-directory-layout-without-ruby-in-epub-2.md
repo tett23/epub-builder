@@ -1,17 +1,17 @@
-# ADR 0006: ADR 0005 のディレクトリから本を読む決定を引き継ぎ、EPUB 2.0.1 ではルビを `ruby` 要素でなく括弧書きの文字として書き出す
+# ADR 0006: [ADR 0005](0005-project-directory-layout.md) のディレクトリから本を読む決定を引き継ぎ、EPUB 2.0.1 ではルビを `ruby` 要素でなく括弧書きの文字として書き出す
 
-ステータス: 採択→ADR 0009
+ステータス: 採択→[ADR 0009](0009-project-directory-layout.md)
 
 ## 文脈
 
-この ADR は ADR 0005 を置き換える。
-ADR 0005 では、Markdown のルビを EPUB 2.0.1 でも `<ruby><rb>…</rb>…</ruby>` で書き出すとした。
+この ADR は [ADR 0005](0005-project-directory-layout.md) を置き換える。
+[ADR 0005](0005-project-directory-layout.md) では、Markdown のルビを EPUB 2.0.1 でも `<ruby><rb>…</rb>…</ruby>` で書き出すとした。
 しかし EPUB 2.0.1（OPS 2.0.1）の本文で使える要素は XHTML 1.1 のモジュールの一部に限られ、ルビのモジュールを含まない。
-実際に、`ruby` を含む EPUB 2.0.1 は EPUBCheck で誤り（RSC-005）になり、ADR 0003 の「EPUBCheck で誤りも警告もないこと」と両立しない。
-そこで、EPUB 2.0.1 でのルビの書き出し方だけを改め、ほかの決定は ADR 0005 のまま引き継ぐ。
-決定の全体を一か所で読めるよう、ADR 0005 の内容をこの ADR に写し、変えた箇所を直す。
+実際に、`ruby` を含む EPUB 2.0.1 は EPUBCheck で誤り（RSC-005）になり、[ADR 0003](0003-epub-2-0-1-and-3-0-output.md) の「EPUBCheck で誤りも警告もないこと」と両立しない。
+そこで、EPUB 2.0.1 でのルビの書き出し方だけを改め、ほかの決定は [ADR 0005](0005-project-directory-layout.md) のまま引き継ぐ。
+決定の全体を一か所で読めるよう、[ADR 0005](0005-project-directory-layout.md) の内容をこの ADR に写し、変えた箇所を直す。
 
-ADR 0004 では、本を表す値（`book`）を受け取る関数を公開 API とした。
+[ADR 0004](0004-public-api-and-zip-writer.md) では、本を表す値（`book`）を受け取る関数を公開 API とした。
 プログラムから使う側（epubize など）はこれで足りるが、手で原稿を書く人には、値を組み立てるコードを書く手間がかかる。
 ファイルを決まった形に並べたディレクトリを渡せば `book` が得られるようにしたい。
 
@@ -49,16 +49,16 @@ EPUB の本文は XHTML でなければならないため、Markdown と HTML �
       cover.jpg
 ```
 
-- ディレクトリを読んで `book`（ADR 0004）を返す関数 `loadBook(dir, options)` を公開する。EPUB を作るのは従来どおり `buildEpub(book, options)` とする
+- ディレクトリを読んで `book`（[ADR 0004](0004-public-api-and-zip-writer.md)）を返す関数 `loadBook(dir, options)` を公開する。EPUB を作るのは従来どおり `buildEpub(book, options)` とする
   - `options.version` に、`buildEpub` と同じく `"2.0.1"` か `"3.0"` を渡す。ルビと脚注の書き出し方が版で違うため、`loadBook` の時点で版を決める。`loadBook` と `buildEpub` に違う版を渡した場合の結果は保証しない
-- `loadBook` は、`buildEpub` を含む中核のモジュールとは別のモジュールに置く。中核のモジュールは、ADR 0004 のとおり外部の依存を持たない
+- `loadBook` は、`buildEpub` を含む中核のモジュールとは別のモジュールに置く。中核のモジュールは、[ADR 0004](0004-public-api-and-zip-writer.md) のとおり外部の依存を持たない
 - 名前が `.` で始まるファイルとディレクトリ（`.DS_Store` など）は、どこにあっても無視する
 - ファイルとディレクトリの名前は NFC に正規化して扱う
 
 ### 書誌情報（`book.toml`）
 
 - 書誌情報は `<project>/book.toml` に TOML で書く。ファイルがなければ例外とする
-- キーは ADR 0004 の書誌情報に対応させ、次のとおりとする
+- キーは [ADR 0004](0004-public-api-and-zip-writer.md) の書誌情報に対応させ、次のとおりとする
 
   ```toml
   identifier = "urn:uuid:00000000-0000-0000-0000-000000000000"
@@ -74,7 +74,7 @@ EPUB の本文は XHTML でなければならないため、Markdown と HTML �
 
 - `identifier`、`title`、`language` は必須とする。ほかは省略してよい
 - 値の型は、`authors` を文字列の配列、`modified` を TOML のオフセット付きの日時、`page_progression_direction` を `"ltr"` か `"rtl"`、ほかを文字列とする。型が違えば例外とする
-  - `modified` はタイムゾーンのない日時（ローカル日時）を例外とする。`dcterms:modified` は UTC で書くため、どの時点かが決まらない値は受け取らない。省略した場合の扱いは ADR 0004 に従う
+  - `modified` はタイムゾーンのない日時（ローカル日時）を例外とする。`dcterms:modified` は UTC で書くため、どの時点かが決まらない値は受け取らない。省略した場合の扱いは [ADR 0004](0004-public-api-and-zip-writer.md) に従う
 - `cover_image` は、プロジェクトのディレクトリからの相対パスで、`assets/` の下の画像を指す。なければ、または画像でなければ例外とする
 - 知らないキーは例外とする。綴りの誤りを黙って無視しないため
 
@@ -86,7 +86,7 @@ EPUB の本文は XHTML でなければならないため、Markdown と HTML �
 ### 本文（`body/`）
 
 - 本文は `body/` の下に、Markdown（`.md`）、XHTML（`.xhtml`）、HTML（`.html`）のいずれかで書く。一つの本の中で混ぜてよい
-- どの形式でも、ファイルには `body` の中身（断片）を書く。版に合った文書の形で包むのは `buildEpub` が行う（ADR 0003）
+- どの形式でも、ファイルには `body` の中身（断片）を書く。版に合った文書の形で包むのは `buildEpub` が行う（[ADR 0003](0003-epub-2-0-1-and-3-0-output.md)）
 - 拡張子を除いた名前が同じファイルが同じディレクトリに二つ以上あれば、例外とする（`01-intro.md` と `01-intro.xhtml` など）。どれを使うべきか決められないため
 - `.md`、`.xhtml`、`.html` 以外の拡張子のファイルが `body/` の下にあれば、例外とする。拡張子の大文字と小文字は区別し、`.MD`、`.markdown`、`.htm` も例外とする
 - `body/` がない、または本文のファイルが一つもなければ、例外とする。中身のないサブディレクトリも例外とする
@@ -194,7 +194,7 @@ Web 小説の投稿サイトや青空文庫で広く使われている書き方�
 
 ### 文書の置き場所と参照の書き換え
 
-- `buildEpub` は、内容文書を `OEBPS/text/` の下に、読み順の番号を 4 桁以上にゼロ詰めした名前（`0001.xhtml`、`0002.xhtml` …）で置く。スタイルシートと画像は `OEBPS/` の下に `book` のパスのまま置く。ADR 0004 で「ライブラリが決める」とした名前を、この規則に定める
+- `buildEpub` は、内容文書を `OEBPS/text/` の下に、読み順の番号を 4 桁以上にゼロ詰めした名前（`0001.xhtml`、`0002.xhtml` …）で置く。スタイルシートと画像は `OEBPS/` の下に `book` のパスのまま置く。[ADR 0004](0004-public-api-and-zip-writer.md) で「ライブラリが決める」とした名前を、この規則に定める
 - `loadBook` は、文書の中の次の参照を、元のファイルの位置からの相対パスとして解決し、EPUB の中での位置からの相対パスに書き換える
   - `img` の `src`、SVG の `image` の `href` と `xlink:href`：`assets/` の下の画像を指すこと
   - `a` の `href`：`assets/` の下のファイル、または `body/` か `meta/` の文書を指すこと。文書へのリンクは、元のファイルの名前（`02-second.md` など）で書き、断片識別子（`#…`）は保つ
@@ -233,13 +233,13 @@ Web 小説の投稿サイトや青空文庫で広く使われている書き方�
 - 後注（本の末尾に全部の注を集めること）はしない
 - `.xhtml` が整形式でないときに、HTML として読み直すことはしない
 - 文書ごとに適用するスタイルシートを選ぶことはしない
-- フォント、音声、動画を `assets/` に置くことはしない（ADR 0003）
+- フォント、音声、動画を `assets/` に置くことはしない（[ADR 0003](0003-epub-2-0-1-and-3-0-output.md)）
 - スタイルシートの中身の解析や、`url()` の書き換えはしない
 - 上に挙げた要素と属性以外の参照（`srcset`、`style` 属性の中の `url()` など）は書き換えない
 - EPUB 3 の `landmarks`、EPUB 2 の `guide` で表紙と奥付を示すことは、この ADR では決めない
 - 目次のページを本文の読み順に入れることはしない
 - 表紙と奥付以外の付き物（扉、前書き、凡例など）を `meta/` に置くことはしない。本文として `body/` に置く
-- 変換した後の XHTML が、版ごとの仕様（要素や属性が使えるか）に合うかの検査はしない（ADR 0003）。EPUBCheck で分かる
+- 変換した後の XHTML が、版ごとの仕様（要素や属性が使えるか）に合うかの検査はしない（[ADR 0003](0003-epub-2-0-1-and-3-0-output.md)）。EPUBCheck で分かる
 
 ## テスト設計
 
@@ -279,7 +279,7 @@ Web 小説の投稿サイトや青空文庫で広く使われている書き方�
   - 題名が、見出し、ファイルの名前（連番を除く）、連番だけの名前の順で決まること
   - サブディレクトリが入れ子の項目になり、`index` の有無で行き先と子が変わること
   - 読み順が表紙、本文、奥付となり、表紙が目次に入らず、奥付が目次の最後に入ること
-- `loadBook` で読んだ本を `buildEpub` で版ごとに EPUB にし、EPUBCheck を通ること（ADR 0003）。フィクスチャ（`test/fixtures/sample-book/`）にはルビと脚注を含め、CI で版ごとに EPUBCheck に掛ける
+- `loadBook` で読んだ本を `buildEpub` で版ごとに EPUB にし、EPUBCheck を通ること（[ADR 0003](0003-epub-2-0-1-and-3-0-output.md)）。フィクスチャ（`test/fixtures/sample-book/`）にはルビと脚注を含め、CI で版ごとに EPUBCheck に掛ける
 
 ## トレードオフ
 

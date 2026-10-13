@@ -1,10 +1,10 @@
 # ADR 0015: ディレクトリから EPUB を作る CLI を、build、check、toc、init、help、version のコマンドで提供する
 
-ステータス: 採択→ADR 0016
+ステータス: 採択→[ADR 0016](0016-command-line-interface.md)
 
 ## 文脈
 
-ADR 0014 では、決まった形に並べたディレクトリから本を読む `loadBook` を定めた。
+[ADR 0014](0014-back-matter.md) では、決まった形に並べたディレクトリから本を読む `loadBook` を定めた。
 しかし、使うには TypeScript のコードを書いて `loadBook` と `buildEpub` を呼ぶ必要がある。
 原稿を書く人が、コードを書かずに、端末からディレクトリを EPUB にできるようにしたい。
 EPUB を作る前に誤りや警告だけを確かめたい、目次がどうなるかを見たい、新しい本の雛形を作りたい、という用途もある。
