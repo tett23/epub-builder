@@ -3,11 +3,12 @@
 この文書は、現在の実装が満たす仕様をまとめたものである。
 決定の理由は ADR に記録しており、この文書では繰り返さない。
 
-- ADR 0004：公開 API と zip の書き出し
-- ADR 0024：対応する仕様と版ごとの出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`、EPUB 3.2、コマンドライン（ADR 0003、ADR 0005 から 0019、ADR 0024 を置き換えた）
-- ADR 0023：hastscript の再実装と、残す依存
-- ADR 0020：ADR の運用と、コミット済みの ADR の保護（ADR 0002 を置き換えた）
-- ADR 0021：クラスを使わず、誤りと TOML の日時を値と関数で表す
+- [ADR 0004](adr/0004-public-api-and-zip-writer.md)：公開 API と zip の書き出し
+- [ADR 0024](adr/0024-epub-3-2.md)：対応する仕様と版ごとの出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`、EPUB 3.2、コマンドライン（[ADR 0003](adr/0003-epub-2-0-1-and-3-0-output.md)、[ADR 0005](adr/0005-project-directory-layout.md) から 0019、[ADR 0024](adr/0024-epub-3-2.md) を置き換えた）
+- [ADR 0023](adr/0023-reimplement-hastscript.md)：hastscript の再実装と、残す依存
+- [ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)：ADR の運用と、コミット済みの ADR の保護（[ADR 0002](adr/0002-immutable-adrs.md) を置き換えた）
+- [ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)：adr-guard v0.8.0 への更新（ステータスの行の変更とリンクの付与の許可、ADR の参照のリンク、ステータスの行の検査、監査と計測の記録の保護）と、ステータスの書き方（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md) の一部を置き換えた）
+- [ADR 0021](adr/0021-no-classes.md)：クラスを使わず、誤りと TOML の日時を値と関数で表す
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 
@@ -54,11 +55,11 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 
 ## 2. 公開するモジュールと関数
 
-| モジュール | 公開するもの                                                                                                                                                                | 外部の依存                                                                 |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `mod.ts`   | `buildEpub`、`Book` などの型、`EpubInputError`（型）、`epubInputError`、`isEpubInputError`                                                                                  | なし                                                                       |
-| `load.ts`  | `loadBook`、`LoadOptions`、`LoadWarning`、`parseToml`、`TomlDateTime`（型）、`tomlDateTime`、`isTomlDateTime`、`TomlError`（型）、`tomlError`、`isTomlError`、TOML の値の型 | unified 系のライブラリ                                                     |
-| `cli.ts`   | `main`（CLI の入口）                                                                                                                                                        | unified 系のライブラリ（`load.ts` を通して）。引数の解析は自前（ADR 0024） |
+| モジュール | 公開するもの                                                                                                                                                                | 外部の依存                                                                                         |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `mod.ts`   | `buildEpub`、`Book` などの型、`EpubInputError`（型）、`epubInputError`、`isEpubInputError`                                                                                  | なし                                                                                               |
+| `load.ts`  | `loadBook`、`LoadOptions`、`LoadWarning`、`parseToml`、`TomlDateTime`（型）、`tomlDateTime`、`isTomlDateTime`、`TomlError`（型）、`tomlError`、`isTomlError`、TOML の値の型 | unified 系のライブラリ                                                                             |
+| `cli.ts`   | `main`（CLI の入口）                                                                                                                                                        | unified 系のライブラリ（`load.ts` を通して）。引数の解析は自前（[ADR 0024](adr/0024-epub-3-2.md)） |
 
 ### 実行時の依存
 
@@ -69,7 +70,7 @@ await Deno.writeFile('book.epub', await buildEpub(book, { version: '3.0' }));
 | `property-information`                                                   | hast の属性の名前と値の対応 | `rehype-parse` が作る hast と同じ対応を使う必要がある |
 
 - これらは `load.ts` と `cli.ts` だけが使う。`mod.ts` は依存を持たない。
-- CLI の引数の解析（ADR 0024）と、XML の断片の解析器が使う hast の要素の作り方（ADR 0023）は、自前で書いている。hast の要素の属性の扱いは hastscript 9.0.1 と同じにしている。
+- CLI の引数の解析（[ADR 0024](adr/0024-epub-3-2.md)）と、XML の断片の解析器が使う hast の要素の作り方（[ADR 0023](adr/0023-reimplement-hastscript.md)）は、自前で書いている。hast の要素の属性の扱いは hastscript 9.0.1 と同じにしている。
 - テストのときだけ `@std/expect` と `@std/testing` を使う。
 
 ### `buildEpub(book, options): Promise<Uint8Array>`
@@ -116,7 +117,7 @@ interface LoadWarning {
 
 ### 誤りの値
 
-誤りは、自前のクラスでなく、標準の `Error` に種類の名前（`name`）と種類ごとの情報を加えた値である（ADR 0021）。`instanceof` ではなく、判別する関数で見分ける。
+誤りは、自前のクラスでなく、標準の `Error` に種類の名前（`name`）と種類ごとの情報を加えた値である（[ADR 0021](adr/0021-no-classes.md)）。`instanceof` ではなく、判別する関数で見分ける。
 
 | 種類        | 型               | 作る関数                           | 判別する関数              | 加える情報       | 公開      |
 | ----------- | ---------------- | ---------------------------------- | ------------------------- | ---------------- | --------- |
@@ -817,7 +818,7 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 | `-h`、`--help`             | すべて                  | 使い方を出す                                                                                                                                                                                                          |
 | `-V`、`--version`          | （コマンドの代わり）    | CLI の版を出す                                                                                                                                                                                                        |
 
-- 引数の解析は自前で書いている（ADR 0024）。長いオプション（`--name`）、短いオプション（`-n`）、値の `--name value`・`--name=value`・`-n value` の形、`--` の後の位置引数を扱う。同じオプションを二度書くと後の値を使う。短いオプションのまとめ書き（`-qe 3.0`）、否定（`--no-strict`）、真偽のオプションへの値（`--strict=true`）は使い方の誤りとする。
+- 引数の解析は自前で書いている（[ADR 0024](adr/0024-epub-3-2.md)）。長いオプション（`--name`）、短いオプション（`-n`）、値の `--name value`・`--name=value`・`-n value` の形、`--` の後の位置引数を扱う。同じオプションを二度書くと後の値を使う。短いオプションのまとめ書き（`-qe 3.0`）、否定（`--no-strict`）、真偽のオプションへの値（`--strict=true`）は使い方の誤りとする。
 
 ### 出力と終了コード
 
@@ -884,8 +885,16 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 - `edge-book` には空白類を含む名前の画像を置き、置き換えた EPUB が EPUBCheck を通ることを確かめる。
 - `test/invalid-fixtures/` の壊れたプロジェクトは、`expected-error.txt` の文字列を含む例外になることを、EPUB 2.0.1 と EPUB 3.0 で確かめる。
 - CI は、整形、lint、型検査、テストに加え、`deno task build:sample` で全フィクスチャから EPUB を作り、EPUBCheck に `--failonwarnings` を付けて掛ける。誤りも警告もないことを求める。
+- `test/adr.test.ts` は、すべての ADR のファイル名、見出し、ステータスの行の書き方を確かめる（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)）。ステータスは `提案`、`採択`、`却下`、`採択→ADR NNNN`（置き換えられた）、`採択→<置き換えた部分>は ADR NNNN`（一部を置き換えられた）のいずれかで、ADR の参照はリンクにしてよい。
+- コミット済みの ADR は、ステータスの行の変更と、ADR の参照へのリンクの付与のほかを変更できない。[tett23/adr-guard](https://github.com/tett23/adr-guard) v0.8.0 で、次の三か所で強制する（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)）。
+  - git の pre-commit hook（`.githooks/pre-commit`）：`adr-guard pre-commit --allow-status --allow-links`
+  - Claude Code の PreToolUse hook（`.claude/settings.json`）：`adr-guard claude-hook --allow-status`
+  - CI の `adr` ジョブ：adr-guard の composite action（`tett23/adr-guard@v0.8.0`、`allow-status: true`、`allow-links: true`）で、push と pull request の範囲のコミットを `check-range --allow-status --allow-links` で検査し、作業ツリーで `adr-guard links` と `adr-guard check-status` を実行する
+- 文書（`.md`）の中の ADR の参照（`ADR 0001` の形）には、ADR のファイルへのリンクを付ける。リンクが無ければ、pre-commit hook と CI でエラーになる。`adr-guard links --fix` で付けられる（[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)）。
+- ADR は、行頭が `ステータス:` のステータスの行をちょうど 1 つ持つ。無い ADR と 2 つ以上ある ADR は、pre-commit hook と CI（`adr-guard check-status`）でエラーになる（[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)）。
+- 監査や計測の記録（どの深さの `docs/` でも、`docs/audit/` と `docs/benchmarks/` 以下のすべてのファイル）も、コミット済みのものは変更、削除、移動できない。`--allow-status` と `--allow-links` は記録には効かない。直すときは新しい記録を作る（[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)）。いまは記録を置いていない。
 
 ## 19. 破棄した ADR
 
-ADR を破棄したときは、ここに経緯と理由を書き、その ADR の番号は欠番にする（ADR 0020）。
+ADR を破棄したときは、ここに経緯と理由を書き、その ADR の番号は欠番にする（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)）。
 破棄した ADR はまだない。

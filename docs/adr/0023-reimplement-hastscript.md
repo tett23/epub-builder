@@ -5,7 +5,7 @@
 ## 文脈
 
 作者の全リポジトリに共通する方針（グローバルの CLAUDE.md）で、ライセンスに問題がなく再実装が容易な依存は、依存に入れずに再実装すると定められた。必要な機能が限られる場合は、必要な機能だけを実装してよい。
-ADR 0019 でも、unified 系のライブラリのうち、使う部分が小さく、テストで同じ結果になることを確かめられるものは再実装するとしている。
+[ADR 0019](0019-epub-output-and-project-layout-with-primary-writing-mode.md) でも、unified 系のライブラリのうち、使う部分が小さく、テストで同じ結果になることを確かめられるものは再実装するとしている。
 
 このリポジトリの実行時の依存は次のとおりである（開発時だけのものを除く）。
 
@@ -17,7 +17,7 @@ ADR 0019 でも、unified 系のライブラリのうち、使う部分が小さ
 | `property-information`                                                   | hast の属性名と属性の対応                      | MIT        |
 | `hastscript`                                                             | 自前の XML の断片の解析器で、hast の要素を作る | MIT        |
 
-`@std/cli` は ADR 0022 で再実装する。この ADR では、残りの依存を見直す。
+`@std/cli` は [ADR 0022](0022-command-line-interface-own-argument-parser.md) で再実装する。この ADR では、残りの依存を見直す。
 
 ## 実装すること
 
@@ -27,7 +27,7 @@ ADR 0019 でも、unified 系のライブラリのうち、使う部分が小さ
   - SVG の要素では SVG の、ほかでは HTML の属性の対応表を使う
   - これまで `hastscript` で作っていた木と同じ木を作る
 - 次の依存は残す。理由はそれぞれ次のとおり
-  - `unified`、`remark-parse`、`remark-rehype`、`rehype-raw`、`rehype-parse`：CommonMark と HTML Living Standard の解析は小さくなく、再実装は容易でない（ADR 0019）
+  - `unified`、`remark-parse`、`remark-rehype`、`rehype-raw`、`rehype-parse`：CommonMark と HTML Living Standard の解析は小さくなく、再実装は容易でない（[ADR 0019](0019-epub-output-and-project-layout-with-primary-writing-mode.md)）
   - `micromark-extension-gfm-footnote`、`mdast-util-gfm-footnote`：micromark の構文の拡張であり、`remark-parse` と組で使う。単独で再実装すると、`remark-parse` との結び付きを自前で持つことになる
   - `property-information`：HTML と SVG の属性の対応表であり、`rehype-parse` が作る hast と同じ対応を使う必要がある。表を写すと、`rehype-parse` との食い違いが起きうる
 - 開発時だけの依存（`@std/expect`、`@std/testing`）は、方針の対象（実行時の依存）に当たらないため残す

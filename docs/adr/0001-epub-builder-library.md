@@ -11,7 +11,7 @@ EPUB を作る処理は、小説や取得元のサイトに関わらない。独
 ## 実装すること
 
 - EPUB のファイルを作るライブラリを、このリポジトリ `epub-builder` で作る
-- 対応する仕様は EPUB 2.0.1 と EPUB 3.0 とする。詳細は ADR 0003 で決める
+- 対応する仕様は EPUB 2.0.1 と EPUB 3.0 とする。詳細は [ADR 0003](0003-epub-2-0-1-and-3-0-output.md) で決める
 - 実装の言語は TypeScript とし、Deno で動かす。設定とタスクは `deno.json` に置き、整形、lint、型検査、テストは Deno の機能で行う
 - リポジトリは公開とし、ライセンスは MIT とする
 - GitHub Actions で、整形、lint、型検査、テストを push と pull request のたびに行う

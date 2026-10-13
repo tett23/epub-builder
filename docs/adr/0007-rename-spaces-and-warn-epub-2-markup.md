@@ -1,20 +1,20 @@
 # ADR 0007: assets/ のファイル名の空白を `_` に置き換え、EPUB 2.0.1 で使えない MathML と ruby 要素は例外にせず警告する
 
-ステータス: 採択→ADR 0009
+ステータス: 採択→[ADR 0009](0009-project-directory-layout.md)
 
 ## 文脈
 
-ADR 0006 の実装をフィクスチャで EPUBCheck に掛けたところ、ADR 0006 で決めていない次の三つが分かった。
+[ADR 0006](0006-project-directory-layout-without-ruby-in-epub-2.md) の実装をフィクスチャで EPUBCheck に掛けたところ、[ADR 0006](0006-project-directory-layout-without-ruby-in-epub-2.md) で決めていない次の三つが分かった。
 
 - ファイル名に空白を含むと、EPUBCheck が警告（PKG-010）を出す。ASCII の空白だけでなく、全角空白（U+3000）やノーブレークスペース（U+00A0）も警告になり、タブは誤り（PKG-009）にもなる
 - EPUB 2.0.1（OPS 2.0.1）の本文では MathML を書けず、EPUBCheck で誤りになる
-- EPUB 2.0.1 では、XHTML や HTML に直接書いた `ruby` 要素も EPUBCheck で誤りになる（ADR 0006 では、書き換えないとだけ決めた）
+- EPUB 2.0.1 では、XHTML や HTML に直接書いた `ruby` 要素も EPUBCheck で誤りになる（[ADR 0006](0006-project-directory-layout-without-ruby-in-epub-2.md) では、書き換えないとだけ決めた）
 
-ADR 0003 では、作った EPUB が EPUBCheck で誤りも警告もないことを求めている。
+[ADR 0003](0003-epub-2-0-1-and-3-0-output.md) では、作った EPUB が EPUBCheck で誤りも警告もないことを求めている。
 一方、MathML や `ruby` 要素を使う原稿を、EPUB 2.0.1 を作るためだけに拒むのは使いにくい。
 使う側が EPUB 3.0 も作るなら、同じ原稿を両方の版に使いたいためである。
 
-この ADR は、ADR 0006 の次の箇所を改める。ほかは ADR 0006 のとおりとする。
+この ADR は、[ADR 0006](0006-project-directory-layout-without-ruby-in-epub-2.md) の次の箇所を改める。ほかは [ADR 0006](0006-project-directory-layout-without-ruby-in-epub-2.md) のとおりとする。
 
 - 「`assets/` の下のファイルは、プロジェクトのディレクトリからの相対パスを、そのまま `book` のパスとする」
 - 「変換した後の XHTML が、版ごとの仕様（要素や属性が使えるか）に合うかの検査はしない」のうち、MathML と `ruby` 要素
@@ -37,7 +37,7 @@ ADR 0003 では、作った EPUB が EPUBCheck で誤りも警告もないこと
 - `loadBook` に `version: "2.0.1"` を渡したとき、変換した本文に次の要素があれば、例外にせず、要素ごとに警告を出す
   - MathML の `math` 要素
   - `ruby` 要素（XHTML や HTML に直接書いたもの、Markdown の中の生の HTML に書いたもの）
-- Markdown のルビの記法は、EPUB 2.0.1 では ADR 0006 のとおり括弧書きの `span` で出すため、警告の対象にならない
+- Markdown のルビの記法は、EPUB 2.0.1 では [ADR 0006](0006-project-directory-layout-without-ruby-in-epub-2.md) のとおり括弧書きの `span` で出すため、警告の対象にならない
 - 要素は書き換えずにそのまま出す。作った EPUB は EPUBCheck で誤りになる
 
 ### 警告の受け取り方
@@ -52,7 +52,7 @@ ADR 0003 では、作った EPUB が EPUBCheck で誤りも警告もないこと
 ## 実装しないこと
 
 - 空白以外の、EPUBCheck が誤りや警告にする文字（`"`、`*`、`:`、`<`、`>`、`?`、`\`、`|` など）の置き換えや検査はしない。必要になったら別の ADR で決める
-- スタイルシートの中の `url()` の書き換えはしない（ADR 0006）
+- スタイルシートの中の `url()` の書き換えはしない（[ADR 0006](0006-project-directory-layout-without-ruby-in-epub-2.md)）
 - `buildEpub` で警告を出すことはしない。中核のモジュールは、受け取った `book` をそのまま書き出す
 - EPUB 2.0.1 の MathML を画像や文字に置き換えることはしない
 - `ruby` 要素を、Markdown のルビと同じ括弧書きの `span` に書き換えることはしない。原稿に書いた要素を黙って別の構造に変えないため
@@ -72,5 +72,5 @@ ADR 0003 では、作った EPUB が EPUBCheck で誤りも警告もないこと
 
 - EPUB の中のファイル名が、原稿のファイル名と変わる。EPUB を展開して原稿と見比べるときに分かりにくくなる
 - スタイルシートの `url()` で空白を含む名前を指していると、参照が切れる。警告で知らせるが、直すのはユーザーである
-- EPUB 2.0.1 で MathML や `ruby` 要素を使った EPUB は、警告が出たうえで作られ、EPUBCheck で誤りになる。ADR 0003 の「誤りも警告もないこと」は、警告を出さない入力に対してだけ保証する
+- EPUB 2.0.1 で MathML や `ruby` 要素を使った EPUB は、警告が出たうえで作られ、EPUBCheck で誤りになる。[ADR 0003](0003-epub-2-0-1-and-3-0-output.md) の「誤りも警告もないこと」は、警告を出さない入力に対してだけ保証する
 - 警告の既定の出力先が標準エラー出力のため、ライブラリとして使う側には余計な出力になることがある。その場合は `onWarning` で受け取る

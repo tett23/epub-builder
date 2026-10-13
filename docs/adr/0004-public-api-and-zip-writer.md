@@ -5,13 +5,13 @@
 ## 文脈
 
 ライブラリを使う側（epubize など）は、データベースから読んだ本文や画像を渡して、EPUB のファイルを得たい。
-EPUB は zip だが、`mimetype` を最初に圧縮せずに置くという制約がある（ADR 0003）。
+EPUB は zip だが、`mimetype` を最初に圧縮せずに置くという制約がある（[ADR 0003](0003-epub-2-0-1-and-3-0-output.md)）。
 Deno には、zip を書く標準のライブラリがない。一方、Web 標準の `CompressionStream`（`deflate-raw`）で圧縮はできる。
 
 ## 実装すること
 
 - 公開する関数は `buildEpub(book, options)` とし、EPUB のファイルの中身を `Uint8Array` で返す。ファイルに書くかどうかは呼び出し側が決める
-  - `options.version` に `"2.0.1"` か `"3.0"` を渡す（ADR 0003）
+  - `options.version` に `"2.0.1"` か `"3.0"` を渡す（[ADR 0003](0003-epub-2-0-1-and-3-0-output.md)）
 - `book` は次を持つ値とする。型は TypeScript で公開する
   - 書誌情報：識別子、題名、言語、著者（複数可）、出版者、説明、更新日時（EPUB 3.0 の `dcterms:modified` に使う。省略したら呼んだ時刻）
   - 頁送りの向き（`ltr` か `rtl`）
@@ -40,7 +40,7 @@ Deno には、zip を書く標準のライブラリがない。一方、Web 標�
   - 公開する関数が、版ごとに EPUB を返すこと
   - 入力の誤りを、EPUB を作る前に例外で知らせること
   - zip の書き出し：作った zip を読み戻し、項目の名前、順序、圧縮の方法、CRC-32、中身が合うこと。CRC-32 を既知の値と比べること
-  - 作った EPUB が EPUBCheck を通ること（ADR 0003）
+  - 作った EPUB が EPUBCheck を通ること（[ADR 0003](0003-epub-2-0-1-and-3-0-output.md)）
 
 ## トレードオフ
 

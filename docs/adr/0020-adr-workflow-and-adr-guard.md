@@ -1,12 +1,12 @@
 # ADR 0020: ADR の運用を提案、レビュー、コミットの順にし、コミット済みの ADR の保護を tett23/adr-guard に置き換える
 
-ステータス: 採択
+ステータス: 採択→adr-guard のバージョン、hook と CI のオプション、ステータスの書き方は[ADR 0025](0025-update-adr-guard-to-v0-8-0.md)
 
 ## 文脈
 
-この ADR は ADR 0002 を置き換える。
+この ADR は [ADR 0002](0002-immutable-adrs.md) を置き換える。
 
-ADR 0002 では、コミット済みの ADR をステータスの行を除いて変更不可とし、epubize から写した判定のスクリプト（`scripts/adr-guard.ts`）を、Claude Code の hook と git の pre-commit hook から呼ぶとした。
+[ADR 0002](0002-immutable-adrs.md) では、コミット済みの ADR をステータスの行を除いて変更不可とし、epubize から写した判定のスクリプト（`scripts/adr-guard.ts`）を、Claude Code の hook と git の pre-commit hook から呼ぶとした。
 その後、作者の全リポジトリに共通する方針（グローバルの CLAUDE.md）が改められ、次のことが定められた。
 
 - ADR は実装に入る前に作る。作った時点ではコミットせず、人間のレビューを受ける
@@ -18,7 +18,7 @@ ADR 0002 では、コミット済みの ADR をステータスの行を除いて
 これまでこのリポジトリでは、ADR を実装と同じコミットで追加し（CLAUDE.md の当時の規則）、置き換えた ADR のステータスを `置換（ADR NNNN）` と書いてきた。
 また、判定のスクリプトは epubize と二重に持っており、CI では検査していなかった。そのため、`git commit --no-verify` や Web UI での編集を防げなかった。
 
-ADR 0002 の決定のうち、コミット済みの ADR をステータスの行を除いて変更不可にすることは変えない。
+[ADR 0002](0002-immutable-adrs.md) の決定のうち、コミット済みの ADR をステータスの行を除いて変更不可にすることは変えない。
 
 ## 実装すること
 
@@ -43,12 +43,12 @@ ADR 0002 の決定のうち、コミット済みの ADR をステータスの行
 
 ### コミット済みの ADR の保護
 
-- 判定には tett23/adr-guard（v0.1.0）を使う。対象、規則（ステータスの行のほかは変更、削除、リネームできない）は ADR 0002 と同じである
+- 判定には tett23/adr-guard（v0.1.0）を使う。対象、規則（ステータスの行のほかは変更、削除、リネームできない）は [ADR 0002](0002-immutable-adrs.md) と同じである
 - 入口は次の三つとする
   - git の pre-commit hook：`.githooks/pre-commit` を `exec adr-guard pre-commit` にする
   - Claude Code の PreToolUse hook（Write、Edit、MultiEdit）：`.claude/settings.json` で `adr-guard claude-hook` を呼ぶ
   - CI：GitHub Actions の新しいジョブで、tett23/adr-guard の composite action（`tett23/adr-guard@v0.1.0`）を使い、push と pull request の範囲のコミットを `check-range` で検査する。範囲のコミットをすべて読むため、`fetch-depth: 0` でチェックアウトする
-- ADR 0002 の Bash の後の検査（PostToolUse hook）は、adr-guard に相当する入口がないため、やめる。Bash による変更は、pre-commit hook と CI で検査する
+- [ADR 0002](0002-immutable-adrs.md) の Bash の後の検査（PostToolUse hook）は、adr-guard に相当する入口がないため、やめる。Bash による変更は、pre-commit hook と CI で検査する
 - epubize から写した判定のスクリプト `scripts/adr-guard.ts` と、そのテスト `test/adr-guard.test.ts` を消す。`deno task test` の `--allow-run=git` も、ほかで使わなければ外す
 - README の開発の節に、adr-guard を入れる手順（リリースのバイナリか `cargo install`）と、`git config core.hooksPath .githooks` を書く
 

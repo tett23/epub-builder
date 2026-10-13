@@ -1,6 +1,6 @@
 # ADR 0002: コミット済みの ADR を変更不可とし、hook で強制する
 
-ステータス: 採択→ADR 0020
+ステータス: 採択→[ADR 0020](0020-adr-workflow-and-adr-guard.md)
 
 ## 文脈
 

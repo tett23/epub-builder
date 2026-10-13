@@ -1,19 +1,19 @@
 # ADR 0018: ディレクトリから EPUB を作る CLI を提供し、`build`、`check`、`toc` は既定で両方の版を扱う
 
-ステータス: 採択→ADR 0022
+ステータス: 採択→[ADR 0022](0022-command-line-interface-own-argument-parser.md)
 
 ## 文脈
 
-この ADR は ADR 0017 を置き換える。
-ADR 0017 では、`build` の版の既定を両方（`all`）とし、`check` と `toc` の既定は `3.0` のままとした。
+この ADR は [ADR 0017](0017-command-line-interface-build-all-by-default.md) を置き換える。
+[ADR 0017](0017-command-line-interface-build-all-by-default.md) では、`build` の版の既定を両方（`all`）とし、`check` と `toc` の既定は `3.0` のままとした。
 しかし、コマンドによって既定の版が違うと、`check` を通した本を `build` すると、調べていない EPUB 2.0.1 も作られる。
 そこで、`check` と `toc` の既定も両方の版にそろえ、`toc` でも両方の版を扱えるようにして、決定の全体をこの ADR に写す。そのほかの決定の中身は変えない。
 
-ADR 0017 は、ADR 0016 を置き換えて、`build` の版の既定を `3.0` から両方に改めたものである。`build` は EPUB 2.0.1 にしか対応しないリーダーのためにも使うため、何も指定しないときは両方の版を作る方が使いやすい。
+[ADR 0017](0017-command-line-interface-build-all-by-default.md) は、[ADR 0016](0016-command-line-interface.md) を置き換えて、`build` の版の既定を `3.0` から両方に改めたものである。`build` は EPUB 2.0.1 にしか対応しないリーダーのためにも使うため、何も指定しないときは両方の版を作る方が使いやすい。
 
-ADR 0016 は、ADR 0015 を置き換えて、インストールのコマンドに `--config deno.json` を加えたものである。`deno install -g` は、`--config` を付けないと `deno.json` を読まず、`imports` に書いた依存を解決できなかった。
+[ADR 0016](0016-command-line-interface.md) は、[ADR 0015](0015-command-line-interface.md) を置き換えて、インストールのコマンドに `--config deno.json` を加えたものである。`deno install -g` は、`--config` を付けないと `deno.json` を読まず、`imports` に書いた依存を解決できなかった。
 
-ADR 0014 では、決まった形に並べたディレクトリから本を読む `loadBook` を定めた。
+[ADR 0014](0014-back-matter.md) では、決まった形に並べたディレクトリから本を読む `loadBook` を定めた。
 しかし、使うには TypeScript のコードを書いて `loadBook` と `buildEpub` を呼ぶ必要がある。
 原稿を書く人が、コードを書かずに、端末からディレクトリを EPUB にできるようにしたい。
 EPUB を作る前に誤りや警告だけを確かめたい、目次がどうなるかを見たい、新しい本の雛形を作りたい、という用途もある。
