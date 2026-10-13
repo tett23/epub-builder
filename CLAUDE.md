@@ -4,13 +4,13 @@ EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ�
 
 ## ADR
 
-設計上の決定は `docs/adr/` に ADR として記録する（ADR 0020）。
+設計上の決定は `docs/adr/` に ADR として記録する（[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)）。
 
 - 決定が要る変更は、実装に入る前に ADR を書く。ステータスを `提案` にし、コミットせずに人間のレビューを受ける。認められたら `採択` にしてコミットし、実装に入る
 - ファイル名は `NNNN-kebab-case.md`（連番は 4 桁）とする
-- 見出しは `# ADR NNNN: <決定を述べる一文>`、その下に `ステータス: <状態>` を置く。状態は `提案`、`採択`、`採択→ADR NNNN`（置き換えられた）、`却下` のいずれか
+- 見出しは `# ADR NNNN: <決定を述べる一文>`、その下に `ステータス: <状態>` を置く。状態は `提案`、`採択`、`採択→ADR NNNN`（置き換えられた）、`採択→<置き換えた部分>は ADR NNNN`（一部を置き換えられた）、`却下` のいずれか（[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)）。ADR の参照はリンクにする
 - 節は「文脈」「実装すること」「実装しないこと」「テスト設計」「トレードオフ」とする。データ構造やアルゴリズムを変えるときは、その節も立てる
-- コミット済みの ADR は変更不可。変えてよいのは `ステータス:` の行だけ。決定を覆すときは、元の ADR の全体を写して改めた新しい ADR を作り、元の ADR のステータスを `採択→ADR NNNN` に変える
+- コミット済みの ADR は変更不可。変えてよいのは `ステータス:` の行と、ADR の参照へのリンクの付与だけ。決定を覆すときは、元の ADR の全体を写して改めた新しい ADR を作り、元の ADR のステータスを `採択→ADR NNNN` に変える
 - コミット前の ADR は自由に直してよい
 - ADR を破棄するときは、経緯と理由を `docs/specifications.md` の「破棄した ADR」に書き、番号は欠番にする
 - ADR で仕様が変わったら、`docs/specifications.md` と `README.md` を同じ変更で直す
@@ -22,7 +22,11 @@ EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ�
 
 ## ADR の保護
 
-- コミット済み ADR の変更不可は、[tett23/adr-guard](https://github.com/tett23/adr-guard) で強制されている（ADR 0020）。Claude Code の hook（`.claude/settings.json`）が Edit / Write を止め、git の pre-commit（`.githooks/pre-commit`）がコミットを拒否し、CI がすべてのコミットを検査する。hook を迂回しない（`--no-verify` を使わない）
+- コミット済み ADR の変更不可は、[tett23/adr-guard](https://github.com/tett23/adr-guard) v0.8.0 で強制されている（[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)）。Claude Code の hook（`.claude/settings.json`）が Edit / Write を止め、git の pre-commit（`.githooks/pre-commit`）がコミットを拒否し、CI がすべてのコミットを検査する。hook を迂回しない（`--no-verify` を使わない）
+- ステータスの行の変更と、ADR の参照へのリンクの付与は、`--allow-status`、`--allow-links` で許可されている
+- 文書（`.md`）の中の ADR の参照（`ADR 0001` の形）には、ADR のファイルへのリンクを付ける。`adr-guard links --fix` で付けられ、`adr-guard links` で確かめられる
+- ADR は、行頭が `ステータス:` のステータスの行をちょうど 1 つ持つ。`adr-guard check-status` で確かめられる
+- 監査や計測の記録（`docs/audit/`、`docs/benchmarks/` 以下）も、コミット済みのものは変更、削除、移動できない。直すときは新しい記録を作る
 
 ## Git
 
@@ -31,6 +35,6 @@ EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ�
 
 ## 実装
 
-- TypeScript でクラスを使わない（ADR 0021）
+- TypeScript でクラスを使わない（[ADR 0021](docs/adr/0021-no-classes.md)）
 - ライセンスに問題がなく再実装が容易な依存は、依存に入れずに再実装する。テストは本家を参考に厚く書く
 - GitHub Actions は、Node 24 以降で動く最新のメジャー版を使う
