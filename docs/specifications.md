@@ -9,6 +9,7 @@
 - [ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)：ADR の運用と、コミット済みの ADR の保護（[ADR 0002](adr/0002-immutable-adrs.md) を置き換えた）
 - [ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)：adr-guard v0.8.0 への更新（ステータスの行の変更とリンクの付与の許可、ADR の参照のリンク、ステータスの行の検査、監査と計測の記録の保護）と、ステータスの書き方（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md) の一部を置き換えた）
 - [ADR 0026](adr/0026-update-adr-guard-to-v0-8-1.md)：adr-guard v0.8.1 への更新（ADR と記録のディレクトリの別名の保護。[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md) の adr-guard のバージョンを置き換える）
+- [ADR 0027](adr/0027-update-adr-guard-to-v0-8-2.md)：adr-guard v0.8.2 への更新（コミット済み ADR のリンクだけの変更の許可。[ADR 0026](adr/0026-update-adr-guard-to-v0-8-1.md) の adr-guard のバージョンを置き換える）
 - [ADR 0021](adr/0021-no-classes.md)：クラスを使わず、誤りと TOML の日時を値と関数で表す
 
 この文書と ADR が食い違う場合は、ADR を正とする。
@@ -887,10 +888,10 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 - `test/invalid-fixtures/` の壊れたプロジェクトは、`expected-error.txt` の文字列を含む例外になることを、EPUB 2.0.1 と EPUB 3.0 で確かめる。
 - CI は、整形、lint、型検査、テストに加え、`deno task build:sample` で全フィクスチャから EPUB を作り、EPUBCheck に `--failonwarnings` を付けて掛ける。誤りも警告もないことを求める。
 - `test/adr.test.ts` は、すべての ADR のファイル名、見出し、ステータスの行の書き方を確かめる（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)）。ステータスは `提案`、`採択`、`却下`、`採択→ADR NNNN`（置き換えられた）、`採択→<置き換えた部分>は ADR NNNN`（一部を置き換えられた）のいずれかで、ADR の参照はリンクにしてよい。
-- コミット済みの ADR は、ステータスの行の変更と、ADR の参照へのリンクの付与のほかを変更できない。[tett23/adr-guard](https://github.com/tett23/adr-guard) v0.8.1 で、次の三か所で強制する（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0026](adr/0026-update-adr-guard-to-v0-8-1.md)）。
+- コミット済みの ADR は、ステータスの行の変更と、リンクだけの変更（リンクの追加と削除、リンク先と画像のリンク先の変更、リンクの参照定義の行の変更）のほかを変更できない。リンクのテキストの変更、画像の追加と削除、自動リンクと本文の URL の変更は拒否する。[tett23/adr-guard](https://github.com/tett23/adr-guard) v0.8.2 で、次の三か所で強制する（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0026](adr/0026-update-adr-guard-to-v0-8-1.md)、[ADR 0027](adr/0027-update-adr-guard-to-v0-8-2.md)）。
   - git の pre-commit hook（`.githooks/pre-commit`）：`adr-guard pre-commit --allow-status --allow-links`
   - Claude Code の PreToolUse hook（`.claude/settings.json`）：`adr-guard claude-hook --allow-status`
-  - CI の `adr` ジョブ：adr-guard の composite action（`tett23/adr-guard@v0.8.1`、`allow-status: true`、`allow-links: true`）で、push と pull request の範囲のコミットを `check-range --allow-status --allow-links` で検査し、作業ツリーで `adr-guard links` と `adr-guard check-status` を実行する
+  - CI の `adr` ジョブ：adr-guard の composite action（`tett23/adr-guard@v0.8.2`、`allow-status: true`、`allow-links: true`）で、push と pull request の範囲のコミットを `check-range --allow-status --allow-links` で検査し、作業ツリーで `adr-guard links` と `adr-guard check-status` を実行する
 - 文書（`.md`）の中の ADR の参照（`ADR 0001` の形）には、ADR のファイルへのリンクを付ける。リンクが無ければ、pre-commit hook と CI でエラーになる。`adr-guard links --fix` で付けられる（[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)）。
 - ADR は、行頭が `ステータス:` のステータスの行をちょうど 1 つ持つ。無い ADR と 2 つ以上ある ADR は、pre-commit hook と CI（`adr-guard check-status`）でエラーになる（[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)）。
 - 監査や計測の記録（どの深さの `docs/` でも、`docs/audit/`、`docs/audits/`、`docs/benchmarks/`、`docs/benchmark/` 以下のすべてのファイル）も、コミット済みのものは変更、削除、移動できない。`--allow-status` と `--allow-links` は記録には効かない。直すときは新しい記録を作る（[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0026](adr/0026-update-adr-guard-to-v0-8-1.md)）。いまは記録を置いていない。
