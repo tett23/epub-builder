@@ -8,11 +8,13 @@ EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ�
 
 - 決定が要る変更は、実装に入る前に ADR を書く。ステータスを `提案` にし、コミットせずに人間のレビューを受ける。認められたら `採択` にしてコミットし、実装に入る
 - ファイル名は `NNNN-kebab-case.md`（連番は 4 桁）とする
-- 見出しは `# ADR NNNN: <決定を述べる一文>`、その下に `ステータス: <状態>` を置く。状態は `提案`、`採択`、`採択→ADR NNNN`（置き換えられた）、`採択→<置き換えた部分>は ADR NNNN`（一部を置き換えられた）、`却下` のいずれか（[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)）。ADR の参照はリンクにする
-- 節は「文脈」「実装すること」「実装しないこと」「テスト設計」「トレードオフ」とする。データ構造やアルゴリズムを変えるときは、その節も立てる
+- 見出しは `# ADR NNNN: <決定を述べる一文>`、その下に `ステータス: <状態>` を置く。状態は `提案`、`採択`、`採択→ADR NNNN`（置き換えられた）、`採択→<置き換えた部分>は ADR NNNN`（一部を置き換えられた）、`却下`、`破棄` のいずれか（[ADR 0028](docs/adr/0028-align-adr-format-with-global-policy.md)）。ADR の参照はリンクにする
+- 節は「文脈」「実装すること」「実装しないこと」「テスト設計」「トレードオフ」「参考文献」の順とし、参考文献を最後の節にする。参考文献には仕様の調査に使った文献を書き、ない場合は「なし」と書く（[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md) 以降。[ADR 0028](docs/adr/0028-align-adr-format-with-global-policy.md)）
+- データ構造やアルゴリズムを変えるときはその節を、仕様の検討のログとして残したいことがあるときは「検討の記録」などの節を、テスト設計より前に立てる
 - コミット済みの ADR は変更不可。変えてよいのは `ステータス:` の行と、リンクだけの変更（[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md)）。決定を覆すときは、元の ADR の全体を写して改めた新しい ADR を作り、元の ADR のステータスを `採択→ADR NNNN` に変える
 - コミット前の ADR は自由に直してよい
-- ADR を破棄するときは、経緯と理由を `docs/specifications.md` の「破棄した ADR」に書き、番号は欠番にする
+- ADR を破棄するときは、ステータスを `破棄` にし、経緯と理由を `docs/specifications.md` の「破棄した ADR」に書く。ファイルは残し、番号は欠番にしない（[ADR 0028](docs/adr/0028-align-adr-format-with-global-policy.md)）
+- ADR を作った後と、ドキュメント（`README.md`、`docs/specifications.md`、`CLAUDE.md`）を更新した後に、`adr-guard links --fix` を実行し、`adr-guard links` で確かめる
 - ADR で仕様が変わったら、`docs/specifications.md` と `README.md` を同じ変更で直す
 
 ## 境界

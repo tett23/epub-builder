@@ -1,6 +1,6 @@
 # ADR 0025: adr-guard を v0.8.0 に上げ、ステータスの行の変更とリンクの付与を許可し、ADR の参照をリンクにする
 
-ステータス: 採択→adr-guard のバージョンは[ADR 0026](0026-update-adr-guard-to-v0-8-1.md)
+ステータス: 採択→adr-guard のバージョンは[ADR 0026](0026-update-adr-guard-to-v0-8-1.md)、ステータスの書き方は[ADR 0028](0028-align-adr-format-with-global-policy.md)
 
 ## 文脈
 

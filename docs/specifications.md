@@ -4,13 +4,14 @@
 決定の理由は ADR に記録しており、この文書では繰り返さない。
 
 - [ADR 0004](adr/0004-public-api-and-zip-writer.md)：公開 API と zip の書き出し
-- [ADR 0024](adr/0024-epub-3-2.md)：対応する仕様と版ごとの出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`、EPUB 3.2、コマンドライン（[ADR 0003](adr/0003-epub-2-0-1-and-3-0-output.md)、[ADR 0005](adr/0005-project-directory-layout.md) から 0019、[ADR 0024](adr/0024-epub-3-2.md) を置き換えた）
+- [ADR 0024](adr/0024-epub-3-2.md)：対応する仕様と版ごとの出力の構成、ディレクトリから本を読む方法、本文の変換、ルビと脚注、ファイル名の空白、警告、節、部・章・節の意味づけ、landmarks、guide、扉、後付け、Kindle の `primary-writing-mode`、EPUB 3.2、コマンドライン（[ADR 0003](adr/0003-epub-2-0-1-and-3-0-output.md)、[ADR 0005](adr/0005-project-directory-layout.md) から 0019、[ADR 0022](adr/0022-command-line-interface-own-argument-parser.md) を置き換えた）
 - [ADR 0023](adr/0023-reimplement-hastscript.md)：hastscript の再実装と、残す依存
 - [ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)：ADR の運用と、コミット済みの ADR の保護（[ADR 0002](adr/0002-immutable-adrs.md) を置き換えた）
 - [ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md)：adr-guard v0.8.0 への更新（ステータスの行の変更とリンクの付与の許可、ADR の参照のリンク、ステータスの行の検査、監査と計測の記録の保護）と、ステータスの書き方（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md) の一部を置き換えた）
 - [ADR 0026](adr/0026-update-adr-guard-to-v0-8-1.md)：adr-guard v0.8.1 への更新（ADR と記録のディレクトリの別名の保護。[ADR 0025](adr/0025-update-adr-guard-to-v0-8-0.md) の adr-guard のバージョンを置き換える）
 - [ADR 0027](adr/0027-update-adr-guard-to-v0-8-2.md)：adr-guard v0.8.2 への更新（コミット済み ADR のリンクだけの変更の許可。[ADR 0026](adr/0026-update-adr-guard-to-v0-8-1.md) の adr-guard のバージョンを置き換える）
 - [ADR 0021](adr/0021-no-classes.md)：クラスを使わず、誤りと TOML の日時を値と関数で表す
+- [ADR 0028](adr/0028-align-adr-format-with-global-policy.md)：ADR の書式（節と参考文献、ステータス、破棄の扱い）
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 
@@ -898,5 +899,5 @@ EPUB 2.0.1 の本文には `epub:type` も `section` 要素もないため、本
 
 ## 19. 破棄した ADR
 
-ADR を破棄したときは、ここに経緯と理由を書き、その ADR の番号は欠番にする（[ADR 0020](adr/0020-adr-workflow-and-adr-guard.md)）。
+ADR を破棄したときは、その ADR のステータスを `破棄` にし、ここに経緯と理由を書く。破棄した ADR のファイルは残し、番号は欠番にしない（[ADR 0028](adr/0028-align-adr-format-with-global-policy.md)）。
 破棄した ADR はまだない。
