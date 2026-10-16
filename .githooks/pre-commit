@@ -1,3 +1,3 @@
 #!/bin/sh
-# コミット済みの ADR と docs/audit、docs/audits、docs/benchmarks、docs/benchmark の記録の変更を拒否する。ADR のステータスの行の変更と、ADR の参照へのリンクの付与だけは許可する。ADR のステータスの行がちょうど 1 つあることも検査する（ADR 0020、ADR 0025、ADR 0026）
+# コミット済みの ADR と docs/audit、docs/audits、docs/benchmarks、docs/benchmark の記録の変更を拒否する。ADR のステータスの行の変更と、リンクだけの変更は許可する。ADR のステータスの行がちょうど 1 つあることも検査する（ADR 0020、ADR 0025、ADR 0026、ADR 0027）
 exec adr-guard pre-commit --allow-status --allow-links

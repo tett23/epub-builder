@@ -21,8 +21,8 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      # ADR 0020、ADR 0025、ADR 0026：コミット済みの ADR はステータスの行とリンクの付与のほかを変更できない。ADR の参照にはリンクが要り、ADR にはステータスの行がちょうど 1 つ要る。docs/audit、docs/audits、docs/benchmarks、docs/benchmark の記録も変更できない
-      - uses: tett23/adr-guard@v0.8.1
+      # ADR 0020、ADR 0025、ADR 0026、ADR 0027：コミット済みの ADR はステータスの行とリンクだけの変更のほかを変更できない。ADR の参照にはリンクが要り、ADR にはステータスの行がちょうど 1 つ要る。docs/audit、docs/audits、docs/benchmarks、docs/benchmark の記録も変更できない
+      - uses: tett23/adr-guard@v0.8.2
         with:
           base: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
           head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
