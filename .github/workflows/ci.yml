@@ -28,6 +28,9 @@ jobs:
           head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           allow-status: true
           allow-links: true
+          # ADR 0029：ADR の参照のリンクと、ステータスの行の検査を、action の既定に頼らずに明記する
+          links: true
+          check-status: true
 
   deno:
     name: Deno

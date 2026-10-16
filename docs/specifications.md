@@ -12,6 +12,7 @@
 - [ADR 0027](adr/0027-update-adr-guard-to-v0-8-2.md)：adr-guard v0.8.2 への更新（コミット済み ADR のリンクだけの変更の許可。[ADR 0026](adr/0026-update-adr-guard-to-v0-8-1.md) の adr-guard のバージョンを置き換える）
 - [ADR 0021](adr/0021-no-classes.md)：クラスを使わず、誤りと TOML の日時を値と関数で表す
 - [ADR 0028](adr/0028-align-adr-format-with-global-policy.md)：ADR の書式（節と参考文献、ステータス、破棄の扱い）
+- [ADR 0029](adr/0029-check-adr-links-in-ci.md)：CI の adr ジョブで adr-guard links と check-status を実行することの明記（[ADR 0028](adr/0028-align-adr-format-with-global-policy.md) の CI での adr-guard links の扱いを置き換えた）
 
 この文書と ADR が食い違う場合は、ADR を正とする。
 

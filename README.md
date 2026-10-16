@@ -94,6 +94,7 @@ git config core.hooksPath .githooks
 
 ステータスの行の変更と、リンクだけの変更（リンク先の変更、リンクの追加と削除。リンクのテキストの変更は含まない）は、pre-commit hook と CI の `--allow-status`、`--allow-links`（Claude Code の hook は `adr-guard claude-hook --allow-status`）で許可する（[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md)）。
 CI でも、push と pull request のすべてのコミットを adr-guard（`tett23/adr-guard@v0.8.2`）で検査する。
+CI では、ADR の参照にリンクがあること（`adr-guard links`）と、ADR にステータスの行がちょうど 1 つあること（`adr-guard check-status`）も検査する（[ADR 0029](docs/adr/0029-check-adr-links-in-ci.md)）。リンクは手元で `adr-guard links --fix` を実行して付ける。
 
 文書（`.md`）の中の ADR の参照（`ADR 0001` の形）には、ADR のファイルへのリンクが要る。リンクが無いと、pre-commit hook と CI でエラーになる。`adr-guard links --fix` で付けられる。
 
