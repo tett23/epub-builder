@@ -6,9 +6,9 @@ EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ�
 
 設計上の決定は `docs/adr/` に ADR として記録する（[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)）。
 
-- 決定が要る変更は、実装に入る前に ADR を書く。ステータスを `提案` にし、コミットせずに人間のレビューを受ける。認められたら `採択` にしてコミットし、実装に入る
+- 決定が要る変更は、実装に入る前に ADR を書く。ステータスを `提案` にし、コミットせずに人間のレビューを受ける。認められたら `採択` にしてコミットし、実装に入る。採択したが実装を後に回す ADR は `採択（未実装）` にし、実装を終えたら `採択` に変える（[ADR 0030](docs/adr/0030-update-adr-guard-to-v0-8-3.md)）
 - ファイル名は `NNNN-kebab-case.md`（連番は 4 桁）とする
-- 見出しは `# ADR NNNN: <決定を述べる一文>`、その下に `ステータス: <状態>` を置く。状態は `提案`、`採択`、`採択→ADR NNNN`（置き換えられた）、`採択→<置き換えた部分>は ADR NNNN`（一部を置き換えられた）、`却下`、`破棄` のいずれか（[ADR 0028](docs/adr/0028-align-adr-format-with-global-policy.md)）。ADR の参照はリンクにする
+- 見出しは `# ADR NNNN: <決定を述べる一文>`、その下に `ステータス: <状態>` を置く。状態は `提案`、`採択`、`採択（未実装）`（採択されたがまだ実装されていない。括弧は全角）、`採択→ADR NNNN`（置き換えられた）、`採択→<置き換えた部分>は ADR NNNN`（一部を置き換えられた）、`却下`、`破棄` のいずれか（[ADR 0028](docs/adr/0028-align-adr-format-with-global-policy.md)、[ADR 0030](docs/adr/0030-update-adr-guard-to-v0-8-3.md)）。`採択（未実装）` の ADR は `adr-guard unimplemented` で一覧できる。ADR の参照はリンクにする
 - 節は「文脈」「実装すること」「実装しないこと」「テスト設計」「トレードオフ」「参考文献」の順とし、参考文献を最後の節にする。参考文献には仕様の調査に使った文献を書き、ない場合は「なし」と書く（[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md) 以降。[ADR 0028](docs/adr/0028-align-adr-format-with-global-policy.md)）
 - データ構造やアルゴリズムを変えるときはその節を、仕様の検討のログとして残したいことがあるときは「検討の記録」などの節を、テスト設計より前に立てる
 - コミット済みの ADR は変更不可。変えてよいのは `ステータス:` の行と、リンクだけの変更（[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md)）。決定を覆すときは、元の ADR の全体を写して改めた新しい ADR を作り、元の ADR のステータスを `採択→ADR NNNN` に変える
@@ -24,7 +24,7 @@ EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ�
 
 ## ADR の保護
 
-- コミット済み ADR の変更不可は、[tett23/adr-guard](https://github.com/tett23/adr-guard) v0.8.2 で強制されている（[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0026](docs/adr/0026-update-adr-guard-to-v0-8-1.md)、[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md)）。Claude Code の hook（`.claude/settings.json`）が Edit / Write を止め、git の pre-commit（`.githooks/pre-commit`）がコミットを拒否し、CI がすべてのコミットを検査する。hook を迂回しない（`--no-verify` を使わない）
+- コミット済み ADR の変更不可は、[tett23/adr-guard](https://github.com/tett23/adr-guard) v0.8.3 で強制されている（[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0026](docs/adr/0026-update-adr-guard-to-v0-8-1.md)、[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md)、[ADR 0030](docs/adr/0030-update-adr-guard-to-v0-8-3.md)）。Claude Code の hook（`.claude/settings.json`）が Edit / Write を止め、git の pre-commit（`.githooks/pre-commit`）がコミットを拒否し、CI がすべてのコミットを検査する。hook を迂回しない（`--no-verify` を使わない）
 - ステータスの行の変更と、リンクだけの変更（リンクのテキストの変更は含まない）は、`--allow-status`、`--allow-links` で許可されている
 - 文書（`.md`）の中の ADR の参照（`ADR 0001` の形）には、ADR のファイルへのリンクを付ける。`adr-guard links --fix` で付けられ、`adr-guard links` で確かめられる
 - ADR は、行頭が `ステータス:` のステータスの行をちょうど 1 つ持つ。`adr-guard check-status` で確かめられる

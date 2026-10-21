@@ -64,6 +64,7 @@ epub-builder build my-book
 - adr-guard v0.8.0 への更新と、ADR の参照のリンク、ステータスの書き方、ステータスの行の検査、監査と計測の記録の保護：[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)
 - adr-guard v0.8.1 への更新と、ADR と記録のディレクトリの別名の保護：[ADR 0026](docs/adr/0026-update-adr-guard-to-v0-8-1.md)
 - adr-guard v0.8.2 への更新と、コミット済み ADR のリンクだけの変更の許可：[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md)
+- adr-guard v0.8.3 への更新と、ステータス「採択（未実装）」：[ADR 0030](docs/adr/0030-update-adr-guard-to-v0-8-3.md)
 - クラスを使わない（誤りと TOML の日時を値で表す）：[ADR 0021](docs/adr/0021-no-classes.md)
 - 依存の再実装と、残す依存：[ADR 0023](docs/adr/0023-reimplement-hastscript.md)
 
@@ -82,7 +83,7 @@ deno task test
 これを [tett23/adr-guard](https://github.com/tett23/adr-guard) で強制する。git の pre-commit hook と Claude Code の hook で使うため、adr-guard を入れる。
 
 ```bash
-cargo install --git https://github.com/tett23/adr-guard --tag v0.8.2
+cargo install --git https://github.com/tett23/adr-guard --tag v0.8.3
 ```
 
 リリースのバイナリを使う手順は adr-guard の README にある。
@@ -93,12 +94,13 @@ git config core.hooksPath .githooks
 ```
 
 ステータスの行の変更と、リンクだけの変更（リンク先の変更、リンクの追加と削除。リンクのテキストの変更は含まない）は、pre-commit hook と CI の `--allow-status`、`--allow-links`（Claude Code の hook は `adr-guard claude-hook --allow-status`）で許可する（[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md)）。
-CI でも、push と pull request のすべてのコミットを adr-guard（`tett23/adr-guard@v0.8.2`）で検査する。
+CI でも、push と pull request のすべてのコミットを adr-guard（`tett23/adr-guard@v0.8.3`）で検査する。
 CI では、ADR の参照にリンクがあること（`adr-guard links`）と、ADR にステータスの行がちょうど 1 つあること（`adr-guard check-status`）も検査する（[ADR 0029](docs/adr/0029-check-adr-links-in-ci.md)）。リンクは手元で `adr-guard links --fix` を実行して付ける。
 
 文書（`.md`）の中の ADR の参照（`ADR 0001` の形）には、ADR のファイルへのリンクが要る。リンクが無いと、pre-commit hook と CI でエラーになる。`adr-guard links --fix` で付けられる。
 
 ADR は、行頭が `ステータス:` のステータスの行をちょうど 1 つ持たねばならない。無い ADR と 2 つ以上ある ADR は、pre-commit hook と CI（`adr-guard check-status`）でエラーになる。
+採択されたがまだ実装されていない ADR のステータスは `採択（未実装）` とし、`adr-guard unimplemented` で一覧できる（[ADR 0030](docs/adr/0030-update-adr-guard-to-v0-8-3.md)）。
 監査や計測の記録（`docs/audit/`、`docs/audits/`、`docs/benchmarks/`、`docs/benchmark/` 以下のすべてのファイル）も、コミット済みのものは変更、削除、移動できない。直すときは新しい記録を作る（[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0026](docs/adr/0026-update-adr-guard-to-v0-8-1.md)）。
 
 ## ライセンス
