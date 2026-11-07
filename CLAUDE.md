@@ -24,10 +24,11 @@ EPUB 2.0.1 と EPUB 3.0 のファイルを作る TypeScript のライブラリ�
 
 ## ADR の保護
 
-- コミット済み ADR の変更不可は、[tett23/adr-guard](https://github.com/tett23/adr-guard) v0.8.3 で強制されている（[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0026](docs/adr/0026-update-adr-guard-to-v0-8-1.md)、[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md)、[ADR 0030](docs/adr/0030-update-adr-guard-to-v0-8-3.md)）。Claude Code の hook（`.claude/settings.json`）が Edit / Write を止め、git の pre-commit（`.githooks/pre-commit`）がコミットを拒否し、CI がすべてのコミットを検査する。hook を迂回しない（`--no-verify` を使わない）
+- コミット済み ADR の変更不可は、[tett23/adr-guard](https://github.com/tett23/adr-guard) v0.10.0 で強制されている（[ADR 0020](docs/adr/0020-adr-workflow-and-adr-guard.md)、[ADR 0025](docs/adr/0025-update-adr-guard-to-v0-8-0.md)、[ADR 0026](docs/adr/0026-update-adr-guard-to-v0-8-1.md)、[ADR 0027](docs/adr/0027-update-adr-guard-to-v0-8-2.md)、[ADR 0030](docs/adr/0030-update-adr-guard-to-v0-8-3.md)、[ADR 0031](docs/adr/0031-update-adr-guard-to-v0-10-0.md)）。Claude Code の hook（`.claude/settings.json`）が Edit / Write を止め、git の pre-commit（`.githooks/pre-commit`）がコミットを拒否し、CI がすべてのコミットを検査する。hook を迂回しない（`--no-verify` を使わない）
 - ステータスの行の変更と、リンクだけの変更（リンクのテキストの変更は含まない）は、`--allow-status`、`--allow-links` で許可されている
-- 文書（`.md`）の中の ADR の参照（`ADR 0001` の形）には、ADR のファイルへのリンクを付ける。`adr-guard links --fix` で付けられ、`adr-guard links` で確かめられる
+- 文書（`.md`）の中の ADR の参照（`ADR 0001` の形）には、ADR のファイルへのリンクを付ける。`adr-guard links --fix` で付けられ、`adr-guard links` で確かめられる。ほかのリポジトリの ADR は、`[tett23/adr-guard の ADR 0019](https://github.com/...)` のように、リンクのテキストごと外部リンクにする（`<リポジトリ> ADR NNNN` と書くと、存在しない修飾子として報告される。[ADR 0031](docs/adr/0031-update-adr-guard-to-v0-10-0.md)）
 - ADR は、行頭が `ステータス:` のステータスの行をちょうど 1 つ持つ。`adr-guard check-status` で確かめられる
+- ADR の番号は重複させない。`adr-guard check-numbers` で確かめられ、CI でも検査する（[ADR 0031](docs/adr/0031-update-adr-guard-to-v0-10-0.md)）
 - 監査や計測の記録（`docs/audit/`、`docs/audits/`、`docs/benchmarks/`、`docs/benchmark/` 以下）も、コミット済みのものは変更、削除、移動できない。直すときは新しい記録を作る
 
 ## Git
