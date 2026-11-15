@@ -1,6 +1,6 @@
 # ADR 0029: CI の adr ジョブで adr-guard links と check-status を実行することを、action の入力に明記する
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 

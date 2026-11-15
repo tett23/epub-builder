@@ -1,6 +1,6 @@
 # ADR 0019: EPUB の出力（[ADR 0003](0003-epub-2-0-1-and-3-0-output.md)）とディレクトリから本を読む方法（[ADR 0014](0014-back-matter.md)）を一つにまとめ、Kindle の `primary-writing-mode` を書く
 
-ステータス: 採択→[ADR 0024](0024-epub-3-2.md)
+Status: superseded [{"by":["docs/adr/0024-epub-3-2.md"],"part":null}]
 
 ## 文脈
 

@@ -1,6 +1,6 @@
 # ADR 0013: ディレクトリから本を読む方法（[ADR 0009](0009-project-directory-layout.md)）と部・章・節の意味づけ（[ADR 0012](0012-structural-semantics-landmarks-and-guide.md)）を一つにまとめ、扉（titlepage）を加える
 
-ステータス: 採択→[ADR 0014](0014-back-matter.md)
+Status: superseded [{"by":["docs/adr/0014-back-matter.md"],"part":null}]
 
 ## 文脈
 

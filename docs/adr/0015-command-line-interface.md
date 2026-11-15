@@ -1,6 +1,6 @@
 # ADR 0015: ディレクトリから EPUB を作る CLI を、build、check、toc、init、help、version のコマンドで提供する
 
-ステータス: 採択→[ADR 0016](0016-command-line-interface.md)
+Status: superseded [{"by":["docs/adr/0016-command-line-interface.md"],"part":null}]
 
 ## 文脈
 

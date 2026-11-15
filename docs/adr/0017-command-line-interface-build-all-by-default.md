@@ -1,6 +1,6 @@
 # ADR 0017: ディレクトリから EPUB を作る CLI を提供し、`build` は既定で両方の版を作る
 
-ステータス: 採択→[ADR 0018](0018-command-line-interface-all-versions-by-default.md)
+Status: superseded [{"by":["docs/adr/0018-command-line-interface-all-versions-by-default.md"],"part":null}]
 
 ## 文脈
 

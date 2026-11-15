@@ -1,6 +1,6 @@
 # ADR 0018: ディレクトリから EPUB を作る CLI を提供し、`build`、`check`、`toc` は既定で両方の版を扱う
 
-ステータス: 採択→[ADR 0022](0022-command-line-interface-own-argument-parser.md)
+Status: superseded [{"by":["docs/adr/0022-command-line-interface-own-argument-parser.md"],"part":null}]
 
 ## 文脈
 

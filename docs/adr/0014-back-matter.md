@@ -1,6 +1,6 @@
 # ADR 0014: [ADR 0013](0013-project-directory-layout-and-titlepage.md) の決定を引き継ぎ、あとがき、付録、参考文献などの後付けを `meta/` に決まった名前で置けるようにする
 
-ステータス: 採択→[ADR 0019](0019-epub-output-and-project-layout-with-primary-writing-mode.md)
+Status: superseded [{"by":["docs/adr/0019-epub-output-and-project-layout-with-primary-writing-mode.md"],"part":null}]
 
 ## 文脈
 

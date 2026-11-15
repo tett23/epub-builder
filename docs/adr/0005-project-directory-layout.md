@@ -1,6 +1,6 @@
 # ADR 0005: 書誌情報を `book.toml`、本文を `body/`、表紙と奥付を `meta/`、スタイルシートと画像を `assets/` に置いたディレクトリから本を読み、並びと目次をファイルの名前と見出しから決める
 
-ステータス: 採択→[ADR 0006](0006-project-directory-layout-without-ruby-in-epub-2.md)
+Status: superseded [{"by":["docs/adr/0006-project-directory-layout-without-ruby-in-epub-2.md"],"part":null}]
 
 ## 文脈
 

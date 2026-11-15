@@ -1,6 +1,6 @@
 # ADR 0030: adr-guard を v0.8.3 に上げ、ステータス「採択（未実装）」を使えるようにする
 
-ステータス: 採択→adr-guard のバージョンは[ADR 0031](0031-update-adr-guard-to-v0-10-0.md)
+Status: superseded [{"by":["docs/adr/0031-update-adr-guard-to-v0-10-0.md"],"part":"adr-guard のバージョン"},{"part":"ステータスの書き方","by":["docs/adr/0032-update-adr-guard-to-v0-13-1.md"]}]
 
 ## 文脈
 

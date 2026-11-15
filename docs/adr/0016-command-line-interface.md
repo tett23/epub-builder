@@ -1,6 +1,6 @@
 # ADR 0016: ディレクトリから EPUB を作る CLI を、build、check、toc、init、help、version のコマンドで提供し、`deno.json` を設定として渡してインストールする
 
-ステータス: 採択→[ADR 0017](0017-command-line-interface-build-all-by-default.md)
+Status: superseded [{"by":["docs/adr/0017-command-line-interface-build-all-by-default.md"],"part":null}]
 
 ## 文脈
 

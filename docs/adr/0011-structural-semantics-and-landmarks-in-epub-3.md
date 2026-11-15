@@ -1,6 +1,6 @@
 # ADR 0011: EPUB 3.0 では、部・章・節の構造を、本文の `epub:type` と見出しごとの `section` 要素で表し、ナビゲーション文書に landmarks を書く
 
-ステータス: 採択→[ADR 0012](0012-structural-semantics-landmarks-and-guide.md)
+Status: superseded [{"by":["docs/adr/0012-structural-semantics-landmarks-and-guide.md"],"part":null}]
 
 ## 文脈
 

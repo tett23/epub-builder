@@ -1,6 +1,6 @@
 # ADR 0007: assets/ のファイル名の空白を `_` に置き換え、EPUB 2.0.1 で使えない MathML と ruby 要素は例外にせず警告する
 
-ステータス: 採択→[ADR 0009](0009-project-directory-layout.md)
+Status: superseded [{"by":["docs/adr/0009-project-directory-layout.md"],"part":null}]
 
 ## 文脈
 
