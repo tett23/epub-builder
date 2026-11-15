@@ -1,6 +1,6 @@
 # ADR 0022: ディレクトリから EPUB を作る CLI を提供し、引数の解析を自前で書く
 
-ステータス: 採択→[ADR 0024](0024-epub-3-2.md)
+Status: superseded [{"by":["docs/adr/0024-epub-3-2.md"],"part":null}]
 
 ## 文脈
 

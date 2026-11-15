@@ -1,6 +1,6 @@
 # ADR 0009: [ADR 0006](0006-project-directory-layout-without-ruby-in-epub-2.md)、[0007](0007-rename-spaces-and-warn-epub-2-markup.md)、[0008](0008-sections-from-headings.md) の決定を一つにまとめ、ディレクトリから本を読む方法の全体を定める
 
-ステータス: 採択→[ADR 0013](0013-project-directory-layout-and-titlepage.md)
+Status: superseded [{"by":["docs/adr/0013-project-directory-layout-and-titlepage.md"],"part":null}]
 
 ## 文脈
 

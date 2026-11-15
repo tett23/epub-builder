@@ -1,6 +1,6 @@
 # ADR 0001: EPUB 2.0.1 と 3.0 を作るライブラリを、Deno で動く TypeScript の公開リポジトリとして MIT ライセンスで作る
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 

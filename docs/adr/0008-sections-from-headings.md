@@ -1,6 +1,6 @@
 # ADR 0008: 目次を、ディレクトリの入れ子の下に、文書の中のすべての見出しを入れ子の節として続けて作る
 
-ステータス: 採択→[ADR 0009](0009-project-directory-layout.md)
+Status: superseded [{"by":["docs/adr/0009-project-directory-layout.md"],"part":null}]
 
 ## 文脈
 

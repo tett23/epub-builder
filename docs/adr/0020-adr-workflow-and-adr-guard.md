@@ -1,6 +1,6 @@
 # ADR 0020: ADR の運用を提案、レビュー、コミットの順にし、コミット済みの ADR の保護を tett23/adr-guard に置き換える
 
-ステータス: 採択→adr-guard のバージョン、hook と CI のオプションは[ADR 0025](0025-update-adr-guard-to-v0-8-0.md)、ステータスの書き方と ADR の破棄の扱いは[ADR 0028](0028-align-adr-format-with-global-policy.md)
+Status: superseded [{"by":["docs/adr/0025-update-adr-guard-to-v0-8-0.md"],"part":"adr-guard のバージョン、hook と CI のオプション"},{"by":["docs/adr/0028-align-adr-format-with-global-policy.md"],"part":"ステータスの書き方と ADR の破棄の扱い"},{"part":"採択した ADR をコミットする手順","by":["docs/adr/0032-update-adr-guard-to-v0-13-1.md"]}]
 
 ## 文脈
 

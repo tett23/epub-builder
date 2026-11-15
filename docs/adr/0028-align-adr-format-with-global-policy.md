@@ -1,6 +1,6 @@
 # ADR 0028: ADR の書式を作者の全リポジトリに共通する方針に合わせ、参考文献の節と破棄のステータスを加える
 
-ステータス: 採択→CI での adr-guard links の扱いは[ADR 0029](0029-check-adr-links-in-ci.md)
+Status: superseded [{"by":["docs/adr/0029-check-adr-links-in-ci.md"],"part":"CI での adr-guard links の扱い"},{"part":"ステータスの書き方","by":["docs/adr/0032-update-adr-guard-to-v0-13-1.md"]}]
 
 ## 文脈
 

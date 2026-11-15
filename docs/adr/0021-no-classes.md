@@ -1,6 +1,6 @@
 # ADR 0021: TypeScript でクラスを使わず、誤りと TOML の日時を値と関数で表す
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 
